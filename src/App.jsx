@@ -81,7 +81,7 @@ async function generateLesson(st) {
         system: sysPrompt,
         userMessage: userMsg,
         model: "claude-haiku-4-5-20251001",
-        max_tokens: 4000
+        max_tokens: 3000
       })
     });
   } catch (fetchErr) {
@@ -94,18 +94,35 @@ async function generateLesson(st) {
     throw new Error(`API вернул ошибку ${response.status}. ${errText.slice(0, 200)}`);
   }
 
-  let data;
-  try {
-    data = await response.json();
-  } catch (e) {
-    throw new Error("Не удалось разобрать ответ API как JSON");
-  }
+  // Читаем SSE-поток (streaming) — данные приходят по мере генерации
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let text = "";
+  let buffer = "";
 
-  if (data.error) {
-    throw new Error(`API ошибка: ${data.error.message || JSON.stringify(data.error)}`);
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n");
+    buffer = lines.pop() || "";
+    for (const line of lines) {
+      if (!line.startsWith("data: ")) continue;
+      const raw = line.slice(6).trim();
+      if (raw === "[DONE]") continue;
+      try {
+        const ev = JSON.parse(raw);
+        if (ev.type === "content_block_delta" && ev.delta?.type === "text_delta") {
+          text += ev.delta.text;
+        }
+        if (ev.type === "error") {
+          throw new Error(ev.error?.message || "Claude API streaming error");
+        }
+      } catch (parseErr) {
+        if (parseErr.message.includes("Claude API")) throw parseErr;
+      }
+    }
   }
-
-  const text = (data.content || []).map(b => b.text || "").join("");
   if (!text) {
     throw new Error("API вернул пустой ответ");
   }

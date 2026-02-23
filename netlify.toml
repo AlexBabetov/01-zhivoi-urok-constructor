@@ -9,11 +9,13 @@
 [functions."generate-lesson"]
   timeout = 30
 
-# Редиректы: все запросы к /api/* → Netlify Functions
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
+[edge_functions]
+  directory = "netlify/edge-functions"
+
+# Edge Function перехватывает /api/generate-lesson — стриминг без таймаутов
+[[edge_functions]]
+  path = "/api/generate-lesson"
+  function = "generate-lesson"
 
 # SPA: все остальные → index.html (React Router)
 [[redirects]]
