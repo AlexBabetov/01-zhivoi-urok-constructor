@@ -9,10 +9,7 @@
 [functions."generate-lesson"]
   timeout = 30
 
-[edge_functions]
-  directory = "netlify/edge-functions"
-
-# Edge Function перехватывает /api/generate-lesson — стриминг без таймаутов
+# Edge Function: /api/generate-lesson → netlify/edge-functions/generate-lesson.js
 [[edge_functions]]
   path = "/api/generate-lesson"
   function = "generate-lesson"

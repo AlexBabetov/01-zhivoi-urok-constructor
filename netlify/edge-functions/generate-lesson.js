@@ -1,10 +1,8 @@
 /**
  * Netlify Edge Function: generate-lesson
- * Стриминг-прокси к Claude API — не ждёт полного ответа,
- * а пересылает SSE-поток напрямую в браузер.
- * Это исключает 504/Inactivity Timeout.
- *
- * Требует env variable: ANTHROPIC_API_KEY
+ * Streaming-прокси к Claude API с keepalive-пингами.
+ * Пинги (": ping\n\n") каждые 3 сек не дают CDN убить соединение
+ * до прихода первого токена от Claude.
  */
 
 export default async (request, context) => {
@@ -57,32 +55,62 @@ export default async (request, context) => {
     );
   }
 
-  const anthropicRes = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": apiKey,
-      "anthropic-version": "2023-06-01",
-    },
-    body: JSON.stringify({
-      model,
-      max_tokens,
-      stream: true,
-      system,
-      messages: [{ role: "user", content: userMessage }],
-    }),
-  });
+  // TransformStream позволяет писать keepalive-пинги + данные от Claude
+  const { readable, writable } = new TransformStream();
+  const writer = writable.getWriter();
+  const enc = new TextEncoder();
 
-  if (!anthropicRes.ok) {
-    const error = await anthropicRes.json();
-    return new Response(
-      JSON.stringify({ error: error.error?.message || "Claude API вернул ошибку" }),
-      { status: anthropicRes.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
-  }
+  // Пинг каждые 3 секунды — CDN видит активность, браузер игнорирует
+  const pingTimer = setInterval(() => {
+    writer.write(enc.encode(": ping\n\n")).catch(() => clearInterval(pingTimer));
+  }, 3000);
 
-  // Пересылаем SSE-поток напрямую в браузер — соединение активно всё время генерации
-  return new Response(anthropicRes.body, {
+  // Запускаем fetch к Claude и стримим результат асинхронно
+  (async () => {
+    try {
+      const anthropicRes = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": apiKey,
+          "anthropic-version": "2023-06-01",
+        },
+        body: JSON.stringify({
+          model,
+          max_tokens,
+          stream: true,
+          system,
+          messages: [{ role: "user", content: userMessage }],
+        }),
+      });
+
+      clearInterval(pingTimer);
+
+      if (!anthropicRes.ok) {
+        const err = await anthropicRes.json();
+        const msg = err.error?.message || "Claude API error";
+        writer.write(enc.encode(`data: ${JSON.stringify({ type: "error", error: { message: msg } })}\n\n`));
+        writer.close();
+        return;
+      }
+
+      // Форвардим SSE-поток от Claude напрямую
+      const reader = anthropicRes.body.getReader();
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        await writer.write(value);
+      }
+    } catch (err) {
+      clearInterval(pingTimer);
+      writer.write(enc.encode(`data: ${JSON.stringify({ type: "error", error: { message: err.message } })}\n\n`));
+    } finally {
+      clearInterval(pingTimer);
+      writer.close();
+    }
+  })();
+
+  return new Response(readable, {
     status: 200,
     headers: {
       ...corsHeaders,
@@ -91,8 +119,4 @@ export default async (request, context) => {
       "X-Accel-Buffering": "no",
     },
   });
-};
-
-export const config = {
-  path: "/api/generate-lesson",
 };
