@@ -6,6 +6,9 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
+[functions."generate-lesson"]
+  timeout = 30
+
 # Редиректы: все запросы к /api/* → Netlify Functions
 [[redirects]]
   from = "/api/*"

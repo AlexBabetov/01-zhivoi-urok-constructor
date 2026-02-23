@@ -23,6 +23,7 @@ function gc(s) { for (const [k, c] of Object.entries(CLUSTERS)) if (c.subjects.i
 // ========== AI PROMPT ==========
 function buildSystemPrompt(clusterName, clusterProfile, modelName, grade, format) {
   const isPrimary = grade <= 4;
+  const isMiddle = grade >= 5 && grade <= 9;
   const isLang = clusterName === "Язык и коммуникация";
   const writingNorm = grade <= 2 ? "35-50 слов класс / 12-17 дом" : grade <= 3 ? "45-60 / 15-20" : "55-70 / 20-25";
 
@@ -34,8 +35,22 @@ function buildSystemPrompt(clusterName, clusterProfile, modelName, grade, format
 КОРИ — персонаж-помощник (голубая буква К, шарфик, рюкзачок). 4 роли: задаёт вопросы, ПУТАЕТСЯ (типичная ошибка→дети исправляют), удивляется, хвалит. Минимум 2 появления, одно — ошибка.
 ОБЯЗАТЕЛЬНО: разминка (каллиграфия+словарь+мостик к теме), игра-передвижение/физминутка ПО ТЕМЕ, хоровое закрепление, «Что я теперь умею», светофор 🟢🟡🔴.` : '';
 
+  const middleBlock = isMiddle ? `
+СРЕДНЯЯ ШКОЛА (${grade}кл): абстрактно-логическое мышление, концентрация 12-15 мин, потребность в автономности и значимости.
+НЕ используй: хоровое закрепление, физминутки, каллиграфию — они воспринимаются как «детское».
+ИСПОЛЬЗУЙ: когнитивный конфликт, связь с реальной жизнью («зачем это мне»), выбор уровня сложности.
+КОРИ для подростков — провокатор или исследователь: создаёт когнитивный конфликт или задаёт открытый вопрос без простого ответа. Появляется 1 раз, реплика острая и короткая (1-2 предложения).
+ГИЛЬДИИ (вместо обычных групп): 🔬 Учёные (ищут закономерности), 💡 Изобретатели (придумывают применение), 🌍 Исследователи (проверяют гипотезы). Каждая гильдия смотрит на задачу со своей точки зрения.
+ЛОВУШКИ: 2 правдоподобных, но ошибочных утверждения учителя — ученики должны поймать и опровергнуть.
+ДВОЙНАЯ РЕФЛЕКСИЯ: контент («Что изменилось в понимании?») + процесс («Как работал? Что помогло думать?»).
+3 ЗАХВАТА разных стилей — учитель выбирает один перед уроком.` : '';
+
   const langBlock = isLang ? `
 РУССКИЙ ЯЗЫК: drilling правил + порождение речи. Каллиграфия→словарь→тема. Мостик: «На какой вопрос отвечают эти слова?». Стыдные вопросы, слова-ловушки обязательны.` : '';
+
+  const middleJsonFormat = isMiddle ?
+`ОТВЕТ — ТОЛЬКО JSON (без markdown, без \`\`\`):
+{"passport":{"topic":"str","type":"str","emotional_goal":"str","educational_goal":"str","key_concept":"str"},"captures":[{"style":"🎭 Провокация","name":"str","technique":"str","text":"полный текст учителя 3-4 предложения","kori_role":"str"},{"style":"💭 Загадка","name":"str","technique":"другой приём","text":"другой текст","kori_role":"str"},{"style":"🌍 Связь с жизнью","name":"str","technique":"третий приём","text":"третий текст","kori_role":"str"}],"first_win":{"task":"конкретная задача — ученик пробует ДО объяснения теории","duration":5},"development":{"key_points":["п1","п2","п3"],"teacher_text":"что говорит учитель","kori":{"role":"провокатор/исследователь","text":"реплика Кори"},"traps":["Ловушка 1: утверждение — почему ошибка","Ловушка 2: утверждение — почему ошибка"]},"guild_task":{"guilds":[{"name":"🔬 Учёные","task":"конкретное задание"},{"name":"💡 Изобретатели","task":"конкретное задание"},{"name":"🌍 Исследователи","task":"конкретное задание"}],"discussion_question":"вопрос для общего обсуждения после"},"tasks":{"green":["з1 базовый","з2"],"yellow":["з1 продвинутый","з2"],"red":"босс-задача нестандартное применение"},"reflection":{"content":"Что изменилось в твоём понимании темы?","process":"Как ты работал сегодня? Что помогло думать лучше?"},"teacher_notes":"3-4 предложения"}` : '';
 
   const jsonFormat = isPrimary ?
 `ОТВЕТ — ТОЛЬКО JSON (без markdown, без \`\`\`):
@@ -45,9 +60,9 @@ function buildSystemPrompt(clusterName, clusterProfile, modelName, grade, format
 
   return `${core}
 КЛАСТЕР: ${clusterName}. ${clusterProfile}
-МОДЕЛЬ: ${modelName}, КЛАСС: ${grade}, ФОРМАТ: ${format === 'online' ? 'Онлайн' : 'Очный'}${grade >= 7 && format === 'online' ? '. Онлайн 7+: Концентрат 10-22мин.' : ''}${primaryBlock}${langBlock}
+МОДЕЛЬ: ${modelName}, КЛАСС: ${grade}, ФОРМАТ: ${format === 'online' ? 'Онлайн' : 'Очный'}${grade >= 7 && format === 'online' ? '. Онлайн 7+: Концентрат 10-22мин.' : ''}${primaryBlock}${middleBlock}${langBlock}
 ПРАВИЛА: конкретность (не «задача», а точная формулировка), готовый текст учителя, каждый захват — ДРУГОЙ стиль, ловушки обязательны, ошибка Кори=типичная ошибка ученика, всё на русском.
-${jsonFormat}`;
+${isMiddle ? middleJsonFormat : jsonFormat}`;
 }
 
 async function generateLesson(st) {
@@ -59,18 +74,18 @@ async function generateLesson(st) {
 
   let response;
   try {
-    response = await fetch("https://api.anthropic.com/v1/messages", {
+    response = await fetch("/api/generate-lesson", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 4000,
         system: sysPrompt,
-        messages: [{ role: "user", content: userMsg }]
+        userMessage: userMsg,
+        model: "claude-haiku-4-5-20251001",
+        max_tokens: 4000
       })
     });
   } catch (fetchErr) {
-    throw new Error("Не удалось подключиться к API. Проверьте интернет-соединение. (" + fetchErr.message + ")");
+    throw new Error("Не удалось подключиться к серверу. Проверьте интернет-соединение. (" + fetchErr.message + ")");
   }
 
   if (!response.ok) {
@@ -820,6 +835,156 @@ function StandardResult({ data, state }) {
   );
 }
 
+// ========== STEP 4: Result (Middle School 5-9) ==========
+function MiddleResult({ data, state }) {
+  const [openCapture, setOpenCapture] = useState(0);
+  const clInfo = CLUSTERS[gc(state.subject)];
+  const model = MODELS.find(m => m.id === state.model);
+  const p = data.passport || {};
+  const dev = data.development || {};
+  const guild = data.guild_task || {};
+
+  const InfoBox = ({ bg, border, children }) => (
+    <div style={{ padding: 14, borderRadius: 10, background: bg, border: `1px solid ${border}`, marginBottom: 8, fontSize: 13, lineHeight: 1.6 }}>{children}</div>
+  );
+  const Section = ({ title, icon, children }) => (
+    <div style={{ marginBottom: 24 }}>
+      <h3 style={{ fontSize: 16, color: "#1e3a5f", marginBottom: 12, display: "flex", alignItems: "center", gap: 8 }}>{icon} {title}</h3>
+      {children}
+    </div>
+  );
+
+  return (
+    <div>
+      {/* Passport */}
+      <div style={{ background: "#f0f4ff", borderRadius: 12, padding: 20, marginBottom: 24, border: "1px solid #c7d2fe" }}>
+        <div style={{ fontSize: 20, fontWeight: 800, color: "#1e3a5f", marginBottom: 4 }}>{state.topic}</div>
+        <div style={{ fontSize: 13, color: "#475569", marginBottom: 8 }}>{p.type} • {state.grade} класс • {state.subject}</div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, fontSize: 13 }}>
+          {p.emotional_goal && <div><strong>🎯 Эмоц. цель:</strong> {p.emotional_goal}</div>}
+          {p.educational_goal && <div><strong>📚 Образ. цель:</strong> {p.educational_goal}</div>}
+          {p.key_concept && <div style={{ gridColumn: "span 2" }}><strong>🔑 Ключевое понятие:</strong> {p.key_concept}</div>}
+        </div>
+      </div>
+
+      {/* Captures */}
+      {data.captures && data.captures.length > 0 && (
+        <Section title="Захват — 3 варианта (выберите один)" icon="⚡">
+          <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+            {data.captures.map((c, i) => (
+              <button key={i} onClick={() => setOpenCapture(i)} style={{
+                flex: 1, padding: "10px 8px", borderRadius: 8, fontSize: 12, fontWeight: openCapture === i ? 700 : 400,
+                background: openCapture === i ? "#1e3a5f" : "#f8fafc", color: openCapture === i ? "#fff" : "#475569",
+                border: openCapture === i ? "none" : "1px solid #e2e8f0", cursor: "pointer"
+              }}>{c.style?.split(' ')[0]} {c.name?.slice(0, 18)}</button>
+            ))}
+          </div>
+          {data.captures[openCapture] && (() => {
+            const c = data.captures[openCapture];
+            return (
+              <div style={{ background: "#fffbeb", border: "1px solid #fbbf2440", borderRadius: 12, padding: 16 }}>
+                <div style={{ fontWeight: 700, fontSize: 15, color: "#92400e", marginBottom: 4 }}>{c.style}: «{c.name}»</div>
+                <div style={{ fontSize: 12, color: "#78350f", marginBottom: 8 }}>Приём: {c.technique}</div>
+                <div style={{ fontSize: 14, lineHeight: 1.6, padding: 12, background: "#fff", borderRadius: 8, marginBottom: 8 }}>
+                  📢 <strong>Учитель:</strong> {c.text}
+                </div>
+                {c.kori_role && <div style={{ fontSize: 13, color: "#7c3aed" }}>🎭 <strong>Кори:</strong> {c.kori_role}</div>}
+              </div>
+            );
+          })()}
+        </Section>
+      )}
+
+      {/* First win */}
+      {data.first_win && (
+        <Section title="Победа до теории" icon="🏆">
+          <InfoBox bg="#ecfdf5" border="#a7f3d0">
+            <strong>Задача ({data.first_win.duration} мин):</strong> {data.first_win.task}
+          </InfoBox>
+        </Section>
+      )}
+
+      {/* Development */}
+      {dev.key_points && (
+        <Section title="Развитие" icon="📚">
+          <InfoBox bg="#eff6ff" border="#bfdbfe">
+            <strong>Ключевые точки:</strong>
+            <ul style={{ margin: "6px 0 0 16px", padding: 0 }}>
+              {dev.key_points.map((p, i) => <li key={i} style={{ marginBottom: 3 }}>{p}</li>)}
+            </ul>
+            {dev.teacher_text && <div style={{ marginTop: 8 }}>📢 {dev.teacher_text}</div>}
+          </InfoBox>
+          {dev.kori && (
+            <InfoBox bg="#f5f3ff" border="#c4b5fd">
+              <strong>🎭 Кори ({dev.kori.role}):</strong> <em>«{dev.kori.text}»</em>
+            </InfoBox>
+          )}
+          {dev.traps && dev.traps.length > 0 && (
+            <InfoBox bg="#fef2f2" border="#fecaca">
+              <strong>⚠️ Ловушки:</strong>
+              <ul style={{ margin: "6px 0 0 16px", padding: 0 }}>
+                {dev.traps.map((t, i) => <li key={i} style={{ marginBottom: 3 }}>{t}</li>)}
+              </ul>
+            </InfoBox>
+          )}
+        </Section>
+      )}
+
+      {/* Guild task */}
+      {guild.guilds && (
+        <Section title="Задание гильдий" icon="⚔️">
+          <div style={{ display: "grid", gap: 8, marginBottom: 12 }}>
+            {guild.guilds.map((g, i) => (
+              <div key={i} style={{ padding: 12, background: "#f8fafc", borderRadius: 10, border: "1px solid #e2e8f0", fontSize: 13 }}>
+                <strong>{g.name}:</strong> {g.task}
+              </div>
+            ))}
+          </div>
+          {guild.discussion_question && (
+            <InfoBox bg="#fdf4ff" border="#e9d5ff">
+              💬 <strong>Общее обсуждение:</strong> {guild.discussion_question}
+            </InfoBox>
+          )}
+        </Section>
+      )}
+
+      {/* Tasks */}
+      {data.tasks && (
+        <Section title="Задачи по уровням" icon="📝">
+          {['green', 'yellow', 'red'].map(level => data.tasks[level] && (
+            <div key={level} style={{ marginBottom: 8 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4 }}>
+                {level === 'green' ? '🟢 Базовый' : level === 'yellow' ? '🟡 Продвинутый' : '🔴 Босс'}
+              </div>
+              {Array.isArray(data.tasks[level])
+                ? data.tasks[level].map((t, i) => <div key={i} style={{ fontSize: 13, color: "#475569", marginLeft: 20, marginBottom: 2 }}>• {t}</div>)
+                : <div style={{ fontSize: 13, color: "#475569", marginLeft: 20 }}>• {data.tasks[level]}</div>
+              }
+            </div>
+          ))}
+        </Section>
+      )}
+
+      {/* Reflection */}
+      {data.reflection && (
+        <Section title="Двойная рефлексия" icon="🪞">
+          <InfoBox bg="#f0fdf4" border="#bbf7d0">
+            <div><strong>📖 Контент:</strong> {data.reflection.content}</div>
+            <div style={{ marginTop: 6 }}><strong>⚙️ Процесс:</strong> {data.reflection.process}</div>
+          </InfoBox>
+        </Section>
+      )}
+
+      {/* Teacher notes */}
+      {data.teacher_notes && (
+        <Section title="Заметки для учителя" icon="📝">
+          <InfoBox bg="#fffbeb" border="#fbbf2440">{data.teacher_notes}</InfoBox>
+        </Section>
+      )}
+    </div>
+  );
+}
+
 // ========== MAIN APP ==========
 export default function App() {
   const [step, setStep] = useState(0);
@@ -829,6 +994,7 @@ export default function App() {
   const [result, setResult] = useState(null);
 
   const isPrimary = state.grade && state.grade <= 4;
+  const isMiddle = state.grade && state.grade >= 5 && state.grade <= 9;
   const steps = STEPS_BASIC;
 
   const canNext = useMemo(() => {
@@ -885,7 +1051,7 @@ export default function App() {
           {step === 0 && <Step1 state={state} setState={setState} />}
           {step === 1 && <Step2 state={state} setState={setState} />}
           {step === 2 && <Step3 state={state} onGenerate={handleGenerate} loading={loading} error={error} />}
-          {step === 3 && result && (isPrimary ? <PrimaryResult data={result} state={state} /> : <StandardResult data={result} state={state} />)}
+          {step === 3 && result && (isPrimary ? <PrimaryResult data={result} state={state} /> : isMiddle ? <MiddleResult data={result} state={state} /> : <StandardResult data={result} state={state} />)}
         </div>
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>

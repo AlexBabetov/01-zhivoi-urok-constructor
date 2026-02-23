@@ -41,7 +41,7 @@ exports.handler = async (event) => {
     return { statusCode: 400, headers, body: JSON.stringify({ error: "Неверный JSON в запросе" }) };
   }
 
-  const { system, userMessage, model = "claude-haiku-4-5-20251001", max_tokens = 4000 } = body;
+  const { system, userMessage, model = "claude-haiku-4-5", max_tokens = 4000 } = body;
 
   if (!system || !userMessage) {
     return {
