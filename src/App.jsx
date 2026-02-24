@@ -4,7 +4,7 @@ import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 const CLUSTERS = {
   exact: { name: "Точные и естественные", emoji: "🔬", color: "#2563eb", subjects: ["Математика","Алгебра","Геометрия","Физика","Химия","Информатика","Биология"], profile: "Конвергентное мышление. Тренажёр 30%, Практикум 25%. Бинарная мгновенная ОС. Deliberate practice." },
   lang: { name: "Язык и коммуникация", emoji: "✍️", color: "#7c3aed", subjects: ["Русский язык","Английский язык","Немецкий язык","Французский язык"], profile: "Drilling правил + порождение речи 50/50. Мастерская 25%, Тренажёр 20%. Двойная ОС: бинарная для грамматики + критериальная для текстов." },
-  human: { name: "Гуманитарные и социальные", emoji: "📜", color: "#dc2626", subjects: ["Литература","История","Обществознание","География","МХК"], profile: "Дивергентное мышление. Дискуссия 30%, Исследование 25%. Критериальная + диалогическая ОС." }
+  human: { name: "Гуманитарные и социальные", emoji: "📜", color: "#dc2626", subjects: ["Литература","История","Обществознание","География","МХК","Окружающий мир"], profile: "Дивергентное мышление. Дискуссия 30%, Исследование 25%. Критериальная + диалогическая ОС." }
 };
 
 const MODELS = [
@@ -25,11 +25,13 @@ function gc(s) { for (const [k, c] of Object.entries(CLUSTERS)) if (c.subjects.i
 const CURRICULUM_FILES = {
   "Математика_1-4": "/curriculum/math-1-4.json",
   "Русский язык_1-4": "/curriculum/russian-1-4.json",
+  "Окружающий мир_1-4": "/curriculum/okr-1-4.json",
 };
 
 function getCurriculumKey(subject, grade) {
   if (subject === "Математика" && grade >= 1 && grade <= 4) return "Математика_1-4";
   if (subject === "Русский язык" && grade >= 1 && grade <= 4) return "Русский язык_1-4";
+  if (subject === "Окружающий мир" && grade >= 1 && grade <= 4) return "Окружающий мир_1-4";
   return null;
 }
 
