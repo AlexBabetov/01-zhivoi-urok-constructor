@@ -26,12 +26,20 @@ const CURRICULUM_FILES = {
   "Математика_1-4": "/curriculum/math-1-4.json",
   "Русский язык_1-4": "/curriculum/russian-1-4.json",
   "Окружающий мир_1-4": "/curriculum/okr-1-4.json",
+  "Математика_5-6": "/curriculum/math-5-6.json",
+  "Алгебра_7-9": "/curriculum/algebra-7-9.json",
+  "Геометрия_7-9": "/curriculum/geometry-7-9.json",
+  "Русский язык_5-9": "/curriculum/russian-5-9.json",
 };
 
 function getCurriculumKey(subject, grade) {
   if (subject === "Математика" && grade >= 1 && grade <= 4) return "Математика_1-4";
   if (subject === "Русский язык" && grade >= 1 && grade <= 4) return "Русский язык_1-4";
   if (subject === "Окружающий мир" && grade >= 1 && grade <= 4) return "Окружающий мир_1-4";
+  if (subject === "Математика" && grade >= 5 && grade <= 6) return "Математика_5-6";
+  if (subject === "Алгебра" && grade >= 7 && grade <= 9) return "Алгебра_7-9";
+  if (subject === "Геометрия" && grade >= 7 && grade <= 9) return "Геометрия_7-9";
+  if (subject === "Русский язык" && grade >= 5 && grade <= 9) return "Русский язык_5-9";
   return null;
 }
 
