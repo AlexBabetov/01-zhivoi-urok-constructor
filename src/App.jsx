@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 
 // ========== DATA ==========
 const CLUSTERS = {
@@ -20,8 +20,60 @@ const MODELS = [
 
 function gc(s) { for (const [k, c] of Object.entries(CLUSTERS)) if (c.subjects.includes(s)) return k; return "exact"; }
 
+// ========== CURRICULUM DATA ==========
+// Maps subject+gradeRange to a static JSON file in /curriculum/
+const CURRICULUM_FILES = {
+  "Математика_1-4": "/curriculum/math-1-4.json",
+};
+
+function getCurriculumKey(subject, grade) {
+  if (subject === "Математика" && grade >= 1 && grade <= 4) return "Математика_1-4";
+  return null;
+}
+
+// Hook: loads and caches curriculum JSON for subject+grade
+function useCurriculum(subject, grade) {
+  const [data, setData] = useState(null);
+  const cache = useRef({});
+  useEffect(() => {
+    const key = getCurriculumKey(subject, grade);
+    if (!key) { setData(null); return; }
+    if (cache.current[key]) { setData(cache.current[key]); return; }
+    fetch(CURRICULUM_FILES[key])
+      .then(r => r.json())
+      .then(json => { cache.current[key] = json; setData(json); })
+      .catch(() => setData(null));
+  }, [subject, grade]);
+  return data;
+}
+
+// Build curriculum context string for the system prompt
+function buildCurriculumContext(curriculum, lessonId) {
+  if (!curriculum || !lessonId) return null;
+  const lesson = curriculum.lessons.find(l => l.id === lessonId);
+  if (!lesson) return null;
+  const section = curriculum.sections.find(s => s.id === lesson.section_id);
+  const grade = lesson.grade;
+  const idx = curriculum.lessons.filter(l => l.grade === grade).findIndex(l => l.id === lessonId);
+  const gradeLessons = curriculum.lessons.filter(l => l.grade === grade);
+  const prev = gradeLessons.slice(Math.max(0, idx - 2), idx).map(l => `${l.lesson_num}. ${l.topic}`);
+  const next = gradeLessons.slice(idx + 1, idx + 2).map(l => `${l.lesson_num}. ${l.topic}`);
+  const techs = Array.isArray(lesson.techniques) ? lesson.techniques.join(", ") : lesson.techniques;
+  return [
+    `ПРОГРАММА: ${curriculum.meta.subject} ${curriculum.meta.grades} кл. (ЖУ360 v5.1), урок №${lesson.lesson_num}/${curriculum.lessons.filter(l => l.grade === grade).length}`,
+    section ? `РАЗДЕЛ: ${section.title}` : "",
+    prev.length ? `ПРЕДЫДУЩИЕ УРОКИ (контекст для связи): ${prev.join(" → ")}` : "",
+    next.length ? `СЛЕДУЮЩИЙ УРОК (упомяни вскользь в ДЗ или сюжете): ${next.join(", ")}` : "",
+    `РЕКОМЕНДОВАННАЯ МОДЕЛЬ ПО ПРОГРАММЕ: ${lesson.model} (${lesson.lesson_type})`,
+    lesson.poiya_step ? `ШАГ ПОЙЯ: ${lesson.poiya_step}` : "",
+    lesson.uud_fgos ? `УУД по ФГОС: ${lesson.uud_fgos}` : "",
+    techs ? `РЕКОМЕНДОВАННЫЕ ТЕХНИКИ ЖУ360: ${techs}` : "",
+    lesson.homework ? `ДОМАШНЕЕ ЗАДАНИЕ (из программы): ${lesson.homework}` : "",
+  ].filter(Boolean).join("\n");
+}
+
 // ========== AI PROMPT ==========
-function buildSystemPrompt(clusterName, clusterProfile, modelName, grade, format) {
+function buildSystemPrompt(clusterName, clusterProfile, modelName, grade, format, curriculumCtx) {
   const isPrimary = grade <= 4;
   const isMiddle = grade >= 5 && grade <= 9;
   const isLang = clusterName === "Язык и коммуникация";
@@ -58,9 +110,11 @@ function buildSystemPrompt(clusterName, clusterProfile, modelName, grade, format
 `ОТВЕТ — ТОЛЬКО JSON (без markdown):
 {"capture":{"technique":"str","text":"подробный текст 3-5 предложений","duration":5},"first_win":{"task":"конкретная задача","duration":3},"timeline":[{"phase":"str","duration":5,"activity":"учитель","students":"ученики","materials":"str","tip":"совет"}],"tasks":{"green":["з1","з2"],"yellow":["з1","з2"],"red":["босс"]},"feedback":{"method":"метод","exit_ticket":"вопрос"},"teacher_notes":"3-4 предложения"}`;
 
+  const curriculumBlock = curriculumCtx ? `\n\n--- ДАННЫЕ ИЗ ПРОГРАММЫ ---\n${curriculumCtx}\n--- (используй эти данные для связи с предыдущими уроками, точных техник и ДЗ) ---` : '';
+
   return `${core}
 КЛАСТЕР: ${clusterName}. ${clusterProfile}
-МОДЕЛЬ: ${modelName}, КЛАСС: ${grade}, ФОРМАТ: ${format === 'online' ? 'Онлайн' : 'Очный'}${grade >= 7 && format === 'online' ? '. Онлайн 7+: Концентрат 10-22мин.' : ''}${primaryBlock}${middleBlock}${langBlock}
+МОДЕЛЬ: ${modelName}, КЛАСС: ${grade}, ФОРМАТ: ${format === 'online' ? 'Онлайн' : 'Очный'}${grade >= 7 && format === 'online' ? '. Онлайн 7+: Концентрат 10-22мин.' : ''}${primaryBlock}${middleBlock}${langBlock}${curriculumBlock}
 ПРАВИЛА: конкретность (не «задача», а точная формулировка), готовый текст учителя, каждый захват — ДРУГОЙ стиль, ловушки обязательны, ошибка Кори=типичная ошибка ученика, всё на русском.
 ${isMiddle ? middleJsonFormat : jsonFormat}`;
 }
@@ -69,7 +123,7 @@ async function generateLesson(st) {
   const ck = gc(st.subject);
   const ci = CLUSTERS[ck];
   const mo = MODELS.find(m => m.id === st.model);
-  const sysPrompt = buildSystemPrompt(ci.name, ci.profile, mo.name, st.grade, st.format);
+  const sysPrompt = buildSystemPrompt(ci.name, ci.profile, mo.name, st.grade, st.format, st.curriculumCtx || null);
   const userMsg = `Предмет: ${st.subject}, Класс: ${st.grade}, Тема: ${st.topic}, Модель: ${mo.name} (${mo.mode}), ${st.duration} мин, ${st.format === 'online' ? 'Онлайн' : 'Очный'}${st.notes ? ', Пожелания: ' + st.notes : ''}`;
 
   let response;
@@ -212,12 +266,90 @@ function Btn({ children, onClick, variant = "primary", disabled, style }) {
   );
 }
 
+// ========== CURRICULUM SELECTOR ==========
+function CurriculumSelector({ curriculum, grade, onSelect }) {
+  const [selectedId, setSelectedId] = useState("");
+  if (!curriculum) return null;
+
+  const gradeSections = curriculum.sections.filter(s => s.grade === grade);
+  const gradeLessons = curriculum.lessons.filter(l => l.grade === grade);
+
+  const handleChange = (e) => {
+    const id = e.target.value;
+    setSelectedId(id);
+    if (!id) { onSelect(null); return; }
+    const lesson = gradeLessons.find(l => l.id === id);
+    if (lesson) onSelect(lesson);
+  };
+
+  const modelEmoji = { "Тренажёр": "🎯", "Исследование": "🔍", "Практикум": "⚙️", "Восстановление": "🌿", "Квест": "🗺️", "Дискуссия": "💬", "Мастерская": "🎨" };
+  const selected = selectedId ? gradeLessons.find(l => l.id === selectedId) : null;
+  const selSection = selected ? curriculum.sections.find(s => s.id === selected.section_id) : null;
+
+  return (
+    <div style={{ marginBottom: 20 }}>
+      <label style={{ fontSize: 13, fontWeight: 600, color: "#475569", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
+        📚 Выбрать урок из программы
+        <span style={{ fontWeight: 400, color: "#94a3b8", fontSize: 12 }}>(необязательно — автозаполнит тему)</span>
+      </label>
+      <select value={selectedId} onChange={handleChange}
+        style={{ width: "100%", padding: "10px 12px", borderRadius: 8, border: "1px solid #a5b4fc", fontSize: 14, fontFamily: "inherit", background: "#fff", color: "#1e293b" }}>
+        <option value="">— Ввести тему вручную —</option>
+        {gradeSections.map(sec => {
+          const secLessons = gradeLessons.filter(l => l.section_id === sec.id);
+          return (
+            <optgroup key={sec.id} label={`📂 ${sec.title} (ур. ${sec.lessons_range})`}>
+              {secLessons.map(l => (
+                <option key={l.id} value={l.id}>
+                  {l.lesson_num}. {l.topic} — {modelEmoji[l.model] || ""} {l.model}
+                </option>
+              ))}
+            </optgroup>
+          );
+        })}
+      </select>
+
+      {selected && (
+        <div style={{ marginTop: 8, padding: 12, borderRadius: 10, background: "#eff6ff", border: "1px solid #bfdbfe", fontSize: 13 }}>
+          <div style={{ fontWeight: 700, color: "#1e3a5f", marginBottom: 4 }}>📖 Урок №{selected.lesson_num} из программы</div>
+          {selSection && <div style={{ color: "#475569", marginBottom: 3 }}>Раздел: {selSection.title}</div>}
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 6 }}>
+            <span style={{ padding: "2px 8px", background: "#e0e7ff", borderRadius: 12, color: "#3730a3" }}>{selected.lesson_type}</span>
+            <span style={{ padding: "2px 8px", background: "#fef3c7", borderRadius: 12, color: "#92400e" }}>{modelEmoji[selected.model]} {selected.model}</span>
+            {selected.poiya_step && <span style={{ padding: "2px 8px", background: "#dcfce7", borderRadius: 12, color: "#166534" }}>Пойя: {selected.poiya_step}</span>}
+          </div>
+          {selected.techniques && selected.techniques.length > 0 && (
+            <div style={{ marginTop: 6, color: "#64748b" }}>Техники: {selected.techniques.join(", ")}</div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ========== STEP 1: Parameters ==========
 function Step1({ state, setState }) {
   const grades = Array.from({ length: 11 }, (_, i) => i + 1);
   const cluster = state.subject ? gc(state.subject) : null;
   const clInfo = cluster ? CLUSTERS[cluster] : null;
   const isPrimary = state.grade && state.grade <= 4;
+  const curriculum = useCurriculum(state.subject, state.grade);
+  const hasCurriculum = !!getCurriculumKey(state.subject, state.grade);
+
+  const handleCurriculumSelect = useCallback((lesson) => {
+    if (!lesson) {
+      setState(s => ({ ...s, curriculumLesson: null, curriculumCtx: null }));
+    } else {
+      const ctx = buildCurriculumContext(curriculum, lesson.id);
+      setState(s => ({
+        ...s,
+        topic: lesson.topic,
+        model: MODELS.find(m => m.name === lesson.model)?.id || s.model,
+        curriculumLesson: lesson.id,
+        curriculumCtx: ctx,
+      }));
+    }
+  }, [curriculum, setState]);
 
   return (
     <div>
@@ -245,6 +377,18 @@ function Step1({ state, setState }) {
           </select>
         </div>
       </div>
+      {hasCurriculum && curriculum && (
+        <CurriculumSelector
+          curriculum={curriculum}
+          grade={state.grade}
+          onSelect={handleCurriculumSelect}
+        />
+      )}
+      {hasCurriculum && !curriculum && (
+        <div style={{ padding: 10, background: "#f1f5f9", borderRadius: 8, fontSize: 13, color: "#94a3b8", marginBottom: 16 }}>
+          ⏳ Загружаем программу...
+        </div>
+      )}
       <div style={{ marginBottom: 20 }}>
         <label style={{ fontSize: 13, fontWeight: 600, color: "#475569", marginBottom: 6, display: "block" }}>Тема урока</label>
         <input value={state.topic || ""} onChange={e => setState(s => ({ ...s, topic: e.target.value }))}
