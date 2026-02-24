@@ -529,10 +529,27 @@ function Step1({ state, setState }) {
         </div>
       )}
       <div style={{ marginBottom: 20 }}>
-        <label style={{ fontSize: 13, fontWeight: 600, color: "#475569", marginBottom: 6, display: "block" }}>Тема урока</label>
-        <input value={state.topic || ""} onChange={e => setState(s => ({ ...s, topic: e.target.value }))}
-          placeholder="Например: Что такое части речи?"
-          style={{ width: "100%", padding: "10px 12px", borderRadius: 8, border: "1px solid #d1d5db", fontSize: 15, fontFamily: "inherit", boxSizing: "border-box" }} />
+        {state.curriculumLesson ? (
+          <>
+            <label style={{ fontSize: 13, fontWeight: 600, color: "#6d28d9", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
+              Уточнить тему
+              <span style={{ fontWeight: 400, color: "#94a3b8", fontSize: 12 }}>(необязательно — тема взята из программы)</span>
+            </label>
+            <input value={state.topic || ""} onChange={e => setState(s => ({ ...s, topic: e.target.value }))}
+              placeholder="Например: акцент на самостоятельной работе, после каникул, перед контрольной..."
+              style={{ width: "100%", padding: "10px 12px", borderRadius: 8, border: "1px solid #a5b4fc", fontSize: 15, fontFamily: "inherit", boxSizing: "border-box", background: "#f5f3ff" }} />
+            <div style={{ fontSize: 12, color: "#7c3aed", marginTop: 5, display: "flex", alignItems: "center", gap: 4 }}>
+              📚 Тема из программы: <em>{state.topic}</em>
+            </div>
+          </>
+        ) : (
+          <>
+            <label style={{ fontSize: 13, fontWeight: 600, color: "#475569", marginBottom: 6, display: "block" }}>Тема урока</label>
+            <input value={state.topic || ""} onChange={e => setState(s => ({ ...s, topic: e.target.value }))}
+              placeholder="Например: Что такое части речи?"
+              style={{ width: "100%", padding: "10px 12px", borderRadius: 8, border: "1px solid #d1d5db", fontSize: 15, fontFamily: "inherit", boxSizing: "border-box" }} />
+          </>
+        )}
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
         <div>
