@@ -65,8 +65,9 @@ exports.handler = async (event) => {
 
   const lessonNum = meta.lesson_num || 0;
   const filename = `${lessonNum}_${topicSlug}.json`;
-  const filePath = `lessons/${subjectSlug}/${meta.grade}/${filename}`;
-  const indexPath = `lessons/index.json`;
+  // CRA: public/ → build/ on deploy, must write to public/lessons/ for static serving
+  const filePath = `public/lessons/${subjectSlug}/${meta.grade}/${filename}`;
+  const indexPath = `public/lessons/index.json`;
   const savedAt = new Date().toISOString();
   const id = `${subjectSlug}-${meta.grade}-${lessonNum}`;
 
@@ -135,7 +136,7 @@ exports.handler = async (event) => {
       topic: meta.topic,
       model: meta.model || "",
       saved_at: savedAt,
-      filename: filePath.replace("lessons/", ""),
+      filename: `${subjectSlug}/${meta.grade}/${filename}`,
     };
 
     const existingIndex = await getFile(indexPath);

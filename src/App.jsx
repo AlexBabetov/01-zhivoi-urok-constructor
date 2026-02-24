@@ -18,7 +18,35 @@ const MODELS = [
   { id: "recovery", name: "Восстановление", emoji: "🌿", mode: "Смешанный", desc: "После контрольных, эмоциональная разгрузка", w: { exact: 10, lang: 10, human: 5 } }
 ];
 
+// Диапазоны классов для каждого предмета
+const SUBJECT_GRADES = {
+  "Математика":          [1,  6],
+  "Алгебра":             [7, 11],
+  "Геометрия":           [7, 11],
+  "Физика":              [7, 11],
+  "Химия":               [8, 11],
+  "Информатика":         [7, 11],
+  "Биология":            [5, 11],
+  "Русский язык":        [1, 11],
+  "Английский язык":     [2, 11],
+  "Немецкий язык":       [2, 11],
+  "Французский язык":    [2, 11],
+  "Литература":          [5,  9],
+  "Литература База":     [10, 11],
+  "Литература Профиль":  [10, 11],
+  "История":             [5, 11],
+  "Обществознание":      [6, 11],
+  "География":           [5,  9],
+  "МХК":                 [8, 11],
+  "Окружающий мир":      [1,  4],
+};
+
 function gc(s) { for (const [k, c] of Object.entries(CLUSTERS)) if (c.subjects.includes(s)) return k; return "exact"; }
+function subjectAvailable(subject, grade) {
+  if (!grade) return true;
+  const r = SUBJECT_GRADES[subject];
+  return !r || (grade >= r[0] && grade <= r[1]);
+}
 
 // ========== CURRICULUM DATA ==========
 // Maps subject+gradeRange to a static JSON file in /curriculum/
@@ -379,6 +407,12 @@ function CurriculumSelector({ curriculum, grade, onSelect }) {
 // ========== STEP 1: Parameters ==========
 function Step1({ state, setState }) {
   const grades = Array.from({ length: 11 }, (_, i) => i + 1);
+  // Фильтруем предметы по выбранному классу
+  const availableSubjects = Object.entries(CLUSTERS).reduce((acc, [k, cl]) => {
+    const filtered = cl.subjects.filter(s => subjectAvailable(s, state.grade));
+    if (filtered.length) acc.push([k, { ...cl, subjects: filtered }]);
+    return acc;
+  }, []);
   const cluster = state.subject ? gc(state.subject) : null;
   const clInfo = cluster ? CLUSTERS[cluster] : null;
   const isPrimary = state.grade && state.grade <= 4;
@@ -407,7 +441,15 @@ function Step1({ state, setState }) {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
         <div>
           <label style={{ fontSize: 13, fontWeight: 600, color: "#475569", marginBottom: 6, display: "block" }}>Класс</label>
-          <select value={state.grade || ""} onChange={e => setState(s => ({ ...s, grade: +e.target.value }))}
+          <select value={state.grade || ""} onChange={e => {
+            const g = +e.target.value;
+            setState(s => ({
+              ...s,
+              grade: g,
+              // сбрасываем предмет если он недоступен для нового класса
+              subject: subjectAvailable(s.subject, g) ? s.subject : "",
+            }));
+          }}
             style={{ width: "100%", padding: "10px 12px", borderRadius: 8, border: "1px solid #d1d5db", fontSize: 15, fontFamily: "inherit", background: "#fff" }}>
             <option value="">Выберите</option>
             {grades.map(g => <option key={g} value={g}>{g} класс</option>)}
@@ -418,7 +460,7 @@ function Step1({ state, setState }) {
           <select value={state.subject || ""} onChange={e => setState(s => ({ ...s, subject: e.target.value }))}
             style={{ width: "100%", padding: "10px 12px", borderRadius: 8, border: "1px solid #d1d5db", fontSize: 15, fontFamily: "inherit", background: "#fff" }}>
             <option value="">Выберите</option>
-            {Object.entries(CLUSTERS).map(([k, cl]) => (
+            {availableSubjects.map(([k, cl]) => (
               <optgroup key={k} label={`${cl.emoji} ${cl.name}`}>
                 {cl.subjects.map(s => <option key={s} value={s}>{s}</option>)}
               </optgroup>
