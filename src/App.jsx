@@ -1359,6 +1359,7 @@ export default function App() {
   const [result, setResult] = useState(null);
   const [libraryOpen, setLibraryOpen] = useState(false);
   const [saveStatus, setSaveStatus] = useState(null); // null | "saving" | "saved" | "error"
+  const [saveError, setSaveError] = useState(null);
 
   const isPrimary = state.grade && state.grade <= 4;
   const isMiddle = state.grade && state.grade >= 5 && state.grade <= 9;
@@ -1393,6 +1394,7 @@ export default function App() {
   const handleSave = useCallback(async () => {
     if (!result || !state.subject || saveStatus === "saving") return;
     setSaveStatus("saving");
+    setSaveError(null);
     const lessonNum = state.curriculumLesson
       ? parseInt(state.curriculumLesson.replace(/^g\d+_l/, ""), 10) || 0
       : 0;
@@ -1405,19 +1407,25 @@ export default function App() {
       curriculum_id: state.curriculumLesson || null,
     };
     try {
-      const resp = await fetch("/api/save-lesson", {
+      const resp = await fetch("/.netlify/functions/save-lesson", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ lesson: result, meta }),
       });
-      const data = await resp.json();
-      if (!resp.ok || !data.ok) throw new Error(data.error || "Ошибка сервера");
+      let data;
+      try {
+        data = await resp.json();
+      } catch {
+        throw new Error(`HTTP ${resp.status} — ответ не JSON (функция не развёрнута?)`);
+      }
+      if (!resp.ok || !data.ok) throw new Error(data.error || `HTTP ${resp.status}`);
       setSaveStatus("saved");
       setTimeout(() => setSaveStatus(null), 4000);
     } catch (e) {
       console.error("Save error:", e);
+      setSaveError(e.message);
       setSaveStatus("error");
-      setTimeout(() => setSaveStatus(null), 5000);
+      setTimeout(() => { setSaveStatus(null); setSaveError(null); }, 8000);
     }
   }, [result, state, saveStatus]);
 
@@ -1427,6 +1435,7 @@ export default function App() {
     setResult(null);
     setError(null);
     setSaveStatus(null);
+    setSaveError(null);
   };
 
   return (
@@ -1456,24 +1465,31 @@ export default function App() {
           {step === 3 && result && (isPrimary ? <PrimaryResult data={result} state={state} /> : isMiddle ? <MiddleResult data={result} state={state} /> : <StandardResult data={result} state={state} />)}
         </div>
 
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          {step > 0 && step < 3 ? <Btn variant="secondary" onClick={() => setStep(s => s - 1)}>← Назад</Btn> : <div />}
-          {step < 2 ? (
-            <Btn onClick={() => setStep(s => s + 1)} disabled={!canNext}>Далее →</Btn>
-          ) : step === 3 ? (
-            <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-              <Btn variant="secondary" onClick={() => { setResult(null); setStep(2); }}>🔄 Перегенерировать</Btn>
-              <Btn
-                variant="secondary"
-                onClick={handleSave}
-                disabled={saveStatus === "saving" || saveStatus === "saved"}
-                style={saveStatus === "saved" ? { borderColor: "#16a34a", color: "#16a34a" } : saveStatus === "error" ? { borderColor: "#dc2626", color: "#dc2626" } : {}}
-              >
-                {saveStatus === "saving" ? "⏳ Сохраняю…" : saveStatus === "saved" ? "✅ Сохранено" : saveStatus === "error" ? "❌ Ошибка" : "💾 Сохранить урок"}
-              </Btn>
-              <Btn onClick={reset}>🎯 Новый урок</Btn>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {saveError && (
+            <div style={{ background: "#fef2f2", border: "1px solid #fca5a5", borderRadius: 8, padding: "8px 12px", fontSize: 12, color: "#b91c1c" }}>
+              ⚠️ {saveError}
             </div>
-          ) : null}
+          )}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            {step > 0 && step < 3 ? <Btn variant="secondary" onClick={() => setStep(s => s - 1)}>← Назад</Btn> : <div />}
+            {step < 2 ? (
+              <Btn onClick={() => setStep(s => s + 1)} disabled={!canNext}>Далее →</Btn>
+            ) : step === 3 ? (
+              <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                <Btn variant="secondary" onClick={() => { setResult(null); setStep(2); }}>🔄 Перегенерировать</Btn>
+                <Btn
+                  variant="secondary"
+                  onClick={handleSave}
+                  disabled={saveStatus === "saving" || saveStatus === "saved"}
+                  style={saveStatus === "saved" ? { borderColor: "#16a34a", color: "#16a34a" } : saveStatus === "error" ? { borderColor: "#dc2626", color: "#dc2626" } : {}}
+                >
+                  {saveStatus === "saving" ? "⏳ Сохраняю…" : saveStatus === "saved" ? "✅ Сохранено" : saveStatus === "error" ? "❌ Ошибка" : "💾 Сохранить урок"}
+                </Btn>
+                <Btn onClick={reset}>🎯 Новый урок</Btn>
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
       {libraryOpen && <LibraryView onClose={() => setLibraryOpen(false)} />}
