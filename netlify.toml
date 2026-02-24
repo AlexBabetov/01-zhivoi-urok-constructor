@@ -9,6 +9,15 @@
 [functions."generate-lesson"]
   timeout = 30
 
+[functions."save-lesson"]
+  timeout = 15
+
+# Regular Function: /api/save-lesson → netlify/functions/save-lesson.js
+[[redirects]]
+  from = "/api/save-lesson"
+  to = "/.netlify/functions/save-lesson"
+  status = 200
+
 # Edge Function: /api/generate-lesson → netlify/edge-functions/generate-lesson.js
 [[edge_functions]]
   path = "/api/generate-lesson"

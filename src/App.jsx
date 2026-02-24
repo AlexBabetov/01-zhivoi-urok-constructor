@@ -1192,12 +1192,173 @@ function MiddleResult({ data, state }) {
 }
 
 // ========== MAIN APP ==========
+// ─────────────────────────────────────────────────────────
+// БИБЛИОТЕКА УРОКОВ
+// ─────────────────────────────────────────────────────────
+
+function useLessons() {
+  const [lessons, setLessons] = useState(null);
+  const [libLoading, setLibLoading] = useState(false);
+  const refresh = useCallback(() => {
+    setLibLoading(true);
+    fetch(`/lessons/index.json?t=${Date.now()}`)
+      .then(r => r.ok ? r.json() : [])
+      .then(data => { setLessons(Array.isArray(data) ? data : []); setLibLoading(false); })
+      .catch(() => { setLessons([]); setLibLoading(false); });
+  }, []);
+  return { lessons, libLoading, refresh };
+}
+
+function LessonCard({ entry, onOpen }) {
+  const [hovered, setHovered] = useState(false);
+  const dateStr = entry.saved_at
+    ? new Date(entry.saved_at).toLocaleDateString("ru-RU", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })
+    : "";
+  const modelColors = { "Исследование": "#eff6ff:#1d4ed8", "Тренажёр": "#fef3c7:#92400e", "Практикум": "#f0fdf4:#166534", "Мастерская": "#fdf4ff:#7e22ce", "Дискуссия": "#fff1f2:#9f1239", "Квест": "#fff7ed:#c2410c", "Восстановление": "#f8fafc:#475569" };
+  const [bg, fg] = (modelColors[entry.model] || "#f8fafc:#475569").split(":");
+  return (
+    <div
+      onClick={() => onOpen(entry)}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{ border: "1px solid #e2e8f0", borderRadius: 12, padding: "14px 16px", cursor: "pointer", background: "#fff", transition: "box-shadow 0.15s", boxShadow: hovered ? "0 4px 14px rgba(0,0,0,0.1)" : "none" }}
+    >
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
+        <div style={{ fontWeight: 600, fontSize: 14, color: "#1e293b", lineHeight: 1.4, flex: 1 }}>{entry.topic}</div>
+        {entry.model && <div style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", background: bg, color: fg, borderRadius: 20, whiteSpace: "nowrap" }}>{entry.model}</div>}
+      </div>
+      <div style={{ marginTop: 7, fontSize: 12, color: "#64748b", display: "flex", flexWrap: "wrap", gap: "4px 12px", alignItems: "center" }}>
+        <span>📚 {entry.subject}</span>
+        <span>🎓 {entry.grade} кл.</span>
+        {entry.lesson_num > 0 && <span>№{entry.lesson_num}</span>}
+        {dateStr && <span style={{ marginLeft: "auto", opacity: 0.7 }}>⏰ {dateStr}</span>}
+      </div>
+    </div>
+  );
+}
+
+function LibraryView({ onClose }) {
+  const { lessons, libLoading, refresh } = useLessons();
+  const [filter, setFilter] = useState({ subject: "", grade: "" });
+  const [search, setSearch] = useState("");
+  const [openData, setOpenData] = useState(null); // { meta, lesson }
+  const [loadingLesson, setLoadingLesson] = useState(false);
+
+  useEffect(() => { refresh(); }, [refresh]);
+
+  const subjects = lessons ? [...new Set(lessons.map(l => l.subject))].sort() : [];
+  const filtered = (lessons || []).filter(l =>
+    (!filter.subject || l.subject === filter.subject) &&
+    (!filter.grade || String(l.grade) === filter.grade) &&
+    (!search || l.topic.toLowerCase().includes(search.toLowerCase()))
+  );
+
+  const handleOpen = async (entry) => {
+    setLoadingLesson(true);
+    try {
+      const resp = await fetch(`/lessons/${entry.filename}?t=${Date.now()}`);
+      if (!resp.ok) throw new Error("Файл не найден. Возможно, урок ещё не задеплоен.");
+      const data = await resp.json();
+      setOpenData(data);
+    } catch (e) {
+      alert("Ошибка загрузки урока: " + e.message);
+    } finally {
+      setLoadingLesson(false);
+    }
+  };
+
+  if (openData) {
+    const st = openData.meta || {};
+    const isPrimary = st.grade && st.grade <= 4;
+    const isMiddle = st.grade && st.grade >= 5 && st.grade <= 9;
+    return (
+      <div>
+        <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
+          <Btn variant="secondary" onClick={() => setOpenData(null)}>← Назад в библиотеку</Btn>
+          <Btn variant="ghost" onClick={onClose} style={{ marginLeft: "auto" }}>✕ Закрыть</Btn>
+        </div>
+        <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 10, padding: "10px 16px", marginBottom: 18, fontSize: 13, color: "#166534" }}>
+          📚 Из библиотеки · {st.subject} {st.grade} кл. · {openData.saved_at ? new Date(openData.saved_at).toLocaleDateString("ru-RU") : ""}
+        </div>
+        {isPrimary ? <PrimaryResult data={openData.lesson} state={st} />
+          : isMiddle ? <MiddleResult data={openData.lesson} state={st} />
+          : <StandardResult data={openData.lesson} state={st} />}
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      {/* Header */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+        <div>
+          <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: "#1e293b" }}>📚 Библиотека уроков</h2>
+          <div style={{ fontSize: 12, color: "#64748b", marginTop: 3 }}>
+            {lessons === null ? "Загрузка..." : `${lessons.length} урок${lessons.length === 1 ? "" : lessons.length < 5 ? "а" : "ов"} сохранено`}
+          </div>
+        </div>
+        <div style={{ display: "flex", gap: 8 }}>
+          <Btn variant="secondary" onClick={refresh} style={{ fontSize: 12 }}>↻</Btn>
+          <Btn variant="ghost" onClick={onClose}>✕ Закрыть</Btn>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+        <input
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="🔍 Поиск по теме..."
+          style={{ flex: 1, padding: "8px 12px", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 13, outline: "none" }}
+        />
+        <select value={filter.subject} onChange={e => setFilter(f => ({ ...f, subject: e.target.value, grade: "" }))}
+          style={{ padding: "8px 10px", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 13, color: "#374151" }}>
+          <option value="">Все предметы</option>
+          {subjects.map(s => <option key={s} value={s}>{s}</option>)}
+        </select>
+        <select value={filter.grade} onChange={e => setFilter(f => ({ ...f, grade: e.target.value }))}
+          style={{ width: 110, padding: "8px 10px", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 13, color: "#374151" }}>
+          <option value="">Все кл.</option>
+          {[1,2,3,4,5,6,7,8,9,10,11].map(g => <option key={g} value={g}>{g} кл.</option>)}
+        </select>
+      </div>
+
+      {/* Content */}
+      {(libLoading || loadingLesson) && (
+        <div style={{ textAlign: "center", padding: 48, color: "#64748b" }}>⏳ {loadingLesson ? "Открываю урок..." : "Загрузка..."}</div>
+      )}
+      {!libLoading && !loadingLesson && filtered.length === 0 && (
+        <div style={{ textAlign: "center", padding: 56, color: "#94a3b8" }}>
+          <div style={{ fontSize: 40, marginBottom: 12 }}>📭</div>
+          <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 6 }}>
+            {lessons && lessons.length === 0 ? "Библиотека пустая" : "Ничего не найдено"}
+          </div>
+          <div style={{ fontSize: 13 }}>
+            {lessons && lessons.length === 0
+              ? "Сгенерируйте урок и нажмите «💾 Сохранить»"
+              : "Попробуйте изменить фильтры"}
+          </div>
+        </div>
+      )}
+      {!libLoading && !loadingLesson && filtered.length > 0 && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {filtered.map(entry => <LessonCard key={entry.id} entry={entry} onOpen={handleOpen} />)}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────
+
 export default function App() {
   const [step, setStep] = useState(0);
   const [state, setState] = useState({ duration: 45, format: "offline" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
+  const [libraryOpen, setLibraryOpen] = useState(false);
+  const [saveStatus, setSaveStatus] = useState(null); // null | "saving" | "saved" | "error"
 
   const isPrimary = state.grade && state.grade <= 4;
   const isMiddle = state.grade && state.grade >= 5 && state.grade <= 9;
@@ -1229,11 +1390,43 @@ export default function App() {
     setLoading(false);
   }, [state]);
 
+  const handleSave = useCallback(async () => {
+    if (!result || !state.subject || saveStatus === "saving") return;
+    setSaveStatus("saving");
+    const lessonNum = state.curriculumLesson
+      ? parseInt(state.curriculumLesson.replace(/^g\d+_l/, ""), 10) || 0
+      : 0;
+    const meta = {
+      subject: state.subject,
+      grade: state.grade,
+      topic: state.topic || "",
+      model: MODELS.find(m => m.id === state.model)?.name || state.model || "",
+      lesson_num: lessonNum,
+      curriculum_id: state.curriculumLesson || null,
+    };
+    try {
+      const resp = await fetch("/api/save-lesson", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lesson: result, meta }),
+      });
+      const data = await resp.json();
+      if (!resp.ok || !data.ok) throw new Error(data.error || "Ошибка сервера");
+      setSaveStatus("saved");
+      setTimeout(() => setSaveStatus(null), 4000);
+    } catch (e) {
+      console.error("Save error:", e);
+      setSaveStatus("error");
+      setTimeout(() => setSaveStatus(null), 5000);
+    }
+  }, [result, state, saveStatus]);
+
   const reset = () => {
     setStep(0);
     setState({ duration: 45, format: "offline" });
     setResult(null);
     setError(null);
+    setSaveStatus(null);
   };
 
   return (
@@ -1246,9 +1439,12 @@ export default function App() {
             <div style={{ fontSize: 11, opacity: 0.7 }}>Конструктор урока • v2.0 {isPrimary ? '• 🎒 Режим Кори' : ''}</div>
           </div>
         </div>
-        {step > 0 && (
-          <Btn variant="ghost" onClick={reset} style={{ color: "#fff", borderColor: "rgba(255,255,255,0.2)", fontSize: 12 }}>↺ Новый урок</Btn>
-        )}
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <Btn variant="ghost" onClick={() => setLibraryOpen(true)} style={{ color: "#fff", borderColor: "rgba(255,255,255,0.2)", fontSize: 12 }}>📚 Библиотека</Btn>
+          {step > 0 && (
+            <Btn variant="ghost" onClick={reset} style={{ color: "#fff", borderColor: "rgba(255,255,255,0.2)", fontSize: 12 }}>↺ Новый урок</Btn>
+          )}
+        </div>
       </div>
 
       <div style={{ maxWidth: 720, margin: "0 auto", padding: "24px 16px" }}>
@@ -1265,13 +1461,22 @@ export default function App() {
           {step < 2 ? (
             <Btn onClick={() => setStep(s => s + 1)} disabled={!canNext}>Далее →</Btn>
           ) : step === 3 ? (
-            <div style={{ display: "flex", gap: 12 }}>
+            <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
               <Btn variant="secondary" onClick={() => { setResult(null); setStep(2); }}>🔄 Перегенерировать</Btn>
+              <Btn
+                variant="secondary"
+                onClick={handleSave}
+                disabled={saveStatus === "saving" || saveStatus === "saved"}
+                style={saveStatus === "saved" ? { borderColor: "#16a34a", color: "#16a34a" } : saveStatus === "error" ? { borderColor: "#dc2626", color: "#dc2626" } : {}}
+              >
+                {saveStatus === "saving" ? "⏳ Сохраняю…" : saveStatus === "saved" ? "✅ Сохранено" : saveStatus === "error" ? "❌ Ошибка" : "💾 Сохранить урок"}
+              </Btn>
               <Btn onClick={reset}>🎯 Новый урок</Btn>
             </div>
           ) : null}
         </div>
       </div>
+      {libraryOpen && <LibraryView onClose={() => setLibraryOpen(false)} />}
     </div>
   );
 }
