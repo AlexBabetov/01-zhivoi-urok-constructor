@@ -116,7 +116,7 @@ function useCurriculum(subject, grade) {
 
 // Build curriculum context string for the system prompt
 function buildCurriculumContext(curriculum, lessonId) {
-  if (!curriculum || !lessonId) return null;
+  if (!curriculum || !lessonId || !curriculum.lessons) return null;
   const lesson = curriculum.lessons.find(l => l.id === lessonId);
   if (!lesson) return null;
   const section = curriculum.sections.find(s => s.id === lesson.section_id);
@@ -372,7 +372,7 @@ function CurriculumSelector({ curriculum, grade, onSelect }) {
   if (!curriculum) return null;
 
   const gradeSections = curriculum.sections.filter(s => s.grade === grade);
-  const gradeLessons = curriculum.lessons.filter(l => l.grade === grade);
+  const gradeLessons = (curriculum.lessons || []).filter(l => l.grade === grade);
 
   const handleChange = (e) => {
     const id = e.target.value;
@@ -398,7 +398,7 @@ function CurriculumSelector({ curriculum, grade, onSelect }) {
         {gradeSections.map(sec => {
           const secLessons = gradeLessons.filter(l => l.section_id === sec.id);
           return (
-            <optgroup key={sec.id} label={`📂 ${sec.title} (ур. ${sec.lessons_range})`}>
+            <optgroup key={sec.id} label={`📂 ${sec.title} (${sec.lessons_range ? `ур. ${sec.lessons_range}` : `${sec.hours ?? sec.total_lessons ?? secLessons.length} ч`})`}>
               {secLessons.map(l => (
                 <option key={l.id} value={l.id}>
                   {l.lesson_num}. {l.topic} — {modelEmoji[l.model] || ""} {l.model}
