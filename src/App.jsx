@@ -139,7 +139,7 @@ async function generateLesson(st) {
         system: sysPrompt,
         userMessage: userMsg,
         model: "claude-haiku-4-5-20251001",
-        max_tokens: 5000
+        max_tokens: 8000
       })
     });
   } catch (fetchErr) {
@@ -157,6 +157,7 @@ async function generateLesson(st) {
   const decoder = new TextDecoder();
   let text = "";
   let buffer = "";
+  let hitMaxTokens = false;
 
   while (true) {
     const { done, value } = await reader.read();
@@ -173,6 +174,10 @@ async function generateLesson(st) {
         if (ev.type === "content_block_delta" && ev.delta?.type === "text_delta") {
           text += ev.delta.text;
         }
+        // Detect truncation by token limit
+        if (ev.type === "message_delta" && ev.delta?.stop_reason === "max_tokens") {
+          hitMaxTokens = true;
+        }
         if (ev.type === "error") {
           throw new Error(ev.error?.message || "Claude API streaming error");
         }
@@ -184,33 +189,61 @@ async function generateLesson(st) {
   if (!text) {
     throw new Error("API вернул пустой ответ");
   }
+  if (hitMaxTokens) {
+    throw new Error("Урок слишком большой — AI достиг лимита токенов. Попробуйте более короткую тему или перегенерируйте.");
+  }
+
+  // Repair helper: fix literal newlines/tabs inside JSON string values
+  function repairJsonStrings(str) {
+    // Replace literal newlines/tabs inside quoted strings only
+    return str.replace(/"(?:[^"\\]|\\.)*"/g, (match) =>
+      match.replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/\t/g, "\\t")
+    );
+  }
+
+  function extractAndParse(raw) {
+    // Strip markdown fences
+    let s = raw.replace(/```json\s*/gi, "").replace(/```\s*/g, "").trim();
+    // Find outermost JSON object
+    const i = s.indexOf('{');
+    const j = s.lastIndexOf('}');
+    if (i === -1 || j === -1) throw new Error("No JSON object found");
+    s = s.slice(i, j + 1);
+    // Fix literal newlines inside strings
+    s = repairJsonStrings(s);
+    // Fix trailing commas
+    s = s.replace(/,\s*([}\]])/g, '$1');
+    return JSON.parse(s);
+  }
+
+  function extractAndRepair(raw) {
+    let s = raw.replace(/```json\s*/gi, "").replace(/```\s*/g, "").trim();
+    const i = s.indexOf('{');
+    if (i === -1) throw new Error("No JSON object found");
+    let fragment = s.slice(i);
+    // Count braces to close incomplete JSON
+    let braces = 0, brackets = 0;
+    for (const ch of fragment) {
+      if (ch === '{') braces++;
+      if (ch === '}') braces--;
+      if (ch === '[') brackets++;
+      if (ch === ']') brackets--;
+    }
+    while (brackets > 0) { fragment += ']'; brackets--; }
+    while (braces > 0) { fragment += '}'; braces--; }
+    fragment = repairJsonStrings(fragment);
+    fragment = fragment.replace(/,\s*([}\]])/g, '$1');
+    return JSON.parse(fragment);
+  }
 
   let parsed;
   try {
-    const cleaned = text.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
-    const i = cleaned.indexOf('{');
-    const j = cleaned.lastIndexOf('}');
-    if (i === -1 || j === -1) throw new Error("No JSON object found");
-    parsed = JSON.parse(cleaned.slice(i, j + 1));
+    parsed = extractAndParse(text);
   } catch (e) {
     try {
-      const cleaned = text.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
-      const i = cleaned.indexOf('{');
-      if (i === -1) throw e;
-      let fragment = cleaned.slice(i);
-      let braces = 0, brackets = 0;
-      for (const ch of fragment) {
-        if (ch === '{') braces++;
-        if (ch === '}') braces--;
-        if (ch === '[') brackets++;
-        if (ch === ']') brackets--;
-      }
-      while (brackets > 0) { fragment += ']'; brackets--; }
-      while (braces > 0) { fragment += '}'; braces--; }
-      fragment = fragment.replace(/,\s*([}\]])/g, '$1');
-      parsed = JSON.parse(fragment);
+      parsed = extractAndRepair(text);
     } catch (e2) {
-      throw new Error("AI не завершил JSON. Попробуйте перегенерировать. Конец: ..." + text.slice(-100));
+      throw new Error("AI не завершил JSON. Попробуйте перегенерировать. Конец: ..." + text.slice(-120));
     }
   }
 
