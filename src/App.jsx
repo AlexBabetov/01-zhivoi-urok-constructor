@@ -4,7 +4,7 @@ import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 const CLUSTERS = {
   exact: { name: "Точные и естественные", emoji: "🔬", color: "#2563eb", subjects: ["Математика","Алгебра","Геометрия","Физика","Химия","Информатика","Биология"], profile: "Конвергентное мышление. Тренажёр 30%, Практикум 25%. Бинарная мгновенная ОС. Deliberate practice." },
   lang: { name: "Язык и коммуникация", emoji: "✍️", color: "#7c3aed", subjects: ["Русский язык","Английский язык","Немецкий язык","Французский язык"], profile: "Drilling правил + порождение речи 50/50. Мастерская 25%, Тренажёр 20%. Двойная ОС: бинарная для грамматики + критериальная для текстов." },
-  human: { name: "Гуманитарные и социальные", emoji: "📜", color: "#dc2626", subjects: ["Литература","История","Обществознание","География","МХК","Окружающий мир"], profile: "Дивергентное мышление. Дискуссия 30%, Исследование 25%. Критериальная + диалогическая ОС." }
+  human: { name: "Гуманитарные и социальные", emoji: "📜", color: "#dc2626", subjects: ["Литература","Литература База","Литература Профиль","История","Обществознание","География","МХК","Окружающий мир"], profile: "Дивергентное мышление. Дискуссия 30%, Исследование 25%. Критериальная + диалогическая ОС." }
 };
 
 const MODELS = [
@@ -30,6 +30,8 @@ const CURRICULUM_FILES = {
   "Алгебра_7-9": "/curriculum/algebra-7-9.json",
   "Геометрия_7-9": "/curriculum/geometry-7-9.json",
   "Русский язык_5-9": "/curriculum/russian-5-9.json",
+  "Литература База_10-11": "/curriculum/literatura-baza-10-11.json",
+  "Литература Профиль_10-11": "/curriculum/literatura-profil-10-11.json",
 };
 
 function getCurriculumKey(subject, grade) {
@@ -40,6 +42,8 @@ function getCurriculumKey(subject, grade) {
   if (subject === "Алгебра" && grade >= 7 && grade <= 9) return "Алгебра_7-9";
   if (subject === "Геометрия" && grade >= 7 && grade <= 9) return "Геометрия_7-9";
   if (subject === "Русский язык" && grade >= 5 && grade <= 9) return "Русский язык_5-9";
+  if (subject === "Литература База" && grade >= 10 && grade <= 11) return "Литература База_10-11";
+  if (subject === "Литература Профиль" && grade >= 10 && grade <= 11) return "Литература Профиль_10-11";
   return null;
 }
 
