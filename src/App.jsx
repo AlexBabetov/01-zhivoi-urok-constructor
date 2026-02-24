@@ -24,10 +24,12 @@ function gc(s) { for (const [k, c] of Object.entries(CLUSTERS)) if (c.subjects.i
 // Maps subject+gradeRange to a static JSON file in /curriculum/
 const CURRICULUM_FILES = {
   "Математика_1-4": "/curriculum/math-1-4.json",
+  "Русский язык_1-4": "/curriculum/russian-1-4.json",
 };
 
 function getCurriculumKey(subject, grade) {
   if (subject === "Математика" && grade >= 1 && grade <= 4) return "Математика_1-4";
+  if (subject === "Русский язык" && grade >= 1 && grade <= 4) return "Русский язык_1-4";
   return null;
 }
 
