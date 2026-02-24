@@ -140,11 +140,34 @@ function buildCurriculumContext(curriculum, lessonId) {
 }
 
 // ========== AI PROMPT ==========
-function buildSystemPrompt(clusterName, clusterProfile, modelName, grade, format, curriculumCtx) {
+function buildSystemPrompt(clusterName, clusterProfile, modelName, grade, format, curriculumCtx, subject = "") {
   const isPrimary = grade <= 4;
   const isMiddle = grade >= 5 && grade <= 9;
   const isLang = clusterName === "Язык и коммуникация";
+  const isMath = ["Математика","Алгебра","Геометрия","Физика","Химия","Химия База","Химия Профиль"].includes(subject);
+  const isRussian = subject === "Русский язык";
+  const isLitReading = subject === "Литературное чтение";
+  const isPE = subject === "Физическая культура";
   const writingNorm = grade <= 2 ? "35-50 слов класс / 12-17 дом" : grade <= 3 ? "45-60 / 15-20" : "55-70 / 20-25";
+
+  // Предметная разминка для начальной школы
+  let warmupDesc;
+  if (isRussian)       warmupDesc = "каллиграфическая минутка (буква+соединения+слова) + словарная работа (5-7 слов) + мостик к теме";
+  else if (isMath)     warmupDesc = "устный счёт (5-6 примеров вслух хором) + таблица умножения (2-3 мин) + логическая задача-ловушка";
+  else if (isLitReading) warmupDesc = "речевая разминка (скороговорка или артикуляция, 2 мин) + вопрос-крючок по прошлому тексту + мостик к теме";
+  else if (isPE)       warmupDesc = "лёгкая подвижная разминка (бег на месте, прыжки, потряхивания) + активирующий вопрос по теме";
+  else                 warmupDesc = "тематическая разминка-загадка или вопрос по теме урока + мостик к новому знанию";
+
+  // Схема поля warmup в JSON — зависит от предмета
+  let warmupSchema;
+  if (isRussian && isPrimary)
+    warmupSchema = `"warmup":{"calligraphy":"буква+соединения+слова","vocabulary":"формат+объём","bridge":"вопрос-мостик"}`;
+  else if (isMath && isPrimary)
+    warmupSchema = `"warmup":{"oral_count":"5-6 конкретных примеров для хорового счёта","multiplication":"тема таблицы умножения + 3-4 факта","logic":"задача-ловушка одной строкой","bridge":"мостик к теме урока"}`;
+  else if (isPrimary)
+    warmupSchema = `"warmup":{"activity":"конкретное упражнение или игровое задание разминки (2-3 мин)","bridge":"мостик к теме урока"}`;
+  else
+    warmupSchema = null; // средняя и старшая школа — разминка свободная
 
   const core = `Ты — эксперт «Живой урок 360» (Корифей). Генерируй урок-конструктор на русском.
 МЕТОДОЛОГИЯ: 8 компонентов, трёхакт Захват→Развитие→Кульминация, смена каждые ${isPrimary?'5-7':'7-10'} мин, «Победа до теории», мгновенная ОС, уровни 🟢🟡🔴.`;
@@ -152,7 +175,9 @@ function buildSystemPrompt(clusterName, clusterProfile, modelName, grade, format
   const primaryBlock = isPrimary ? `
 НАЧАЛКА (${grade}кл): конкретно-образное мышление, концентрация 10-15мин, 70% Открытие. Норма письма: ${writingNorm}.
 КОРИ — персонаж-помощник (голубая буква К, шарфик, рюкзачок). 4 роли: задаёт вопросы, ПУТАЕТСЯ (типичная ошибка→дети исправляют), удивляется, хвалит. Минимум 2 появления, одно — ошибка.
-ОБЯЗАТЕЛЬНО: разминка (каллиграфия+словарь+мостик к теме), игра-передвижение/физминутка ПО ТЕМЕ, хоровое закрепление, «Что я теперь умею», светофор 🟢🟡🔴.` : '';
+РАЗМИНКА (обязательно, 5-7 мин): ${warmupDesc}.
+ОБЯЗАТЕЛЬНО ТАКЖЕ: игра-передвижение/физминутка ПО ТЕМЕ, хоровое закрепление, «Что я теперь умею», светофор 🟢🟡🔴.
+ШАГ ПОЙЯ (только Математика, Алгебра, Геометрия): используй в задачах на открытие; для других предметов НЕ применяй.` : '';
 
   const middleBlock = isMiddle ? `
 СРЕДНЯЯ ШКОЛА (${grade}кл): абстрактно-логическое мышление, концентрация 12-15 мин, потребность в автономности и значимости.
@@ -173,7 +198,7 @@ function buildSystemPrompt(clusterName, clusterProfile, modelName, grade, format
 
   const jsonFormat = isPrimary ?
 `ОТВЕТ — ТОЛЬКО JSON (без markdown, без \`\`\`):
-{"passport":{"topic":"str","type":"Урок-открытие/закрепление","emotional_goal":"str","educational_goal":"str","key_concept":"str","writing_volume":"~N слов"},"warmup":{"calligraphy":"буква+соединения+слова","vocabulary":"формат+объём","bridge":"вопрос-мостик"},"captures":[{"style":"🎭 Драматический","name":"str","technique":"str","text":"ПОЛНЫЙ текст учителя 3-5 предложений","kori_role":"str","first_win":"конкретная задача"},{"style":"💭 Рефлексивный","name":"str","technique":"другой приём","text":"другой текст","kori_role":"str","first_win":"str"},{"style":"🔍 Аналитический","name":"str","technique":"третий приём","text":"третий текст","kori_role":"str","first_win":"str"}],"development":{"new_material":{"duration":7,"key_content":["п1","п2","п3"],"teacher_text":"str","kori_mistake":{"mistake":"ошибка Кори","correction":"как дети исправляют"}},"active_game":{"name":"str","type":"передвижение/жесты/пары","rules":["п1","п2","п3"],"words_or_tasks":["8+ слов"],"traps":["ловушка ⚠️ — почему"],"duration":8,"online_adaptation":"str"},"written_practice":{"volume":"~25-30 слов","variants":["вар1","вар2"],"duration":8}},"climax":{"humanitarian_question":"💭 вопрос про чувства","practical_question":"🔍 что умею + как проверить","choral":["«начало...» — ОТВЕТ!","«начало...» — ОТВЕТ!"],"i_can_now":"Теперь я умею..."},"homework":{"basic":"str","creative":"str (по желанию)"},"storylines":[{"name":"🔬 Назв","style":"str","this_lesson":"str","next_lessons":"str"},{"name":"🏙️ Назв","style":"str","this_lesson":"str","next_lessons":"str"}],"checklist":["☐ п1","☐ п2","☐ п3","☐ п4","☐ п5","☐ п6","☐ п7","☐ п8"],"teacher_notes":"3-4 предложения"}` :
+{"passport":{"topic":"str","type":"Урок-открытие/закрепление","emotional_goal":"str","educational_goal":"str","key_concept":"str","writing_volume":"~N слов"},${warmupSchema ? warmupSchema + ',' : ''}"captures":[{"style":"🎭 Драматический","name":"str","technique":"str","text":"ПОЛНЫЙ текст учителя 3-5 предложений","kori_role":"str","first_win":"конкретная задача"},{"style":"💭 Рефлексивный","name":"str","technique":"другой приём","text":"другой текст","kori_role":"str","first_win":"str"},{"style":"🔍 Аналитический","name":"str","technique":"третий приём","text":"третий текст","kori_role":"str","first_win":"str"}],"development":{"new_material":{"duration":7,"key_content":["п1","п2","п3"],"teacher_text":"str","kori_mistake":{"mistake":"ошибка Кори","correction":"как дети исправляют"}},"active_game":{"name":"str","type":"передвижение/жесты/пары","rules":["п1","п2","п3"],"words_or_tasks":["8+ слов"],"traps":["ловушка ⚠️ — почему"],"duration":8,"online_adaptation":"str"},"written_practice":{"volume":"~25-30 слов","variants":["вар1","вар2"],"duration":8}},"climax":{"humanitarian_question":"💭 вопрос про чувства","practical_question":"🔍 что умею + как проверить","choral":["«начало...» — ОТВЕТ!","«начало...» — ОТВЕТ!"],"i_can_now":"Теперь я умею..."},"homework":{"basic":"str","creative":"str (по желанию)"},"storylines":[{"name":"🔬 Назв","style":"str","this_lesson":"str","next_lessons":"str"},{"name":"🏙️ Назв","style":"str","this_lesson":"str","next_lessons":"str"}],"checklist":["☐ п1","☐ п2","☐ п3","☐ п4","☐ п5","☐ п6","☐ п7","☐ п8"],"teacher_notes":"3-4 предложения"}` :
 `ОТВЕТ — ТОЛЬКО JSON (без markdown):
 {"capture":{"technique":"str","text":"подробный текст 3-5 предложений","duration":5},"first_win":{"task":"конкретная задача","duration":3},"timeline":[{"phase":"str","duration":5,"activity":"учитель","students":"ученики","materials":"str","tip":"совет"}],"tasks":{"green":["з1","з2"],"yellow":["з1","з2"],"red":["босс"]},"feedback":{"method":"метод","exit_ticket":"вопрос"},"teacher_notes":"3-4 предложения"}`;
 
@@ -190,7 +215,7 @@ async function generateLesson(st) {
   const ck = gc(st.subject);
   const ci = CLUSTERS[ck];
   const mo = MODELS.find(m => m.id === st.model);
-  const sysPrompt = buildSystemPrompt(ci.name, ci.profile, mo.name, st.grade, st.format, st.curriculumCtx || null);
+  const sysPrompt = buildSystemPrompt(ci.name, ci.profile, mo.name, st.grade, st.format, st.curriculumCtx || null, st.subject);
   const userMsg = `Предмет: ${st.subject}, Класс: ${st.grade}, Тема: ${st.topic}, Модель: ${mo.name} (${mo.mode}), ${st.duration} мин, ${st.format === 'online' ? 'Онлайн' : 'Очный'}${st.notes ? ', Пожелания: ' + st.notes : ''}`;
 
   let response;
@@ -669,7 +694,7 @@ function exportPrimaryDocx(data, state) {
 
   // Title
   html += `<h1>${esc(state.topic)}</h1>`;
-  html += `<div class="subtitle">РУССКИЙ ЯЗЫК • ${state.grade} КЛАСС • Урок-конструктор<br>Методология «Живой урок 360» v5.1 • Образовательная сеть «Корифей» • 2026</div>`;
+  html += `<div class="subtitle">${esc((state.subject || "").toUpperCase())} • ${state.grade} КЛАСС • Урок-конструктор<br>Методология «Живой урок 360» v5.1 • Образовательная сеть «Корифей» • 2026</div>`;
 
   // Passport
   html += `<h2>📋 Паспорт урока</h2><table>`;
@@ -681,12 +706,16 @@ function exportPrimaryDocx(data, state) {
   rows.forEach(([l,v]) => { if(v) html += `<tr><td class="label">${esc(l)}</td><td>${esc(v)}</td></tr>`; });
   html += `</table>`;
 
-  // Warmup
-  if (w.calligraphy) {
+  // Warmup — универсальный (Russian: calligraphy/vocabulary; Math: oral_count/multiplication/logic; other: activity)
+  if (w.calligraphy || w.oral_count || w.activity) {
     html += `<h2>✏️ Разминка</h2>`;
-    html += `<p><b>Каллиграфическая минутка (~3 мин):</b> ${esc(w.calligraphy)}</p>`;
-    html += `<p><b>Словарная работа (~4 мин):</b> ${esc(w.vocabulary)}</p>`;
-    html += `<p><b>🌉 Мостик к теме:</b> <i>${esc(w.bridge)}</i></p>`;
+    if (w.calligraphy)    html += `<p><b>Каллиграфическая минутка (~3 мин):</b> ${esc(w.calligraphy)}</p>`;
+    if (w.vocabulary)     html += `<p><b>Словарная работа (~4 мин):</b> ${esc(w.vocabulary)}</p>`;
+    if (w.oral_count)     html += `<p><b>Устный счёт (~3 мин):</b> ${esc(w.oral_count)}</p>`;
+    if (w.multiplication) html += `<p><b>Таблица умножения (~2 мин):</b> ${esc(w.multiplication)}</p>`;
+    if (w.logic)          html += `<p><b>Логическая задача (~2 мин):</b> ${esc(w.logic)}</p>`;
+    if (w.activity)       html += `<p><b>Разминка (~3 мин):</b> ${esc(w.activity)}</p>`;
+    if (w.bridge)         html += `<p><b>🌉 Мостик к теме:</b> <i>${esc(w.bridge)}</i></p>`;
   }
 
   // Captures
@@ -842,13 +871,17 @@ function PrimaryResult({ data, state }) {
         </div>
       </div>
 
-      {/* Warmup */}
-      {w.calligraphy && (
+      {/* Warmup — универсальный: Russian / Math / другие */}
+      {(w.calligraphy || w.oral_count || w.activity) && (
         <Section title="Разминка" icon="✏️">
           <InfoBox bg="#f8fafc" border="#e2e8f0">
-            <div><strong>Каллиграфия:</strong> {w.calligraphy}</div>
-            <div style={{ marginTop: 6 }}><strong>Словарная работа:</strong> {w.vocabulary}</div>
-            <div style={{ marginTop: 6 }}><strong>🌉 Мостик к теме:</strong> <em>{w.bridge}</em></div>
+            {w.calligraphy    && <div><strong>Каллиграфическая минутка:</strong> {w.calligraphy}</div>}
+            {w.vocabulary     && <div style={{ marginTop: 6 }}><strong>Словарная работа:</strong> {w.vocabulary}</div>}
+            {w.oral_count     && <div><strong>Устный счёт:</strong> {w.oral_count}</div>}
+            {w.multiplication && <div style={{ marginTop: 6 }}><strong>Таблица умножения:</strong> {w.multiplication}</div>}
+            {w.logic          && <div style={{ marginTop: 6 }}><strong>Логическая задача:</strong> {w.logic}</div>}
+            {w.activity       && <div><strong>Разминка:</strong> {w.activity}</div>}
+            {w.bridge         && <div style={{ marginTop: 6 }}><strong>🌉 Мостик к теме:</strong> <em>{w.bridge}</em></div>}
           </InfoBox>
         </Section>
       )}

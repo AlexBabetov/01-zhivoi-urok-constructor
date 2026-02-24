@@ -826,7 +826,7 @@
       "lesson_type": "Открытие",
       "model": "Дискуссия",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -847,7 +847,7 @@
       "lesson_type": "Закрепление",
       "model": "Восстановление",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -868,7 +868,7 @@
       "lesson_type": "Открытие",
       "model": "Мастерская",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -889,7 +889,7 @@
       "lesson_type": "Закрепление",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -910,7 +910,7 @@
       "lesson_type": "Открытие",
       "model": "Практикум",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -931,7 +931,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -952,7 +952,7 @@
       "lesson_type": "Открытие",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -973,7 +973,7 @@
       "lesson_type": "Закрепление",
       "model": "Дискуссия",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -994,7 +994,7 @@
       "lesson_type": "Открытие",
       "model": "Восстановление",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -1015,7 +1015,7 @@
       "lesson_type": "Закрепление",
       "model": "Мастерская",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -1036,7 +1036,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -1057,7 +1057,7 @@
       "lesson_type": "Закрепление",
       "model": "Практикум",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -1078,7 +1078,7 @@
       "lesson_type": "Открытие",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -1099,7 +1099,7 @@
       "lesson_type": "Закрепление",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -1120,7 +1120,7 @@
       "lesson_type": "Открытие",
       "model": "Дискуссия",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -1141,7 +1141,7 @@
       "lesson_type": "Закрепление",
       "model": "Восстановление",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -1162,7 +1162,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -1183,7 +1183,7 @@
       "lesson_type": "Закрепление",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -1204,7 +1204,7 @@
       "lesson_type": "Открытие",
       "model": "Практикум",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -1225,7 +1225,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -1246,7 +1246,7 @@
       "lesson_type": "Открытие",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -1267,7 +1267,7 @@
       "lesson_type": "Закрепление",
       "model": "Дискуссия",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -1288,7 +1288,7 @@
       "lesson_type": "Открытие",
       "model": "Восстановление",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -1309,7 +1309,7 @@
       "lesson_type": "Закрепление",
       "model": "Мастерская",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -1330,7 +1330,7 @@
       "lesson_type": "Смешанный",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -1351,7 +1351,7 @@
       "lesson_type": "Закрепление",
       "model": "Практикум",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -1372,7 +1372,7 @@
       "lesson_type": "Открытие",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -1393,7 +1393,7 @@
       "lesson_type": "Закрепление",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -1414,7 +1414,7 @@
       "lesson_type": "Открытие",
       "model": "Дискуссия",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -1435,7 +1435,7 @@
       "lesson_type": "Закрепление",
       "model": "Восстановление",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -1456,7 +1456,7 @@
       "lesson_type": "Открытие",
       "model": "Мастерская",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -1477,7 +1477,7 @@
       "lesson_type": "Закрепление",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -1498,7 +1498,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -1519,7 +1519,7 @@
       "lesson_type": "Смешанный",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "коммуникативные"
@@ -1540,7 +1540,7 @@
       "lesson_type": "Открытие",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -1562,7 +1562,7 @@
       "lesson_type": "Закрепление",
       "model": "Дискуссия",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -1584,7 +1584,7 @@
       "lesson_type": "Открытие",
       "model": "Восстановление",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -1606,7 +1606,7 @@
       "lesson_type": "Закрепление",
       "model": "Мастерская",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -1628,7 +1628,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -1650,7 +1650,7 @@
       "lesson_type": "Закрепление",
       "model": "Практикум",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -1672,7 +1672,7 @@
       "lesson_type": "Открытие",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -1694,7 +1694,7 @@
       "lesson_type": "Закрепление",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -1716,7 +1716,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -1738,7 +1738,7 @@
       "lesson_type": "Закрепление",
       "model": "Восстановление",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -1760,7 +1760,7 @@
       "lesson_type": "Открытие",
       "model": "Мастерская",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -1782,7 +1782,7 @@
       "lesson_type": "Закрепление",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -1804,7 +1804,7 @@
       "lesson_type": "Открытие",
       "model": "Практикум",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -1826,7 +1826,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -1848,7 +1848,7 @@
       "lesson_type": "Открытие",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -1870,7 +1870,7 @@
       "lesson_type": "Закрепление",
       "model": "Дискуссия",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -1892,7 +1892,7 @@
       "lesson_type": "Смешанный",
       "model": "Восстановление",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -1914,7 +1914,7 @@
       "lesson_type": "Закрепление",
       "model": "Мастерская",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -1936,7 +1936,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -1958,7 +1958,7 @@
       "lesson_type": "Закрепление",
       "model": "Практикум",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -1980,7 +1980,7 @@
       "lesson_type": "Открытие",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2002,7 +2002,7 @@
       "lesson_type": "Закрепление",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2024,7 +2024,7 @@
       "lesson_type": "Открытие",
       "model": "Дискуссия",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2046,7 +2046,7 @@
       "lesson_type": "Смешанный",
       "model": "Восстановление",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2068,7 +2068,7 @@
       "lesson_type": "Открытие",
       "model": "Мастерская",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2090,7 +2090,7 @@
       "lesson_type": "Закрепление",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2112,7 +2112,7 @@
       "lesson_type": "Открытие",
       "model": "Практикум",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2134,7 +2134,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2156,7 +2156,7 @@
       "lesson_type": "Открытие",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2178,7 +2178,7 @@
       "lesson_type": "Закрепление",
       "model": "Дискуссия",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2200,7 +2200,7 @@
       "lesson_type": "Открытие",
       "model": "Восстановление",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2222,7 +2222,7 @@
       "lesson_type": "Закрепление",
       "model": "Мастерская",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2244,7 +2244,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2266,7 +2266,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2288,7 +2288,7 @@
       "lesson_type": "Открытие",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2310,7 +2310,7 @@
       "lesson_type": "Закрепление",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2332,7 +2332,7 @@
       "lesson_type": "Открытие",
       "model": "Дискуссия",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2354,7 +2354,7 @@
       "lesson_type": "Закрепление",
       "model": "Восстановление",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2376,7 +2376,7 @@
       "lesson_type": "Открытие",
       "model": "Мастерская",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2398,7 +2398,7 @@
       "lesson_type": "Закрепление",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2420,7 +2420,7 @@
       "lesson_type": "Открытие",
       "model": "Практикум",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2442,7 +2442,7 @@
       "lesson_type": "Смешанный",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2464,7 +2464,7 @@
       "lesson_type": "Открытие",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2486,7 +2486,7 @@
       "lesson_type": "Закрепление",
       "model": "Дискуссия",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2508,7 +2508,7 @@
       "lesson_type": "Открытие",
       "model": "Восстановление",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2530,7 +2530,7 @@
       "lesson_type": "Закрепление",
       "model": "Мастерская",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2552,7 +2552,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2574,7 +2574,7 @@
       "lesson_type": "Закрепление",
       "model": "Практикум",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2596,7 +2596,7 @@
       "lesson_type": "Открытие",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2618,7 +2618,7 @@
       "lesson_type": "Закрепление",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2640,7 +2640,7 @@
       "lesson_type": "Открытие",
       "model": "Дискуссия",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2662,7 +2662,7 @@
       "lesson_type": "Закрепление",
       "model": "Восстановление",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2684,7 +2684,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2706,7 +2706,7 @@
       "lesson_type": "Закрепление",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2728,7 +2728,7 @@
       "lesson_type": "Открытие",
       "model": "Практикум",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2750,7 +2750,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2772,7 +2772,7 @@
       "lesson_type": "Открытие",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2794,7 +2794,7 @@
       "lesson_type": "Закрепление",
       "model": "Дискуссия",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2816,7 +2816,7 @@
       "lesson_type": "Открытие",
       "model": "Восстановление",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2838,7 +2838,7 @@
       "lesson_type": "Закрепление",
       "model": "Мастерская",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2860,7 +2860,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2882,7 +2882,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2904,7 +2904,7 @@
       "lesson_type": "Открытие",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2926,7 +2926,7 @@
       "lesson_type": "Закрепление",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2948,7 +2948,7 @@
       "lesson_type": "Открытие",
       "model": "Дискуссия",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2970,7 +2970,7 @@
       "lesson_type": "Закрепление",
       "model": "Восстановление",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -2992,7 +2992,7 @@
       "lesson_type": "Открытие",
       "model": "Мастерская",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",
@@ -3014,7 +3014,7 @@
       "lesson_type": "Смешанный",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "uud_fgos": [
         "познавательные",
         "регулятивные",

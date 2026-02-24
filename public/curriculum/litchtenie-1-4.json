@@ -1106,7 +1106,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -1127,7 +1127,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"
@@ -1148,7 +1148,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Чтение с остановками",
         "Толстые и тонкие вопросы"
@@ -1169,7 +1169,7 @@
       "lesson_type": "Смешанный",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Толстые и тонкие вопросы",
         "Синквейн"
@@ -1190,7 +1190,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Синквейн",
         "Кластер"
@@ -1211,7 +1211,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Кластер",
         "Дерево предсказаний"
@@ -1232,7 +1232,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Дерево предсказаний",
         "ИНСЕРТ"
@@ -1253,7 +1253,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "ИНСЕРТ",
         "Верные/неверные утверждения"
@@ -1274,7 +1274,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Верные/неверные утверждения",
         "Шесть шляп"
@@ -1295,7 +1295,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Шесть шляп",
         "Пятиминутное эссе"
@@ -1316,7 +1316,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Пятиминутное эссе",
         "Иллюстративный ряд"
@@ -1337,7 +1337,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Иллюстративный ряд",
         "Сказочный герой"
@@ -1358,7 +1358,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Сказочный герой",
         "Первая победа"
@@ -1379,7 +1379,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Первая победа",
         "Читательский дневник"
@@ -1400,7 +1400,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -1421,7 +1421,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"
@@ -1442,7 +1442,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Чтение с остановками",
         "Толстые и тонкие вопросы"
@@ -1463,7 +1463,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Толстые и тонкие вопросы",
         "Синквейн"
@@ -1484,7 +1484,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Синквейн",
         "Кластер"
@@ -1505,7 +1505,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Кластер",
         "Дерево предсказаний"
@@ -1526,7 +1526,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Дерево предсказаний",
         "ИНСЕРТ"
@@ -1547,7 +1547,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "ИНСЕРТ",
         "Верные/неверные утверждения"
@@ -1568,7 +1568,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Верные/неверные утверждения",
         "Шесть шляп"
@@ -1589,7 +1589,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Шесть шляп",
         "Пятиминутное эссе"
@@ -1610,7 +1610,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Пятиминутное эссе",
         "Иллюстративный ряд"
@@ -1631,7 +1631,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Иллюстративный ряд",
         "Сказочный герой"
@@ -1652,7 +1652,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Сказочный герой",
         "Первая победа"
@@ -1673,7 +1673,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Первая победа",
         "Читательский дневник"
@@ -1694,7 +1694,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -1715,7 +1715,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"
@@ -1736,7 +1736,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Чтение с остановками",
         "Толстые и тонкие вопросы"
@@ -1757,7 +1757,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Толстые и тонкие вопросы",
         "Синквейн"
@@ -1778,7 +1778,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Синквейн",
         "Кластер"
@@ -1799,7 +1799,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Кластер",
         "Дерево предсказаний"
@@ -1820,7 +1820,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Дерево предсказаний",
         "ИНСЕРТ"
@@ -1841,7 +1841,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "ИНСЕРТ",
         "Верные/неверные утверждения"
@@ -1862,7 +1862,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Верные/неверные утверждения",
         "Шесть шляп"
@@ -1883,7 +1883,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Шесть шляп",
         "Пятиминутное эссе"
@@ -1904,7 +1904,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Пятиминутное эссе",
         "Иллюстративный ряд"
@@ -1925,7 +1925,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Иллюстративный ряд",
         "Сказочный герой"
@@ -1946,7 +1946,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Сказочный герой",
         "Первая победа"
@@ -1967,7 +1967,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Первая победа",
         "Читательский дневник"
@@ -1988,7 +1988,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -2009,7 +2009,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"
@@ -2030,7 +2030,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Чтение с остановками",
         "Толстые и тонкие вопросы"
@@ -2051,7 +2051,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Толстые и тонкие вопросы",
         "Синквейн"
@@ -2072,7 +2072,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Синквейн",
         "Кластер"
@@ -2093,7 +2093,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Кластер",
         "Дерево предсказаний"
@@ -2114,7 +2114,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Дерево предсказаний",
         "ИНСЕРТ"
@@ -2135,7 +2135,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "ИНСЕРТ",
         "Верные/неверные утверждения"
@@ -2156,7 +2156,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Верные/неверные утверждения",
         "Шесть шляп"
@@ -2177,7 +2177,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Шесть шляп",
         "Пятиминутное эссе"
@@ -2198,7 +2198,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Пятиминутное эссе",
         "Иллюстративный ряд"
@@ -2219,7 +2219,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Иллюстративный ряд",
         "Сказочный герой"
@@ -2240,7 +2240,7 @@
       "lesson_type": "Смешанный",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Сказочный герой",
         "Первая победа"
@@ -2261,7 +2261,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Первая победа",
         "Читательский дневник"
@@ -2282,7 +2282,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -2303,7 +2303,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"
@@ -2324,7 +2324,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Чтение с остановками",
         "Толстые и тонкие вопросы"
@@ -2345,7 +2345,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Толстые и тонкие вопросы",
         "Синквейн"
@@ -2366,7 +2366,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Синквейн",
         "Кластер"
@@ -2387,7 +2387,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Кластер",
         "Дерево предсказаний"
@@ -2408,7 +2408,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Дерево предсказаний",
         "ИНСЕРТ"
@@ -2429,7 +2429,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "ИНСЕРТ",
         "Верные/неверные утверждения"
@@ -2450,7 +2450,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Верные/неверные утверждения",
         "Шесть шляп"
@@ -2471,7 +2471,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Шесть шляп",
         "Пятиминутное эссе"
@@ -2492,7 +2492,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Пятиминутное эссе",
         "Иллюстративный ряд"
@@ -2513,7 +2513,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Иллюстративный ряд",
         "Сказочный герой"
@@ -2534,7 +2534,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Сказочный герой",
         "Первая победа"
@@ -2555,7 +2555,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Первая победа",
         "Читательский дневник"
@@ -2576,7 +2576,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -2597,7 +2597,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"
@@ -2618,7 +2618,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Чтение с остановками",
         "Толстые и тонкие вопросы"
@@ -2639,7 +2639,7 @@
       "lesson_type": "Смешанный",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Толстые и тонкие вопросы",
         "Синквейн"
@@ -2660,7 +2660,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Синквейн",
         "Кластер"
@@ -2681,7 +2681,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Кластер",
         "Дерево предсказаний"
@@ -2702,7 +2702,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Дерево предсказаний",
         "ИНСЕРТ"
@@ -2723,7 +2723,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "ИНСЕРТ",
         "Верные/неверные утверждения"
@@ -2744,7 +2744,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Верные/неверные утверждения",
         "Шесть шляп"
@@ -2765,7 +2765,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Шесть шляп",
         "Пятиминутное эссе"
@@ -2786,7 +2786,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Пятиминутное эссе",
         "Иллюстративный ряд"
@@ -2807,7 +2807,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Иллюстративный ряд",
         "Сказочный герой"
@@ -2828,7 +2828,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Сказочный герой",
         "Первая победа"
@@ -2849,7 +2849,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Первая победа",
         "Читательский дневник"
@@ -2870,7 +2870,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -2891,7 +2891,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"
@@ -2912,7 +2912,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Чтение с остановками",
         "Толстые и тонкие вопросы"
@@ -2933,7 +2933,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Толстые и тонкие вопросы",
         "Синквейн"
@@ -2954,7 +2954,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Синквейн",
         "Кластер"
@@ -2975,7 +2975,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Кластер",
         "Дерево предсказаний"
@@ -2996,7 +2996,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Дерево предсказаний",
         "ИНСЕРТ"
@@ -3017,7 +3017,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "ИНСЕРТ",
         "Верные/неверные утверждения"
@@ -3038,7 +3038,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Верные/неверные утверждения",
         "Шесть шляп"
@@ -3059,7 +3059,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Шесть шляп",
         "Пятиминутное эссе"
@@ -3080,7 +3080,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Пятиминутное эссе",
         "Иллюстративный ряд"
@@ -3101,7 +3101,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Иллюстративный ряд",
         "Сказочный герой"
@@ -3122,7 +3122,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Сказочный герой",
         "Первая победа"
@@ -3143,7 +3143,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Первая победа",
         "Читательский дневник"
@@ -3164,7 +3164,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -3185,7 +3185,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"
@@ -3206,7 +3206,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Чтение с остановками",
         "Толстые и тонкие вопросы"
@@ -3227,7 +3227,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Толстые и тонкие вопросы",
         "Синквейн"
@@ -3248,7 +3248,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Синквейн",
         "Кластер"
@@ -3269,7 +3269,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Кластер",
         "Дерево предсказаний"
@@ -3290,7 +3290,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Дерево предсказаний",
         "ИНСЕРТ"
@@ -3311,7 +3311,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "ИНСЕРТ",
         "Верные/неверные утверждения"
@@ -3332,7 +3332,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Верные/неверные утверждения",
         "Шесть шляп"
@@ -3353,7 +3353,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Шесть шляп",
         "Пятиминутное эссе"
@@ -3374,7 +3374,7 @@
       "lesson_type": "Смешанный",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Пятиминутное эссе",
         "Иллюстративный ряд"
@@ -3395,7 +3395,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Иллюстративный ряд",
         "Сказочный герой"
@@ -3416,7 +3416,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Сказочный герой",
         "Первая победа"
@@ -3437,7 +3437,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Первая победа",
         "Читательский дневник"
@@ -3458,7 +3458,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -3479,7 +3479,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"
@@ -3500,7 +3500,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Чтение с остановками",
         "Толстые и тонкие вопросы"
@@ -3521,7 +3521,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Толстые и тонкие вопросы",
         "Синквейн"
@@ -3542,7 +3542,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Синквейн",
         "Кластер"
@@ -3563,7 +3563,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Кластер",
         "Дерево предсказаний"
@@ -3584,7 +3584,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Дерево предсказаний",
         "ИНСЕРТ"
@@ -3605,7 +3605,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "ИНСЕРТ",
         "Верные/неверные утверждения"
@@ -3626,7 +3626,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Верные/неверные утверждения",
         "Шесть шляп"
@@ -3647,7 +3647,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Шесть шляп",
         "Пятиминутное эссе"
@@ -3668,7 +3668,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Пятиминутное эссе",
         "Иллюстративный ряд"
@@ -3689,7 +3689,7 @@
       "lesson_type": "Смешанный",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Иллюстративный ряд",
         "Сказочный герой"
@@ -3710,7 +3710,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Сказочный герой",
         "Первая победа"
@@ -3731,7 +3731,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Первая победа",
         "Читательский дневник"
@@ -3752,7 +3752,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -3773,7 +3773,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"
@@ -3794,7 +3794,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Чтение с остановками",
         "Толстые и тонкие вопросы"
@@ -3815,7 +3815,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Толстые и тонкие вопросы",
         "Синквейн"
@@ -3836,7 +3836,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Синквейн",
         "Кластер"
@@ -3857,7 +3857,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Кластер",
         "Дерево предсказаний"
@@ -3878,7 +3878,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Дерево предсказаний",
         "ИНСЕРТ"
@@ -3899,7 +3899,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "ИНСЕРТ",
         "Верные/неверные утверждения"
@@ -3920,7 +3920,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Верные/неверные утверждения",
         "Шесть шляп"
@@ -3941,7 +3941,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 0,
-      "poiya_step": "Шаг 1",
+      "poiya_step": null,
       "techniques": [
         "Шесть шляп",
         "Пятиминутное эссе"
@@ -3962,7 +3962,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Пятиминутное эссе",
         "Иллюстративный ряд"
@@ -3983,7 +3983,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Иллюстративный ряд",
         "Сказочный герой"
@@ -4004,7 +4004,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Сказочный герой",
         "Первая победа"
@@ -4025,7 +4025,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Первая победа",
         "Читательский дневник"
@@ -4046,7 +4046,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -4067,7 +4067,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"
@@ -4088,7 +4088,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Чтение с остановками",
         "Толстые и тонкие вопросы"
@@ -4109,7 +4109,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Толстые и тонкие вопросы",
         "Синквейн"
@@ -4130,7 +4130,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Синквейн",
         "Кластер"
@@ -4151,7 +4151,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Кластер",
         "Дерево предсказаний"
@@ -4172,7 +4172,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Дерево предсказаний",
         "ИНСЕРТ"
@@ -4193,7 +4193,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "ИНСЕРТ",
         "Верные/неверные утверждения"
@@ -4214,7 +4214,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Верные/неверные утверждения",
         "Шесть шляп"
@@ -4235,7 +4235,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Шесть шляп",
         "Пятиминутное эссе"
@@ -4256,7 +4256,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Пятиминутное эссе",
         "Иллюстративный ряд"
@@ -4277,7 +4277,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Иллюстративный ряд",
         "Сказочный герой"
@@ -4298,7 +4298,7 @@
       "lesson_type": "Смешанный",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Сказочный герой",
         "Первая победа"
@@ -4319,7 +4319,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Первая победа",
         "Читательский дневник"
@@ -4340,7 +4340,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -4361,7 +4361,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"
@@ -4382,7 +4382,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Чтение с остановками",
         "Толстые и тонкие вопросы"
@@ -4403,7 +4403,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Толстые и тонкие вопросы",
         "Синквейн"
@@ -4424,7 +4424,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Синквейн",
         "Кластер"
@@ -4445,7 +4445,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Кластер",
         "Дерево предсказаний"
@@ -4466,7 +4466,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Дерево предсказаний",
         "ИНСЕРТ"
@@ -4487,7 +4487,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "ИНСЕРТ",
         "Верные/неверные утверждения"
@@ -4508,7 +4508,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Верные/неверные утверждения",
         "Шесть шляп"
@@ -4529,7 +4529,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Шесть шляп",
         "Пятиминутное эссе"
@@ -4550,7 +4550,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Пятиминутное эссе",
         "Иллюстративный ряд"
@@ -4571,7 +4571,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Иллюстративный ряд",
         "Сказочный герой"
@@ -4592,7 +4592,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Сказочный герой",
         "Первая победа"
@@ -4613,7 +4613,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Первая победа",
         "Читательский дневник"
@@ -4634,7 +4634,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -4655,7 +4655,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"
@@ -4676,7 +4676,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Чтение с остановками",
         "Толстые и тонкие вопросы"
@@ -4697,7 +4697,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Толстые и тонкие вопросы",
         "Синквейн"
@@ -4718,7 +4718,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Синквейн",
         "Кластер"
@@ -4739,7 +4739,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Кластер",
         "Дерево предсказаний"
@@ -4760,7 +4760,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Дерево предсказаний",
         "ИНСЕРТ"
@@ -4781,7 +4781,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "ИНСЕРТ",
         "Верные/неверные утверждения"
@@ -4802,7 +4802,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Верные/неверные утверждения",
         "Шесть шляп"
@@ -4823,7 +4823,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Шесть шляп",
         "Пятиминутное эссе"
@@ -4844,7 +4844,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Пятиминутное эссе",
         "Иллюстративный ряд"
@@ -4865,7 +4865,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Иллюстративный ряд",
         "Сказочный герой"
@@ -4886,7 +4886,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Сказочный герой",
         "Первая победа"
@@ -4907,7 +4907,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Первая победа",
         "Читательский дневник"
@@ -4928,7 +4928,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -4949,7 +4949,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"
@@ -4970,7 +4970,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Чтение с остановками",
         "Толстые и тонкие вопросы"
@@ -4991,7 +4991,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Толстые и тонкие вопросы",
         "Синквейн"
@@ -5012,7 +5012,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Синквейн",
         "Кластер"
@@ -5033,7 +5033,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Кластер",
         "Дерево предсказаний"
@@ -5054,7 +5054,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Дерево предсказаний",
         "ИНСЕРТ"
@@ -5075,7 +5075,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "ИНСЕРТ",
         "Верные/неверные утверждения"
@@ -5096,7 +5096,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Верные/неверные утверждения",
         "Шесть шляп"
@@ -5117,7 +5117,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Шесть шляп",
         "Пятиминутное эссе"
@@ -5138,7 +5138,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Пятиминутное эссе",
         "Иллюстративный ряд"
@@ -5159,7 +5159,7 @@
       "lesson_type": "Смешанный",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Иллюстративный ряд",
         "Сказочный герой"
@@ -5180,7 +5180,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Сказочный герой",
         "Первая победа"
@@ -5201,7 +5201,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Первая победа",
         "Читательский дневник"
@@ -5222,7 +5222,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -5243,7 +5243,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"
@@ -5264,7 +5264,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Чтение с остановками",
         "Толстые и тонкие вопросы"
@@ -5285,7 +5285,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Толстые и тонкие вопросы",
         "Синквейн"
@@ -5306,7 +5306,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Синквейн",
         "Кластер"
@@ -5327,7 +5327,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Кластер",
         "Дерево предсказаний"
@@ -5348,7 +5348,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Дерево предсказаний",
         "ИНСЕРТ"
@@ -5369,7 +5369,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "ИНСЕРТ",
         "Верные/неверные утверждения"
@@ -5390,7 +5390,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Верные/неверные утверждения",
         "Шесть шляп"
@@ -5411,7 +5411,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Шесть шляп",
         "Пятиминутное эссе"
@@ -5432,7 +5432,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Пятиминутное эссе",
         "Иллюстративный ряд"
@@ -5453,7 +5453,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Иллюстративный ряд",
         "Сказочный герой"
@@ -5474,7 +5474,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Сказочный герой",
         "Первая победа"
@@ -5495,7 +5495,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Первая победа",
         "Читательский дневник"
@@ -5516,7 +5516,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -5537,7 +5537,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"
@@ -5558,7 +5558,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Чтение с остановками",
         "Толстые и тонкие вопросы"
@@ -5579,7 +5579,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Толстые и тонкие вопросы",
         "Синквейн"
@@ -5600,7 +5600,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Синквейн",
         "Кластер"
@@ -5621,7 +5621,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Кластер",
         "Дерево предсказаний"
@@ -5642,7 +5642,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Дерево предсказаний",
         "ИНСЕРТ"
@@ -5663,7 +5663,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "ИНСЕРТ",
         "Верные/неверные утверждения"
@@ -5684,7 +5684,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Верные/неверные утверждения",
         "Шесть шляп"
@@ -5705,7 +5705,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Шесть шляп",
         "Пятиминутное эссе"
@@ -5726,7 +5726,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Пятиминутное эссе",
         "Иллюстративный ряд"
@@ -5747,7 +5747,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Иллюстративный ряд",
         "Сказочный герой"
@@ -5768,7 +5768,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Сказочный герой",
         "Первая победа"
@@ -5789,7 +5789,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Первая победа",
         "Читательский дневник"
@@ -5810,7 +5810,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -5831,7 +5831,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"
@@ -5852,7 +5852,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Чтение с остановками",
         "Толстые и тонкие вопросы"
@@ -5873,7 +5873,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Толстые и тонкие вопросы",
         "Синквейн"
@@ -5894,7 +5894,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Синквейн",
         "Кластер"
@@ -5915,7 +5915,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Кластер",
         "Дерево предсказаний"
@@ -5936,7 +5936,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Дерево предсказаний",
         "ИНСЕРТ"
@@ -5957,7 +5957,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "ИНСЕРТ",
         "Верные/неверные утверждения"
@@ -5978,7 +5978,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Верные/неверные утверждения",
         "Шесть шляп"
@@ -5999,7 +5999,7 @@
       "lesson_type": "Смешанный",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Шесть шляп",
         "Пятиминутное эссе"
@@ -6020,7 +6020,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Пятиминутное эссе",
         "Иллюстративный ряд"
@@ -6041,7 +6041,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Иллюстративный ряд",
         "Сказочный герой"
@@ -6062,7 +6062,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Сказочный герой",
         "Первая победа"
@@ -6083,7 +6083,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Первая победа",
         "Читательский дневник"
@@ -6104,7 +6104,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -6125,7 +6125,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"
@@ -6146,7 +6146,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Чтение с остановками",
         "Толстые и тонкие вопросы"
@@ -6167,7 +6167,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Толстые и тонкие вопросы",
         "Синквейн"
@@ -6188,7 +6188,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Синквейн",
         "Кластер"
@@ -6209,7 +6209,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Кластер",
         "Дерево предсказаний"
@@ -6230,7 +6230,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Дерево предсказаний",
         "ИНСЕРТ"
@@ -6251,7 +6251,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "ИНСЕРТ",
         "Верные/неверные утверждения"
@@ -6272,7 +6272,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Верные/неверные утверждения",
         "Шесть шляп"
@@ -6293,7 +6293,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Шесть шляп",
         "Пятиминутное эссе"
@@ -6314,7 +6314,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Пятиминутное эссе",
         "Иллюстративный ряд"
@@ -6335,7 +6335,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Иллюстративный ряд",
         "Сказочный герой"
@@ -6356,7 +6356,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Сказочный герой",
         "Первая победа"
@@ -6377,7 +6377,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Первая победа",
         "Читательский дневник"
@@ -6398,7 +6398,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -6419,7 +6419,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"
@@ -6440,7 +6440,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Чтение с остановками",
         "Толстые и тонкие вопросы"
@@ -6461,7 +6461,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Толстые и тонкие вопросы",
         "Синквейн"
@@ -6482,7 +6482,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Синквейн",
         "Кластер"
@@ -6503,7 +6503,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Кластер",
         "Дерево предсказаний"
@@ -6524,7 +6524,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Дерево предсказаний",
         "ИНСЕРТ"
@@ -6545,7 +6545,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "ИНСЕРТ",
         "Верные/неверные утверждения"
@@ -6566,7 +6566,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Верные/неверные утверждения",
         "Шесть шляп"
@@ -6587,7 +6587,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Шесть шляп",
         "Пятиминутное эссе"
@@ -6608,7 +6608,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Пятиминутное эссе",
         "Иллюстративный ряд"
@@ -6629,7 +6629,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Иллюстративный ряд",
         "Сказочный герой"
@@ -6650,7 +6650,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Сказочный герой",
         "Первая победа"
@@ -6671,7 +6671,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Первая победа",
         "Читательский дневник"
@@ -6692,7 +6692,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -6713,7 +6713,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"
@@ -6734,7 +6734,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Чтение с остановками",
         "Толстые и тонкие вопросы"
@@ -6755,7 +6755,7 @@
       "lesson_type": "Смешанный",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Толстые и тонкие вопросы",
         "Синквейн"
@@ -6776,7 +6776,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Синквейн",
         "Кластер"
@@ -6797,7 +6797,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-2",
+      "poiya_step": null,
       "techniques": [
         "Кластер",
         "Дерево предсказаний"
@@ -6818,7 +6818,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Дерево предсказаний",
         "ИНСЕРТ"
@@ -6839,7 +6839,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "ИНСЕРТ",
         "Верные/неверные утверждения"
@@ -6860,7 +6860,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Верные/неверные утверждения",
         "Шесть шляп"
@@ -6881,7 +6881,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Шесть шляп",
         "Пятиминутное эссе"
@@ -6902,7 +6902,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Пятиминутное эссе",
         "Иллюстративный ряд"
@@ -6923,7 +6923,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Иллюстративный ряд",
         "Сказочный герой"
@@ -6944,7 +6944,7 @@
       "lesson_type": "Смешанный",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Сказочный герой",
         "Первая победа"
@@ -6965,7 +6965,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Первая победа",
         "Читательский дневник"
@@ -6986,7 +6986,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -7007,7 +7007,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"
@@ -7028,7 +7028,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Чтение с остановками",
         "Толстые и тонкие вопросы"
@@ -7049,7 +7049,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Толстые и тонкие вопросы",
         "Синквейн"
@@ -7070,7 +7070,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Синквейн",
         "Кластер"
@@ -7091,7 +7091,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Кластер",
         "Дерево предсказаний"
@@ -7112,7 +7112,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Дерево предсказаний",
         "ИНСЕРТ"
@@ -7133,7 +7133,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "ИНСЕРТ",
         "Верные/неверные утверждения"
@@ -7154,7 +7154,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Верные/неверные утверждения",
         "Шесть шляп"
@@ -7175,7 +7175,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Шесть шляп",
         "Пятиминутное эссе"
@@ -7196,7 +7196,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Пятиминутное эссе",
         "Иллюстративный ряд"
@@ -7217,7 +7217,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Иллюстративный ряд",
         "Сказочный герой"
@@ -7238,7 +7238,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Сказочный герой",
         "Первая победа"
@@ -7259,7 +7259,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Первая победа",
         "Читательский дневник"
@@ -7280,7 +7280,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -7301,7 +7301,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"
@@ -7322,7 +7322,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Чтение с остановками",
         "Толстые и тонкие вопросы"
@@ -7343,7 +7343,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Толстые и тонкие вопросы",
         "Синквейн"
@@ -7364,7 +7364,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Синквейн",
         "Кластер"
@@ -7385,7 +7385,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Кластер",
         "Дерево предсказаний"
@@ -7406,7 +7406,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Дерево предсказаний",
         "ИНСЕРТ"
@@ -7427,7 +7427,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "ИНСЕРТ",
         "Верные/неверные утверждения"
@@ -7448,7 +7448,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Верные/неверные утверждения",
         "Шесть шляп"
@@ -7469,7 +7469,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Шесть шляп",
         "Пятиминутное эссе"
@@ -7490,7 +7490,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Пятиминутное эссе",
         "Иллюстративный ряд"
@@ -7511,7 +7511,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Иллюстративный ряд",
         "Сказочный герой"
@@ -7532,7 +7532,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Сказочный герой",
         "Первая победа"
@@ -7553,7 +7553,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Первая победа",
         "Читательский дневник"
@@ -7574,7 +7574,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -7595,7 +7595,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"
@@ -7616,7 +7616,7 @@
       "lesson_type": "Смешанный",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Чтение с остановками",
         "Толстые и тонкие вопросы"
@@ -7637,7 +7637,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Толстые и тонкие вопросы",
         "Синквейн"
@@ -7658,7 +7658,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Синквейн",
         "Кластер"
@@ -7679,7 +7679,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Кластер",
         "Дерево предсказаний"
@@ -7700,7 +7700,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Дерево предсказаний",
         "ИНСЕРТ"
@@ -7721,7 +7721,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "ИНСЕРТ",
         "Верные/неверные утверждения"
@@ -7742,7 +7742,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Верные/неверные утверждения",
         "Шесть шляп"
@@ -7763,7 +7763,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Шесть шляп",
         "Пятиминутное эссе"
@@ -7784,7 +7784,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Пятиминутное эссе",
         "Иллюстративный ряд"
@@ -7805,7 +7805,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Иллюстративный ряд",
         "Сказочный герой"
@@ -7826,7 +7826,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Сказочный герой",
         "Первая победа"
@@ -7847,7 +7847,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Первая победа",
         "Читательский дневник"
@@ -7868,7 +7868,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -7889,7 +7889,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"
@@ -7910,7 +7910,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Чтение с остановками",
         "Толстые и тонкие вопросы"
@@ -7931,7 +7931,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Толстые и тонкие вопросы",
         "Синквейн"
@@ -7952,7 +7952,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Синквейн",
         "Кластер"
@@ -7973,7 +7973,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Кластер",
         "Дерево предсказаний"
@@ -7994,7 +7994,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Дерево предсказаний",
         "ИНСЕРТ"
@@ -8015,7 +8015,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "ИНСЕРТ",
         "Верные/неверные утверждения"
@@ -8036,7 +8036,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Верные/неверные утверждения",
         "Шесть шляп"
@@ -8057,7 +8057,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Шесть шляп",
         "Пятиминутное эссе"
@@ -8078,7 +8078,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Пятиминутное эссе",
         "Иллюстративный ряд"
@@ -8099,7 +8099,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Иллюстративный ряд",
         "Сказочный герой"
@@ -8120,7 +8120,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Сказочный герой",
         "Первая победа"
@@ -8141,7 +8141,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Первая победа",
         "Читательский дневник"
@@ -8162,7 +8162,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -8183,7 +8183,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"
@@ -8204,7 +8204,7 @@
       "lesson_type": "Смешанный",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Чтение с остановками",
         "Толстые и тонкие вопросы"
@@ -8225,7 +8225,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Толстые и тонкие вопросы",
         "Синквейн"
@@ -8246,7 +8246,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Синквейн",
         "Кластер"
@@ -8267,7 +8267,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Кластер",
         "Дерево предсказаний"
@@ -8288,7 +8288,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Дерево предсказаний",
         "ИНСЕРТ"
@@ -8309,7 +8309,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "ИНСЕРТ",
         "Верные/неверные утверждения"
@@ -8330,7 +8330,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Верные/неверные утверждения",
         "Шесть шляп"
@@ -8351,7 +8351,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Шесть шляп",
         "Пятиминутное эссе"
@@ -8372,7 +8372,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Пятиминутное эссе",
         "Иллюстративный ряд"
@@ -8393,7 +8393,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Иллюстративный ряд",
         "Сказочный герой"
@@ -8414,7 +8414,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Сказочный герой",
         "Первая победа"
@@ -8435,7 +8435,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Первая победа",
         "Читательский дневник"
@@ -8456,7 +8456,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -8477,7 +8477,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"
@@ -8498,7 +8498,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Чтение с остановками",
         "Толстые и тонкие вопросы"
@@ -8519,7 +8519,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Толстые и тонкие вопросы",
         "Синквейн"
@@ -8540,7 +8540,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Синквейн",
         "Кластер"
@@ -8561,7 +8561,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Кластер",
         "Дерево предсказаний"
@@ -8582,7 +8582,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Дерево предсказаний",
         "ИНСЕРТ"
@@ -8603,7 +8603,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "ИНСЕРТ",
         "Верные/неверные утверждения"
@@ -8624,7 +8624,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Верные/неверные утверждения",
         "Шесть шляп"
@@ -8645,7 +8645,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Шесть шляп",
         "Пятиминутное эссе"
@@ -8666,7 +8666,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Пятиминутное эссе",
         "Иллюстративный ряд"
@@ -8687,7 +8687,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Иллюстративный ряд",
         "Сказочный герой"
@@ -8708,7 +8708,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Сказочный герой",
         "Первая победа"
@@ -8729,7 +8729,7 @@
       "lesson_type": "Смешанный",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Первая победа",
         "Читательский дневник"
@@ -8750,7 +8750,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -8771,7 +8771,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"
@@ -8792,7 +8792,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Чтение с остановками",
         "Толстые и тонкие вопросы"
@@ -8813,7 +8813,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Толстые и тонкие вопросы",
         "Синквейн"
@@ -8834,7 +8834,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Синквейн",
         "Кластер"
@@ -8855,7 +8855,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Кластер",
         "Дерево предсказаний"
@@ -8876,7 +8876,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Дерево предсказаний",
         "ИНСЕРТ"
@@ -8897,7 +8897,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "ИНСЕРТ",
         "Верные/неверные утверждения"
@@ -8918,7 +8918,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Верные/неверные утверждения",
         "Шесть шляп"
@@ -8939,7 +8939,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Шесть шляп",
         "Пятиминутное эссе"
@@ -8960,7 +8960,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Пятиминутное эссе",
         "Иллюстративный ряд"
@@ -8981,7 +8981,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Иллюстративный ряд",
         "Сказочный герой"
@@ -9002,7 +9002,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Сказочный герой",
         "Первая победа"
@@ -9023,7 +9023,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Первая победа",
         "Читательский дневник"
@@ -9044,7 +9044,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -9065,7 +9065,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"
@@ -9086,7 +9086,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Чтение с остановками",
         "Толстые и тонкие вопросы"
@@ -9107,7 +9107,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Толстые и тонкие вопросы",
         "Синквейн"
@@ -9128,7 +9128,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Синквейн",
         "Кластер"
@@ -9149,7 +9149,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Кластер",
         "Дерево предсказаний"
@@ -9170,7 +9170,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Дерево предсказаний",
         "ИНСЕРТ"
@@ -9191,7 +9191,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "ИНСЕРТ",
         "Верные/неверные утверждения"
@@ -9212,7 +9212,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Верные/неверные утверждения",
         "Шесть шляп"
@@ -9233,7 +9233,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Шесть шляп",
         "Пятиминутное эссе"
@@ -9254,7 +9254,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Пятиминутное эссе",
         "Иллюстративный ряд"
@@ -9275,7 +9275,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Иллюстративный ряд",
         "Сказочный герой"
@@ -9296,7 +9296,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Сказочный герой",
         "Первая победа"
@@ -9317,7 +9317,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Первая победа",
         "Читательский дневник"
@@ -9338,7 +9338,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -9359,7 +9359,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"
@@ -9380,7 +9380,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Чтение с остановками",
         "Толстые и тонкие вопросы"
@@ -9401,7 +9401,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Толстые и тонкие вопросы",
         "Синквейн"
@@ -9422,7 +9422,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Синквейн",
         "Кластер"
@@ -9443,7 +9443,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Кластер",
         "Дерево предсказаний"
@@ -9464,7 +9464,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Дерево предсказаний",
         "ИНСЕРТ"
@@ -9485,7 +9485,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "ИНСЕРТ",
         "Верные/неверные утверждения"
@@ -9506,7 +9506,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Верные/неверные утверждения",
         "Шесть шляп"
@@ -9527,7 +9527,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Шесть шляп",
         "Пятиминутное эссе"
@@ -9548,7 +9548,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Пятиминутное эссе",
         "Иллюстративный ряд"
@@ -9569,7 +9569,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Иллюстративный ряд",
         "Сказочный герой"
@@ -9590,7 +9590,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Сказочный герой",
         "Первая победа"
@@ -9611,7 +9611,7 @@
       "lesson_type": "Смешанный",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Первая победа",
         "Читательский дневник"
@@ -9632,7 +9632,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Читательский дневник",
         "Словарная работа"
@@ -9653,7 +9653,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1-3",
+      "poiya_step": null,
       "techniques": [
         "Словарная работа",
         "Чтение с остановками"

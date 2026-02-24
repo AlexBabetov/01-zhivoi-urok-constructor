@@ -210,7 +210,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -229,7 +229,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -248,7 +248,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -267,7 +267,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -286,7 +286,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -305,7 +305,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -324,7 +324,7 @@
       "lesson_type": "Смешанный",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -343,7 +343,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -362,7 +362,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -381,7 +381,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -400,7 +400,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -419,7 +419,7 @@
       "lesson_type": "Смешанный",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -438,7 +438,7 @@
       "lesson_type": "Смешанный",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -457,7 +457,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -476,7 +476,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -495,7 +495,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -514,7 +514,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -533,7 +533,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -552,7 +552,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -571,7 +571,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -590,7 +590,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -609,7 +609,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -628,7 +628,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -647,7 +647,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -666,7 +666,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -685,7 +685,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -704,7 +704,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -723,7 +723,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -742,7 +742,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -761,7 +761,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -780,7 +780,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -799,7 +799,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -818,7 +818,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -837,7 +837,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -856,7 +856,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -875,7 +875,7 @@
       "lesson_type": "Смешанный",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -894,7 +894,7 @@
       "lesson_type": "Смешанный",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -913,7 +913,7 @@
       "lesson_type": "Смешанный",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -932,7 +932,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -951,7 +951,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -970,7 +970,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -989,7 +989,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -1008,7 +1008,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -1027,7 +1027,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -1046,7 +1046,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -1065,7 +1065,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -1084,7 +1084,7 @@
       "lesson_type": "Смешанный",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -1103,7 +1103,7 @@
       "lesson_type": "Смешанный",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -1122,7 +1122,7 @@
       "lesson_type": "Смешанный",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -1141,7 +1141,7 @@
       "lesson_type": "Смешанный",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -1160,7 +1160,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -1179,7 +1179,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -1198,7 +1198,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -1217,7 +1217,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -1236,7 +1236,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -1255,7 +1255,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -1274,7 +1274,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -1293,7 +1293,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -1312,7 +1312,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -1331,7 +1331,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -1350,7 +1350,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -1369,7 +1369,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -1388,7 +1388,7 @@
       "lesson_type": "Смешанный",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -1407,7 +1407,7 @@
       "lesson_type": "Смешанный",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -1426,7 +1426,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -1445,7 +1445,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -1464,7 +1464,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -1483,7 +1483,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -1502,7 +1502,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -1521,7 +1521,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -1540,7 +1540,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -1559,7 +1559,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -1578,7 +1578,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -1597,7 +1597,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -1616,7 +1616,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -1635,7 +1635,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -1654,7 +1654,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -1673,7 +1673,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -1692,7 +1692,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -1711,7 +1711,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -1730,7 +1730,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -1749,7 +1749,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -1768,7 +1768,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -1787,7 +1787,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -1806,7 +1806,7 @@
       "lesson_type": "Смешанный",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -1825,7 +1825,7 @@
       "lesson_type": "Смешанный",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -1844,7 +1844,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Терминологический диктант",
@@ -1863,7 +1863,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Терминологический диктант",
@@ -1882,7 +1882,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Терминологический диктант",
@@ -1901,7 +1901,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Терминологический диктант",
@@ -1920,7 +1920,7 @@
       "lesson_type": "Смешанный",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Литературный квест",
@@ -1939,7 +1939,7 @@
       "lesson_type": "Смешанный",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Литературный квест",
@@ -1958,7 +1958,7 @@
       "lesson_type": "Смешанный",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Литературный квест",
@@ -1977,7 +1977,7 @@
       "lesson_type": "Смешанный",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Литературный квест",
@@ -1996,7 +1996,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -2015,7 +2015,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -2034,7 +2034,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -2053,7 +2053,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -2072,7 +2072,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -2091,7 +2091,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -2110,7 +2110,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -2129,7 +2129,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -2148,7 +2148,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -2167,7 +2167,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -2186,7 +2186,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -2205,7 +2205,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -2224,7 +2224,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -2243,7 +2243,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -2262,7 +2262,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -2281,7 +2281,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -2300,7 +2300,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -2319,7 +2319,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -2338,7 +2338,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -2357,7 +2357,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -2376,7 +2376,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -2395,7 +2395,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -2414,7 +2414,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -2433,7 +2433,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -2452,7 +2452,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -2471,7 +2471,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -2490,7 +2490,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -2509,7 +2509,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -2528,7 +2528,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -2547,7 +2547,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -2566,7 +2566,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -2585,7 +2585,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -2604,7 +2604,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -2623,7 +2623,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -2642,7 +2642,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -2661,7 +2661,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -2680,7 +2680,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -2699,7 +2699,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -2718,7 +2718,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -2737,7 +2737,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -2756,7 +2756,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -2775,7 +2775,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -2794,7 +2794,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -2813,7 +2813,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -2832,7 +2832,7 @@
       "lesson_type": "Смешанный",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -2851,7 +2851,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -2870,7 +2870,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -2889,7 +2889,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -2908,7 +2908,7 @@
       "lesson_type": "Смешанный",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -2927,7 +2927,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -2946,7 +2946,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -2965,7 +2965,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -2984,7 +2984,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -3003,7 +3003,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -3022,7 +3022,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -3041,7 +3041,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -3060,7 +3060,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -3079,7 +3079,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -3098,7 +3098,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -3117,7 +3117,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -3136,7 +3136,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -3155,7 +3155,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -3174,7 +3174,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -3193,7 +3193,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -3212,7 +3212,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -3231,7 +3231,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -3250,7 +3250,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -3269,7 +3269,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -3288,7 +3288,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -3307,7 +3307,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -3326,7 +3326,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -3345,7 +3345,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -3364,7 +3364,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -3383,7 +3383,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -3402,7 +3402,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -3421,7 +3421,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -3440,7 +3440,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -3459,7 +3459,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -3478,7 +3478,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -3497,7 +3497,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -3516,7 +3516,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -3535,7 +3535,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -3554,7 +3554,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -3573,7 +3573,7 @@
       "lesson_type": "Смешанный",
       "model": "Дискуссия",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Дебаты",
@@ -3592,7 +3592,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -3611,7 +3611,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -3630,7 +3630,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -3649,7 +3649,7 @@
       "lesson_type": "Открытие",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -3668,7 +3668,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -3687,7 +3687,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -3706,7 +3706,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -3725,7 +3725,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -3744,7 +3744,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -3763,7 +3763,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -3782,7 +3782,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -3801,7 +3801,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -3820,7 +3820,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -3839,7 +3839,7 @@
       "lesson_type": "Смешанный",
       "model": "Мастерская",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Творческое письмо",
@@ -3858,7 +3858,7 @@
       "lesson_type": "Смешанный",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -3877,7 +3877,7 @@
       "lesson_type": "Смешанный",
       "model": "Исследование",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Захват вопросом",
@@ -3896,7 +3896,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Терминологический диктант",
@@ -3915,7 +3915,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Терминологический диктант",
@@ -3934,7 +3934,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Терминологический диктант",
@@ -3953,7 +3953,7 @@
       "lesson_type": "Закрепление",
       "model": "Тренажёр",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Терминологический диктант",
@@ -3972,7 +3972,7 @@
       "lesson_type": "Смешанный",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Литературный квест",
@@ -3991,7 +3991,7 @@
       "lesson_type": "Смешанный",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Литературный квест",
@@ -4010,7 +4010,7 @@
       "lesson_type": "Смешанный",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Литературный квест",
@@ -4029,7 +4029,7 @@
       "lesson_type": "Смешанный",
       "model": "Квест",
       "lecture_block_min": 0,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Литературный квест",
@@ -4048,7 +4048,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
@@ -4067,7 +4067,7 @@
       "lesson_type": "Смешанный",
       "model": "Практикум",
       "lecture_block_min": 20,
-      "poiya_step": "Шаги 1–4",
+      "poiya_step": null,
       "uud_fgos": "Познавательные, коммуникативные, регулятивные УУД",
       "techniques": [
         "Работа с текстом",
