@@ -2,6 +2,15 @@
   command = "npm run build"
   publish = "build"
 
+[build.environment]
+  REACT_APP_SUPABASE_URL = "https://wogcofceyeeouxokzpqy.supabase.co"
+  REACT_APP_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndvZ2NvZmNleWVlb3V4b2t6cHF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwMjUwNDEsImV4cCI6MjA4NzYwMTA0MX0.fWXd3TnEIyXEOE8USvTVbITHr6TqYe-2dtA51511Wc8"
+  # Добавить в Netlify Dashboard → Site settings → Environment variables:
+  # SUPABASE_URL              = https://wogcofceyeeouxokzpqy.supabase.co
+  # SUPABASE_SERVICE_ROLE_KEY = <service_role key из Supabase Settings → API>
+  # RESEND_API_KEY            = <API key из resend.com>
+  # ADMIN_EMAIL               = babetov_aa@koriphey.ru  (опционально)
+
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
@@ -11,6 +20,25 @@
 
 [functions."save-lesson"]
   timeout = 15
+
+[functions."notify-admin"]
+  timeout = 10
+
+[functions."list-pending-users"]
+  timeout = 10
+
+[functions."update-user-status"]
+  timeout = 10
+
+[functions."get-analytics"]
+  timeout = 15
+
+# Редирект со старого Netlify-адреса на кастомный домен
+[[redirects]]
+  from = "https://constructor-zhivoi-urok.netlify.app/*"
+  to = "https://urok360.koriphey.ru/:splat"
+  status = 301
+  force = true
 
 # Regular Function: /api/save-lesson → netlify/functions/save-lesson.js
 [[redirects]]

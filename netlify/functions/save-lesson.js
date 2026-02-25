@@ -9,7 +9,7 @@
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Content-Type": "application/json",
 };
@@ -137,6 +137,8 @@ exports.handler = async (event) => {
       model: meta.model || "",
       saved_at: savedAt,
       filename: `${subjectSlug}/${meta.grade}/${filename}`,
+      author_id: meta.author_id || null,
+      author_email: meta.author_email || null,
     };
 
     const existingIndex = await getFile(indexPath);
@@ -160,6 +162,34 @@ exports.handler = async (event) => {
     );
 
     console.log(`[save-lesson] OK: ${filePath} (${indexArr.length} в индексе)`);
+
+    // Логируем событие сохранения в Supabase
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (supabaseUrl && supabaseServiceKey && meta.author_email) {
+      try {
+        await fetch(`${supabaseUrl}/rest/v1/lesson_events`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "apikey": supabaseServiceKey,
+            "Authorization": `Bearer ${supabaseServiceKey}`,
+            "Prefer": "return=minimal",
+          },
+          body: JSON.stringify({
+            user_id: meta.author_id || null,
+            user_email: meta.author_email,
+            event_type: "saved",
+            subject: meta.subject,
+            grade: meta.grade,
+            lesson_title: meta.topic,
+            lesson_id: id,
+          }),
+        });
+      } catch (e) {
+        console.warn("[save-lesson] Supabase log error:", e.message);
+      }
+    }
 
     return {
       statusCode: 200,
