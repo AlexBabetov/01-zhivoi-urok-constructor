@@ -197,6 +197,12 @@ function RegisterForm({ onSwitchToLogin }) {
 
     setLoading(true);
 
+    // Корифейские домены получают доступ сразу без подтверждения
+    const TRUSTED_DOMAINS = ["koriphey.ru", "koriphey.online"];
+    const emailDomain = form.email.split("@")[1]?.toLowerCase() || "";
+    const isTrusted = TRUSTED_DOMAINS.includes(emailDomain);
+    const initialStatus = isTrusted ? "approved" : "pending";
+
     // 1. Регистрация в Supabase
     const { data, error: signUpError } = await supabase.auth.signUp({
       email: form.email,
@@ -204,7 +210,7 @@ function RegisterForm({ onSwitchToLogin }) {
       options: {
         data: {
           role: "teacher",
-          status: "pending",
+          status: initialStatus,
           name: form.name,
           school: form.school,
           city: form.city,
@@ -221,28 +227,58 @@ function RegisterForm({ onSwitchToLogin }) {
       return;
     }
 
-    // 2. Выходим сразу (статус pending — войти всё равно нельзя)
-    await supabase.auth.signOut();
+    if (!isTrusted) {
+      // 2а. Сторонний домен — выходим (ждут подтверждения)
+      await supabase.auth.signOut();
 
-    // 3. Уведомляем администратора
-    try {
-      await fetch("/.netlify/functions/notify-admin", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          school: form.school,
-          city: form.city,
-        }),
-      });
-    } catch (_) {
-      // не критично — заявка уже сохранена в Supabase
+      // 3. Уведомляем администратора
+      try {
+        await fetch("/.netlify/functions/notify-admin", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: form.name,
+            email: form.email,
+            school: form.school,
+            city: form.city,
+          }),
+        });
+      } catch (_) {
+        // не критично — заявка уже сохранена в Supabase
+      }
     }
+    // 2б. Корифейский домен — остаётся в системе, сразу попадёт в приложение
 
-    setSuccess(true);
+    setSuccess(isTrusted ? "trusted" : "pending");
     setLoading(false);
   };
+
+  if (success === "trusted") {
+    // Корифейский домен — сразу перенаправляем, страница перегрузится через AuthGate
+    return (
+      <div style={BG}>
+        <div style={{ ...CARD, textAlign: "center" }}>
+          <div style={{ fontSize: 56, marginBottom: 16 }}>🎉</div>
+          <div style={{ fontSize: 20, fontWeight: 800, color: "#1e3a5f", marginBottom: 12 }}>
+            Добро пожаловать!
+          </div>
+          <p style={{ fontSize: 14, color: "#475569", lineHeight: 1.6, marginBottom: 24 }}>
+            Аккаунт создан. Войдите с вашим email и паролем — доступ открыт сразу!
+          </p>
+          <button
+            onClick={onSwitchToLogin}
+            style={{
+              background: "#1e3a5f", color: "#fff", border: "none",
+              borderRadius: 10, padding: "11px 24px", fontSize: 14,
+              fontWeight: 700, cursor: "pointer",
+            }}
+          >
+            Войти →
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (success) {
     return (
