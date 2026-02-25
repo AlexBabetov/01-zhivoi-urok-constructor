@@ -103,6 +103,14 @@ function getCurriculumKey(subject, grade) {
   if (subject === "Музыка" && grade >= 1 && grade <= 4) return "Музыка_1-4";
   if (subject === "Технология" && grade >= 1 && grade <= 4) return "Технология_1-4";
   if (subject === "Физическая культура" && grade >= 1 && grade <= 4) return "Физическая культура_1-4";
+  // Средняя школа — добавлено Sprint 2
+  if (subject === "Биология" && grade >= 5 && grade <= 9) return "Биология_5-9";
+  if (subject === "Физика" && grade >= 7 && grade <= 9) return "Физика_7-9";
+  if (subject === "Информатика" && grade >= 7 && grade <= 9) return "Информатика_7-9";
+  if (subject === "История" && grade >= 5 && grade <= 9) return "История_5-9";
+  if (subject === "Обществознание" && grade >= 6 && grade <= 9) return "Обществознание_6-9";
+  if (subject === "Литература" && grade >= 5 && grade <= 9) return "Литература_5-9";
+  if (subject === "География" && grade >= 5 && grade <= 9) return "География_5-9";
   return null;
 }
 
