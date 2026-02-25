@@ -122,6 +122,9 @@ function getCurriculumKey(subject, grade) {
   if (subject === "Литература" && grade >= 5 && grade <= 9) return "Литература_5-9";
   if (subject === "География" && grade >= 5 && grade <= 9) return "География_5-9";
   // Старшая школа (СОО) — добавлено Sprint 2
+  // Алгебра и Геометрия в 10-11 классе объединены в ФРП по Математике (СОО)
+  if (subject === "Алгебра" && grade >= 10 && grade <= 11) return "Математика_10-11_база";
+  if (subject === "Геометрия" && grade >= 10 && grade <= 11) return "Математика_10-11_база";
   if (subject === "Математика" && grade >= 10 && grade <= 11) return "Математика_10-11_база";
   if (subject === "Математика (углублённый)" && grade >= 10 && grade <= 11) return "Математика_10-11_углублённый";
   if (subject === "Физика" && grade >= 10 && grade <= 11) return "Физика_10-11_база";
@@ -150,7 +153,23 @@ function useCurriculum(subject, grade) {
   return data;
 }
 
-// Build curriculum context string for the system prompt
+// Build curriculum context from sections only (for ФРП-style JSONs without lesson-level detail)
+function buildSectionsContext(curriculum, grade) {
+  if (!curriculum || !grade) return null;
+  const gradeSections = (curriculum.sections || []).filter(s => s.grade === grade);
+  if (!gradeSections.length) return null;
+  const meta = curriculum.meta || {};
+  const level = meta.level ? ` (${meta.level})` : '';
+  const sectionList = gradeSections.map(s => `${s.title} (${s.hours}ч)`).join('; ');
+  const totalH = gradeSections.reduce((acc, s) => acc + (s.hours || 0), 0);
+  return [
+    `ПРОГРАММА: ${meta.subject || ''} ${meta.grades || ''} кл.${level} — ${meta.source || 'ФРП'}, ${grade} класс`,
+    `РАЗДЕЛЫ ${grade} КЛАССА (${totalH}ч всего): ${sectionList}`,
+    `Учитывай эти разделы: тема урока должна соответствовать одному из разделов, упоминай связи с соседними темами курса.`,
+  ].filter(Boolean).join("\n");
+}
+
+// Build curriculum context string for the system prompt (detailed lesson-level)
 function buildCurriculumContext(curriculum, lessonId) {
   if (!curriculum || !lessonId || !curriculum.lessons) return null;
   const lesson = curriculum.lessons.find(l => l.id === lessonId);
@@ -251,7 +270,9 @@ async function generateLesson(st) {
   const ck = gc(st.subject);
   const ci = CLUSTERS[ck];
   const mo = MODELS.find(m => m.id === st.model);
-  const sysPrompt = buildSystemPrompt(ci.name, ci.profile, mo.name, st.grade, st.format, st.curriculumCtx || null, st.subject);
+  // curriculumCtx = lesson-level (from detailed JSONs); sectionsCtx = auto-built from ФРП sections
+  const effectiveCtx = st.curriculumCtx || st.sectionsCtx || null;
+  const sysPrompt = buildSystemPrompt(ci.name, ci.profile, mo.name, st.grade, st.format, effectiveCtx, st.subject);
   const userMsg = `Предмет: ${st.subject}, Класс: ${st.grade}, Тема: ${st.topic}, Модель: ${mo.name} (${mo.mode}), ${st.duration} мин, ${st.format === 'online' ? 'Онлайн' : 'Очный'}${st.notes ? ', Пожелания: ' + st.notes : ''}`;
 
   let response;
@@ -502,6 +523,16 @@ function Step1({ state, setState }) {
   const isPrimary = state.grade && state.grade <= 4;
   const curriculum = useCurriculum(state.subject, state.grade);
   const hasCurriculum = !!getCurriculumKey(state.subject, state.grade);
+
+  // Auto-inject sections context when curriculum loads (ФРП-style JSONs without lesson detail)
+  useEffect(() => {
+    if (!curriculum || !state.grade) return;
+    const hasCurriculumLessons = !!(curriculum.lessons && curriculum.lessons.length);
+    if (!hasCurriculumLessons) {
+      const ctx = buildSectionsContext(curriculum, state.grade);
+      setState(s => ({ ...s, sectionsCtx: ctx }));
+    }
+  }, [curriculum, state.grade, setState]);
 
   const handleCurriculumSelect = useCallback((lesson) => {
     if (!lesson) {
