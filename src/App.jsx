@@ -154,7 +154,7 @@ function useCurriculum(subject, grade) {
 }
 
 // Build curriculum context from sections only (for ФРП-style JSONs without lesson-level detail)
-function buildSectionsContext(curriculum, grade) {
+function buildSectionsContext(curriculum, grade, focusSection) {
   if (!curriculum || !grade) return null;
   const gradeSections = (curriculum.sections || []).filter(s => s.grade === grade);
   if (!gradeSections.length) return null;
@@ -162,11 +162,19 @@ function buildSectionsContext(curriculum, grade) {
   const level = meta.level ? ` (${meta.level})` : '';
   const sectionList = gradeSections.map(s => `${s.title} (${s.hours}ч)`).join('; ');
   const totalH = gradeSections.reduce((acc, s) => acc + (s.hours || 0), 0);
+  if (focusSection) {
+    return [
+      `ПРОГРАММА: ${meta.subject || ''} ${meta.grades || ''} кл.${level} — ${meta.source || 'ФРП'}, ${grade} класс`,
+      `ВЫБРАННЫЙ РАЗДЕЛ: ${focusSection.title} (${focusSection.hours}ч)`,
+      `Все разделы ${grade} класса (${totalH}ч): ${sectionList}`,
+      `Учитывай: тема урока принадлежит разделу "${focusSection.title}". Упоминай предыдущие разделы как контекст, делай связи вперёд на следующие разделы курса.`,
+    ].join("\n");
+  }
   return [
     `ПРОГРАММА: ${meta.subject || ''} ${meta.grades || ''} кл.${level} — ${meta.source || 'ФРП'}, ${grade} класс`,
     `РАЗДЕЛЫ ${grade} КЛАССА (${totalH}ч всего): ${sectionList}`,
     `Учитывай эти разделы: тема урока должна соответствовать одному из разделов, упоминай связи с соседними темами курса.`,
-  ].filter(Boolean).join("\n");
+  ].join("\n");
 }
 
 // Build curriculum context string for the system prompt (detailed lesson-level)
@@ -473,22 +481,39 @@ function CurriculumSelector({ curriculum, grade, onSelect }) {
 
   // ФРП-style JSON: только разделы, без поурочного планирования
   if (sectionsOnly) {
+    const [selSectionKey, setSelSectionKey] = useState("");
+    const selectedSection = selSectionKey ? gradeSections.find(s => (s.id || s.title) === selSectionKey) : null;
+    const handleSectionChange = (e) => {
+      const key = e.target.value;
+      setSelSectionKey(key);
+      const sec = key ? gradeSections.find(s => (s.id || s.title) === key) : null;
+      onSelect(sec ? { sectionMode: true, section: sec } : null);
+    };
     return (
-      <div style={{ marginBottom: 20, padding: 12, borderRadius: 10, background: "#f0fdf4", border: "1px solid #86efac" }}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: "#166534", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
-          ✅ Программа загружена
-          <span style={{ fontWeight: 400, color: "#16a34a", fontSize: 12 }}>— разделы ФРП учитываются при генерации</span>
-        </div>
-        <div style={{ fontSize: 12, color: "#15803d", marginBottom: 8 }}>
-          {meta.subject} {meta.grades} кл.{meta.level ? ` · ${meta.level}` : ""} · {grade} класс · {totalH}ч
-        </div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+      <div style={{ marginBottom: 20 }}>
+        <label style={{ fontSize: 13, fontWeight: 600, color: "#475569", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
+          📚 Раздел программы
+          <span style={{ fontWeight: 400, color: "#94a3b8", fontSize: 12 }}>(необязательно — уточняет контекст урока)</span>
+        </label>
+        <select value={selSectionKey} onChange={handleSectionChange}
+          style={{ width: "100%", padding: "10px 12px", borderRadius: 8, border: "1px solid #a5b4fc", fontSize: 14, fontFamily: "inherit", background: "#fff", color: "#1e293b" }}>
+          <option value="">— Все разделы (тему введите вручную) —</option>
           {gradeSections.map(sec => (
-            <span key={sec.id || sec.title} style={{ padding: "2px 8px", background: "#dcfce7", borderRadius: 12, fontSize: 11, color: "#166534" }}>
+            <option key={sec.id || sec.title} value={sec.id || sec.title}>
               {sec.title} ({sec.hours}ч)
-            </span>
+            </option>
           ))}
-        </div>
+        </select>
+        {selectedSection && (
+          <div style={{ marginTop: 8, padding: 10, borderRadius: 8, background: "#f0fdf4", border: "1px solid #86efac", fontSize: 12, color: "#166534" }}>
+            ✅ Раздел выбран — AI учтёт его при генерации. Введите конкретную тему урока ниже.
+          </div>
+        )}
+        {!selectedSection && (
+          <div style={{ marginTop: 6, fontSize: 11, color: "#94a3b8" }}>
+            {meta.subject} {meta.grades} кл.{meta.level ? ` · ${meta.level}` : ""} · {grade} класс · {totalH}ч · {gradeSections.length} разделов
+          </div>
+        )}
       </div>
     );
   }
@@ -568,20 +593,30 @@ function Step1({ state, setState }) {
     }
   }, [curriculum, state.grade, setState]);
 
-  const handleCurriculumSelect = useCallback((lesson) => {
-    if (!lesson) {
+  const handleCurriculumSelect = useCallback((item) => {
+    if (!item) {
+      // Сброс — восстанавливаем полный sectionsCtx если есть sections
       setState(s => ({ ...s, curriculumLesson: null, curriculumCtx: null }));
+      if (curriculum && !(curriculum.lessons && curriculum.lessons.length)) {
+        const ctx = buildSectionsContext(curriculum, state.grade);
+        setState(s => ({ ...s, sectionsCtx: ctx }));
+      }
+    } else if (item.sectionMode) {
+      // Выбран раздел из ФРП — обновляем sectionsCtx с фокусом на разделе
+      const ctx = buildSectionsContext(curriculum, state.grade, item.section);
+      setState(s => ({ ...s, sectionsCtx: ctx, curriculumLesson: null, curriculumCtx: null }));
     } else {
-      const ctx = buildCurriculumContext(curriculum, lesson.id);
+      // Выбран конкретный урок из поурочного планирования
+      const ctx = buildCurriculumContext(curriculum, item.id);
       setState(s => ({
         ...s,
-        topic: lesson.topic,
-        model: MODELS.find(m => m.name === lesson.model)?.id || s.model,
-        curriculumLesson: lesson.id,
+        topic: item.topic,
+        model: MODELS.find(m => m.name === item.model)?.id || s.model,
+        curriculumLesson: item.id,
         curriculumCtx: ctx,
       }));
     }
-  }, [curriculum, setState]);
+  }, [curriculum, state.grade, setState]);
 
   return (
     <div>
