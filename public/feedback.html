@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Обратная связь — Конструктор урока ЖУ360</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      background: #1e3a5f;
+      color: #fff;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header h1 { font-size: 18px; font-weight: 700; }
+    .header p { font-size: 12px; opacity: 0.75; margin-top: 2px; }
+
+    /* Layout */
+    .container { max-width: 680px; margin: 0 auto; padding: 32px 16px 64px; }
+
+    /* Tabs */
+    .tabs { display: flex; gap: 0; margin-bottom: 28px; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; background: #fff; }
+    .tab-btn {
+      flex: 1; padding: 14px 20px; border: none; cursor: pointer;
+      font-size: 14px; font-weight: 600; font-family: inherit;
+      background: #fff; color: #64748b; transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .tab-btn.active { background: #1e3a5f; color: #fff; }
+    .tab-btn:not(.active):hover { background: #f1f5f9; }
+
+    /* Panel */
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* Card */
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      border: 1px solid #e2e8f0;
+      margin-bottom: 20px;
+    }
+    .card-title {
+      font-size: 16px; font-weight: 700; color: #1e3a5f;
+      margin-bottom: 6px; display: flex; align-items: center; gap: 8px;
+    }
+    .card-subtitle { font-size: 13px; color: #64748b; margin-bottom: 20px; }
+
+    /* Fields */
+    .field { margin-bottom: 20px; }
+    .field:last-child { margin-bottom: 0; }
+    label.field-label {
+      display: block; font-size: 13px; font-weight: 600;
+      color: #374151; margin-bottom: 8px;
+    }
+    .required { color: #ef4444; margin-left: 2px; }
+    .field-hint { font-size: 11px; color: #94a3b8; font-weight: 400; margin-left: 4px; }
+
+    input[type="text"], input[type="date"], select, textarea {
+      width: 100%; padding: 10px 12px; border-radius: 8px;
+      border: 1px solid #d1d5db; font-size: 14px;
+      font-family: inherit; color: #1e293b; background: #fff;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus, input[type="date"]:focus, select:focus, textarea:focus {
+      outline: none; border-color: #1e3a5f; box-shadow: 0 0 0 3px rgba(30,58,95,0.08);
+    }
+    textarea { resize: vertical; min-height: 80px; }
+
+    /* Star rating */
+    .stars { display: flex; gap: 4px; }
+    .star-btn {
+      background: none; border: none; cursor: pointer; font-size: 28px;
+      opacity: 0.25; transition: opacity 0.15s, transform 0.1s;
+      padding: 2px;
+    }
+    .star-btn.active { opacity: 1; }
+    .star-btn:hover { transform: scale(1.15); }
+    .star-label { font-size: 12px; color: #64748b; margin-top: 4px; }
+
+    /* Radio pills */
+    .pills { display: flex; flex-direction: column; gap: 8px; }
+    .pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pill-label {
+      display: flex; align-items: center; gap: 8px; cursor: pointer;
+      padding: 9px 14px; border-radius: 8px;
+      border: 1px solid #e2e8f0; background: #f8fafc;
+      font-size: 14px; transition: all 0.15s; flex: 1; min-width: 160px;
+    }
+    .pill-label input { accent-color: #1e3a5f; }
+    .pill-label:has(input:checked) { background: #eff6ff; border-color: #bfdbfe; color: #1e3a5f; font-weight: 600; }
+
+    /* Mood buttons */
+    .mood-grid { display: flex; gap: 10px; flex-wrap: wrap; }
+    .mood-btn {
+      flex: 1; min-width: 80px; display: flex; flex-direction: column;
+      align-items: center; gap: 4px; padding: 12px 8px; border-radius: 10px;
+      border: 1px solid #e2e8f0; background: #f8fafc;
+      cursor: pointer; transition: all 0.15s; font-family: inherit;
+    }
+    .mood-btn .emoji { font-size: 24px; }
+    .mood-btn .label { font-size: 11px; color: #64748b; }
+    .mood-btn.active { border: 2px solid #1e3a5f; background: #eff6ff; }
+    .mood-btn.active .label { color: #1e3a5f; font-weight: 600; }
+
+    /* Checklist */
+    .checklist { display: flex; flex-direction: column; gap: 8px; }
+    .check-row {
+      display: flex; align-items: center; gap: 10px; padding: 9px 12px;
+      border-radius: 8px; border: 1px solid #e2e8f0; background: #f8fafc;
+      cursor: pointer; font-size: 14px; transition: background 0.15s;
+    }
+    .check-row:has(input:checked) { background: #f0fdf4; border-color: #bbf7d0; }
+    .check-row input { accent-color: #16a34a; width: 16px; height: 16px; cursor: pointer; }
+
+    /* Score */
+    .score-row { display: flex; align-items: center; gap: 12px; }
+    .score-row input[type="range"] {
+      flex: 1; accent-color: #1e3a5f; padding: 0;
+    }
+    .score-val {
+      width: 40px; text-align: center; font-size: 20px; font-weight: 700;
+      color: #1e3a5f; border: none; background: none; padding: 0;
+    }
+    .score-labels { display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8; margin-top: 4px; }
+
+    /* Submit */
+    .submit-wrap { margin-top: 8px; }
+    .btn-submit {
+      width: 100%; padding: 14px; background: #1e3a5f; color: #fff;
+      border: none; border-radius: 10px; font-size: 16px; font-weight: 700;
+      font-family: inherit; cursor: pointer; transition: background 0.2s;
+    }
+    .btn-submit:hover { background: #162d4a; }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Success */
+    .success-block {
+      display: none; text-align: center; padding: 48px 20px;
+      background: #fff; border-radius: 16px; border: 1px solid #e2e8f0;
+    }
+    .success-block.show { display: block; }
+    .success-block .icon { font-size: 56px; margin-bottom: 16px; }
+    .success-block h2 { font-size: 22px; color: #1e3a5f; margin-bottom: 8px; }
+    .success-block p { color: #64748b; font-size: 14px; line-height: 1.6; }
+
+    .divider { border: none; border-top: 1px solid #e2e8f0; margin: 8px 0 20px; }
+
+    @media (max-width: 500px) {
+      .card { padding: 20px 16px; }
+      .pill-label { min-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <span style="font-size:24px">🎯</span>
+  <div>
+    <h1>Конструктор урока ЖУ360 — Пилот</h1>
+    <p>Обратная связь после урока · Русский язык 2 класс</p>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('teacher')" id="tab-teacher">
+      ✍️ Учитель <span style="font-size:11px;opacity:0.75">~3 мин</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('methodist')" id="tab-methodist">
+      🔬 Методист <span style="font-size:11px;opacity:0.75">~7 мин</span>
+    </button>
+  </div>
+
+  <!-- ====== TEACHER FORM ====== -->
+  <div class="panel active" id="panel-teacher">
+    <form name="feedback-teacher" method="POST" netlify netlify-honeypot="bot-field" onsubmit="handleSubmit(event, 'teacher')">
+      <input type="hidden" name="form-name" value="feedback-teacher" />
+      <p style="display:none"><input name="bot-field" /></p>
+
+      <!-- Урок -->
+      <div class="card">
+        <div class="card-title">📖 Об уроке</div>
+        <div class="card-subtitle">Расскажите, какой урок вы провели</div>
+
+        <div class="field">
+          <label class="field-label">Ваше имя <span class="required">*</span></label>
+          <input type="text" name="teacher_name" placeholder="Например: Анна Сергеевна" required />
+        </div>
+
+        <div class="field">
+          <label class="field-label">Тема урока <span class="required">*</span></label>
+          <input type="text" name="lesson_topic" placeholder="Например: Что такое части речи?" required />
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="field">
+            <label class="field-label">Класс</label>
+            <select name="grade">
+              <option value="2">2 класс</option>
+              <option value="1">1 класс</option>
+              <option value="3">3 класс</option>
+              <option value="4">4 класс</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label">Дата урока</label>
+            <input type="date" name="lesson_date" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Оценка -->
+      <div class="card">
+        <div class="card-title">⭐ Ваша оценка</div>
+        <div class="card-subtitle">Насколько AI-сценарий помог вам провести хороший урок?</div>
+
+        <div class="field">
+          <label class="field-label">Общая оценка сценария <span class="required">*</span></label>
+          <div class="stars" id="stars-teacher">
+            <button type="button" class="star-btn" data-v="1" onclick="setStars('teacher',1)">⭐</button>
+            <button type="button" class="star-btn" data-v="2" onclick="setStars('teacher',2)">⭐</button>
+            <button type="button" class="star-btn" data-v="3" onclick="setStars('teacher',3)">⭐</button>
+            <button type="button" class="star-btn" data-v="4" onclick="setStars('teacher',4)">⭐</button>
+            <button type="button" class="star-btn" data-v="5" onclick="setStars('teacher',5)">⭐</button>
+          </div>
+          <div class="star-label" id="star-label-teacher">Нажмите на звезду</div>
+          <input type="hidden" name="rating" id="rating-teacher" />
+        </div>
+
+        <div class="field">
+          <label class="field-label">Тайминг <span class="required">*</span></label>
+          <div class="pills">
+            <label class="pill-label"><input type="radio" name="timing" value="ok" required /> ✅ Уложился в отведённое время</label>
+            <label class="pill-label"><input type="radio" name="timing" value="5min" /> ⏱ Вышел за время на 5–10 минут</label>
+            <label class="pill-label"><input type="radio" name="timing" value="long" /> ⌛ Значительно вышел / не завершил</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Атмосфера на уроке <span class="required">*</span></label>
+          <div class="mood-grid">
+            <button type="button" class="mood-btn" onclick="setMood('low')"><span class="emoji">😐</span><span class="label">Вялая</span></button>
+            <button type="button" class="mood-btn" onclick="setMood('work')"><span class="emoji">🙂</span><span class="label">Рабочая</span></button>
+            <button type="button" class="mood-btn" onclick="setMood('active')"><span class="emoji">😊</span><span class="label">Активная</span></button>
+            <button type="button" class="mood-btn" onclick="setMood('fire')"><span class="emoji">🔥</span><span class="label">Высокий драйв</span></button>
+          </div>
+          <input type="hidden" name="mood" id="mood-input" />
+        </div>
+
+        <div class="field">
+          <label class="field-label">Какой захват использовали?</label>
+          <div class="pill-row">
+            <label class="pill-label"><input type="radio" name="capture_used" value="1" /> Захват 1</label>
+            <label class="pill-label"><input type="radio" name="capture_used" value="2" /> Захват 2</label>
+            <label class="pill-label"><input type="radio" name="capture_used" value="3" /> Захват 3</label>
+            <label class="pill-label"><input type="radio" name="capture_used" value="none" /> Не использовал</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Фидбек -->
+      <div class="card">
+        <div class="card-title">💬 Ваш фидбек</div>
+        <div class="card-subtitle">Поможет улучшить конструктор</div>
+
+        <div class="field">
+          <label class="field-label">Что зашло лучше всего? <span class="required">*</span></label>
+          <textarea name="what_worked" placeholder="Например: дети очень активно включились в игру, Кори помог удержать внимание..." required></textarea>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Что вызвало сложность?</label>
+          <textarea name="what_was_hard" placeholder="Например: не хватило времени на письменную работу, непонятно как применить ловушку..."></textarea>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Что изменили бы в сценарии?</label>
+          <textarea name="suggestions" placeholder="Любые идеи — всё важно"></textarea>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Использовали бы этот сценарий снова? <span class="required">*</span></label>
+          <div class="pills">
+            <label class="pill-label"><input type="radio" name="would_reuse" value="yes" required /> ✅ Да, использую как есть</label>
+            <label class="pill-label"><input type="radio" name="would_reuse" value="with_edits" /> ✏️ Да, с небольшими правками</label>
+            <label class="pill-label"><input type="radio" name="would_reuse" value="no" /> ❌ Нет, нужен другой подход</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="submit-wrap">
+        <button type="submit" class="btn-submit" id="submit-teacher">Отправить обратную связь →</button>
+      </div>
+    </form>
+
+    <div class="success-block" id="success-teacher">
+      <div class="icon">🙏</div>
+      <h2>Спасибо, ваш фидбек отправлен!</h2>
+      <p>Каждый ответ помогает нам сделать конструктор лучше.<br>Ваши наблюдения уже у методической команды Корифея.</p>
+      <p style="margin-top:16px"><a href="https://constructor-zhivoi-urok.netlify.app" style="color:#1e3a5f;font-weight:600">← Вернуться в конструктор</a></p>
+    </div>
+  </div>
+
+  <!-- ====== METHODIST FORM ====== -->
+  <div class="panel" id="panel-methodist">
+    <form name="feedback-methodist" method="POST" netlify netlify-honeypot="bot-field" onsubmit="handleSubmit(event, 'methodist')">
+      <input type="hidden" name="form-name" value="feedback-methodist" />
+      <p style="display:none"><input name="bot-field" /></p>
+
+      <!-- Об уроке -->
+      <div class="card">
+        <div class="card-title">📋 Наблюдение урока</div>
+        <div class="card-subtitle">Методическая оценка соответствия ЖУ360</div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="field">
+            <label class="field-label">Ваше имя <span class="required">*</span></label>
+            <input type="text" name="methodist_name" placeholder="Имя методиста" required />
+          </div>
+          <div class="field">
+            <label class="field-label">Дата наблюдения</label>
+            <input type="date" name="observation_date" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Учитель и тема урока <span class="required">*</span></label>
+          <input type="text" name="lesson_info" placeholder="Например: Анна Сергеевна — «Что такое части речи?»" required />
+        </div>
+      </div>
+
+      <!-- Компоненты ЖУ360 -->
+      <div class="card">
+        <div class="card-title">🔬 Компоненты ЖУ360</div>
+        <div class="card-subtitle">Отметьте всё, что было реализовано на уроке</div>
+
+        <div class="checklist">
+          <label class="check-row"><input type="checkbox" name="components" value="capture" /> 🎭 Захват — выбран и проведён</label>
+          <label class="check-row"><input type="checkbox" name="components" value="first_win" /> 🏆 Победа до теории — ученики решили задачу до объяснения</label>
+          <label class="check-row"><input type="checkbox" name="components" value="kori" /> 🦊 Кори (персонаж) использован в уроке</label>
+          <label class="check-row"><input type="checkbox" name="components" value="kori_mistake" /> ❌ Ошибка Кори — дети исправляли типичную ошибку</label>
+          <label class="check-row"><input type="checkbox" name="components" value="warmup" /> 💪 Разминка проведена</label>
+          <label class="check-row"><input type="checkbox" name="components" value="active_game" /> 🎮 Активная игра с передвижением/жестами</label>
+          <label class="check-row"><input type="checkbox" name="components" value="choral" /> 🗣️ Хоровое закрепление (не менее 2 раз)</label>
+          <label class="check-row"><input type="checkbox" name="components" value="reflection_double" /> 🪞 Двойная рефлексия (гуманитарный + практический вопрос)</label>
+          <label class="check-row"><input type="checkbox" name="components" value="traps" /> ⚠️ Ловушки в игре — дети их замечали</label>
+          <label class="check-row"><input type="checkbox" name="components" value="timing_ok" /> ⏱ Тайминг по блокам в целом соблюдён</label>
+        </div>
+      </div>
+
+      <!-- Оценка -->
+      <div class="card">
+        <div class="card-title">📊 Оценка качества</div>
+        <div class="card-subtitle">Общая оценка соответствия методологии ЖУ360</div>
+
+        <div class="field">
+          <label class="field-label">Соответствие ЖУ360 (1–10) <span class="required">*</span></label>
+          <div class="score-row">
+            <input type="range" name="zh360_score" min="1" max="10" value="5"
+              oninput="document.getElementById('score-val').textContent=this.value" id="score-range" />
+            <span class="score-val" id="score-val">5</span>
+          </div>
+          <div class="score-labels"><span>Слабое (1)</span><span>Среднее (5)</span><span>Эталон (10)</span></div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Оценка AI-сценария как инструмента <span class="required">*</span></label>
+          <div class="stars" id="stars-methodist">
+            <button type="button" class="star-btn" data-v="1" onclick="setStars('methodist',1)">⭐</button>
+            <button type="button" class="star-btn" data-v="2" onclick="setStars('methodist',2)">⭐</button>
+            <button type="button" class="star-btn" data-v="3" onclick="setStars('methodist',3)">⭐</button>
+            <button type="button" class="star-btn" data-v="4" onclick="setStars('methodist',4)">⭐</button>
+            <button type="button" class="star-btn" data-v="5" onclick="setStars('methodist',5)">⭐</button>
+          </div>
+          <div class="star-label" id="star-label-methodist">Нажмите на звезду</div>
+          <input type="hidden" name="tool_rating" id="rating-methodist" />
+        </div>
+      </div>
+
+      <!-- Методический анализ -->
+      <div class="card">
+        <div class="card-title">🧠 Методический анализ</div>
+        <div class="card-subtitle">Детальный разбор — помогает улучшить AI-промпт</div>
+
+        <div class="field">
+          <label class="field-label">Что AI-сценарий сделал хорошо? <span class="required">*</span></label>
+          <textarea name="ai_strengths" rows="4" placeholder="Например: точно подобрал активную игру под тему, хорошо выстроил трёхактную структуру, захват создал правильную интригу..." required></textarea>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Какие компоненты ЖУ360 потребовали доработки учителем?</label>
+          <textarea name="ai_weaknesses" rows="4" placeholder="Например: ошибка Кори была слишком очевидной, хоровое закрепление не подходило к теме, тайминг захвата завышен..."></textarea>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Конкретные предложения по улучшению промпта</label>
+          <textarea name="prompt_suggestions" rows="4" placeholder="Например: AI должен учитывать X, нужно добавить инструкцию про Y, убрать шаблон Z..."></textarea>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Готов к масштабированию? <span class="required">*</span></label>
+          <div class="pills">
+            <label class="pill-label"><input type="radio" name="ready_to_scale" value="yes" required /> ✅ Да — можно запускать на других учителях</label>
+            <label class="pill-label"><input type="radio" name="ready_to_scale" value="with_training" /> 📚 Да — после дополнительного обучения</label>
+            <label class="pill-label"><input type="radio" name="ready_to_scale" value="needs_revision" /> 🔧 Нужна доработка промпта</label>
+            <label class="pill-label"><input type="radio" name="ready_to_scale" value="no" /> ❌ Нет — концептуальные проблемы</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="submit-wrap">
+        <button type="submit" class="btn-submit" id="submit-methodist">Отправить методическое заключение →</button>
+      </div>
+    </form>
+
+    <div class="success-block" id="success-methodist">
+      <div class="icon">✅</div>
+      <h2>Методическое заключение отправлено!</h2>
+      <p>Спасибо за детальный анализ — это ключевые данные для Sprint 3.<br>Все ответы автоматически попадают в дашборд пилота.</p>
+      <p style="margin-top:16px"><a href="https://constructor-zhivoi-urok.netlify.app" style="color:#1e3a5f;font-weight:600">← Вернуться в конструктор</a></p>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+  // Tab switching
+  function switchTab(tab) {
+    ['teacher', 'methodist'].forEach(t => {
+      document.getElementById('panel-' + t).classList.toggle('active', t === tab);
+      document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+    });
+  }
+
+  // Star rating
+  const starLabels = ['', '1 — Не помог совсем', '2 — Слабый сценарий', '3 — Средне', '4 — Хороший сценарий', '5 — Отличный, провёл без правок!'];
+  function setStars(who, n) {
+    document.querySelectorAll(`#stars-${who} .star-btn`).forEach(btn => {
+      btn.classList.toggle('active', +btn.dataset.v <= n);
+    });
+    document.getElementById(`rating-${who}`).value = n;
+    document.getElementById(`star-label-${who}`).textContent = starLabels[n];
+  }
+
+  // Mood
+  function setMood(v) {
+    document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    document.getElementById('mood-input').value = v;
+  }
+
+  // Form submit
+  async function handleSubmit(e, who) {
+    e.preventDefault();
+    const form = e.target;
+    const btn = document.getElementById('submit-' + who);
+    btn.disabled = true;
+    btn.textContent = '⏳ Отправляю…';
+
+    // Gather checkboxes (multiple values)
+    const data = new FormData(form);
+    // Components checkboxes: collect all
+    const components = form.querySelectorAll('input[name="components"]:checked');
+    data.delete('components');
+    components.forEach(c => data.append('components', c.value));
+
+    try {
+      const resp = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(data).toString(),
+      });
+      if (resp.ok) {
+        form.style.display = 'none';
+        document.getElementById('success-' + who).classList.add('show');
+      } else {
+        throw new Error('HTTP ' + resp.status);
+      }
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = who === 'teacher' ? 'Отправить обратную связь →' : 'Отправить методическое заключение →';
+      alert('Ошибка отправки: ' + err.message + '\nПопробуйте ещё раз.');
+    }
+  }
+</script>
+</body>
+</html>
