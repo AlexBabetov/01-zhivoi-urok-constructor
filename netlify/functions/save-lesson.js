@@ -9,7 +9,7 @@
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Content-Type": "application/json",
 };
@@ -137,6 +137,8 @@ exports.handler = async (event) => {
       model: meta.model || "",
       saved_at: savedAt,
       filename: `${subjectSlug}/${meta.grade}/${filename}`,
+      author_id: meta.author_id || null,
+      author_email: meta.author_email || null,
     };
 
     const existingIndex = await getFile(indexPath);

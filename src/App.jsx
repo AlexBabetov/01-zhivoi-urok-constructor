@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
+import { supabase } from "./supabase";
 
 // ========== DATA ==========
 const CLUSTERS = {
@@ -1706,8 +1707,13 @@ function LessonDetailView({ openData, onBack, onClose }) {
   );
 }
 
-function LibraryView({ onClose }) {
-  const { lessons, libLoading, refresh } = useLessons();
+function LibraryView({ onClose, user }) {
+  const { lessons: allLessons, libLoading, refresh } = useLessons();
+  const isAdmin = user?.user_metadata?.role === "admin";
+  // Учитель видит только свои уроки; admin видит все
+  const lessons = isAdmin
+    ? allLessons
+    : (allLessons || []).filter(l => !l.author_id || l.author_id === user?.id);
   const [search, setSearch] = useState("");
   const [selectedSubject, setSelectedSubject] = useState(null); // null = subject grid
   const [openData, setOpenData] = useState(null);
@@ -1902,7 +1908,7 @@ function LibraryView({ onClose }) {
 
 // ─────────────────────────────────────────────────────────
 
-export default function App() {
+export default function App({ user }) {
   const [step, setStep] = useState(0);
   const [state, setState] = useState({ duration: 45, format: "offline" });
   const [loading, setLoading] = useState(false);
@@ -1965,11 +1971,18 @@ export default function App() {
       model: MODELS.find(m => m.id === state.model)?.name || state.model || "",
       lesson_num: lessonNum,
       curriculum_id: state.curriculumLesson || null,
+      author_id: user?.id || null,
+      author_email: user?.email || null,
     };
     try {
+      // Получаем текущий JWT токен
+      const { data: { session } } = await supabase.auth.getSession();
+      const authHeader = session?.access_token
+        ? { "Authorization": `Bearer ${session.access_token}` }
+        : {};
       const resp = await fetch("/.netlify/functions/save-lesson", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...authHeader },
         body: JSON.stringify({ lesson: result, meta }),
       });
       let data;
@@ -2013,6 +2026,16 @@ export default function App() {
           <a href="/feedback.html" target="_blank" rel="noopener noreferrer" style={{ color: "#fff", borderColor: "rgba(255,255,255,0.2)", fontSize: 12, padding: "10px 24px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.2)", textDecoration: "none", fontWeight: 600, fontFamily: "inherit", display: "inline-block" }}>📋 Фидбек</a>
           {step > 0 && (
             <Btn variant="ghost" onClick={reset} style={{ color: "#fff", borderColor: "rgba(255,255,255,0.2)", fontSize: 12 }}>↺ Новый урок</Btn>
+          )}
+          {user && (
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginLeft: 4, borderLeft: "1px solid rgba(255,255,255,0.15)", paddingLeft: 12 }}>
+              <span style={{ fontSize: 11, opacity: 0.7, maxWidth: 140, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                👤 {user.email}
+              </span>
+              <Btn variant="ghost" onClick={() => supabase.auth.signOut()} style={{ color: "#fff", borderColor: "rgba(255,255,255,0.2)", fontSize: 11, padding: "6px 12px" }}>
+                Выйти
+              </Btn>
+            </div>
           )}
         </div>
       </div>
@@ -2061,7 +2084,7 @@ export default function App() {
         </div>
       </div>
       {reflOpen && <ReflectionModal state={state} onClose={() => setReflOpen(false)} onSaved={() => setReflDone(true)} />}
-      {libraryOpen && <LibraryView onClose={() => setLibraryOpen(false)} />}
+      {libraryOpen && <LibraryView onClose={() => setLibraryOpen(false)} user={user} />}
     </div>
   );
 }
