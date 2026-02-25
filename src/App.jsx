@@ -456,6 +456,169 @@ function Btn({ children, onClick, variant = "primary", disabled, style }) {
   );
 }
 
+// ========== REFLECTION: localStorage helpers ==========
+const REFL_KEY = "zh360_reflections";
+
+function makeReflId(subject, grade, topic) {
+  const slug = (s) => (s || "").toLowerCase().replace(/ё/g, "е").replace(/\s+/g, "-").replace(/[^a-zа-я0-9-]/g, "");
+  return `${slug(subject)}-${grade}-${slug(topic).slice(0, 30)}`;
+}
+
+function saveReflection(subject, grade, topic, data) {
+  try {
+    const all = JSON.parse(localStorage.getItem(REFL_KEY) || "{}");
+    const id = makeReflId(subject, grade, topic);
+    all[id] = { ...data, saved_at: new Date().toISOString() };
+    localStorage.setItem(REFL_KEY, JSON.stringify(all));
+    return id;
+  } catch { return null; }
+}
+
+function getReflection(subject, grade, topic) {
+  try {
+    const all = JSON.parse(localStorage.getItem(REFL_KEY) || "{}");
+    return all[makeReflId(subject, grade, topic)] || null;
+  } catch { return null; }
+}
+
+// ========== REFLECTION MODAL ==========
+const TIMING_OPTS = [
+  { v: "ok",    label: "✅ Уложился в время" },
+  { v: "5min",  label: "⏱ Вышел на 5–10 мин" },
+  { v: "long",  label: "⌛ Значительно вышел / не завершил" },
+];
+const MOOD_OPTS = [
+  { v: "low",    emoji: "😐", label: "Вялая" },
+  { v: "work",   emoji: "🙂", label: "Рабочая" },
+  { v: "active", emoji: "😊", label: "Активная" },
+  { v: "fire",   emoji: "🔥", label: "Высокий драйв" },
+];
+const CAPTURE_OPTS = [
+  { v: "1", label: "Захват 1" },
+  { v: "2", label: "Захват 2" },
+  { v: "3", label: "Захват 3" },
+  { v: "0", label: "Не использовал" },
+];
+
+function ReflectionModal({ state, onClose, onSaved }) {
+  const existing = getReflection(state.subject, state.grade, state.topic);
+  const [rating,  setRating]  = useState(existing?.rating  || 0);
+  const [timing,  setTiming]  = useState(existing?.timing  || "");
+  const [mood,    setMood]    = useState(existing?.mood    || "");
+  const [capture, setCapture] = useState(existing?.capture || "");
+  const [notes,   setNotes]   = useState(existing?.notes   || "");
+  const [saved,   setSaved]   = useState(!!existing);
+
+  const canSave = rating > 0 && timing && mood;
+
+  const handleSave = () => {
+    saveReflection(state.subject, state.grade, state.topic, { rating, timing, mood, capture, notes });
+    setSaved(true);
+    onSaved && onSaved();
+    setTimeout(onClose, 1200);
+  };
+
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }}>
+      <div style={{ background: "#fff", borderRadius: 20, padding: 28, maxWidth: 480, width: "100%", boxShadow: "0 8px 40px rgba(0,0,0,0.18)", maxHeight: "90vh", overflowY: "auto" }}>
+
+        {/* Header */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
+          <div>
+            <div style={{ fontSize: 20, fontWeight: 700, color: "#1e3a5f" }}>📋 Рефлексия после урока</div>
+            <div style={{ fontSize: 12, color: "#64748b", marginTop: 3 }}>
+              {state.subject} · {state.grade} кл. · {state.topic}
+            </div>
+          </div>
+          <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 20, color: "#94a3b8", padding: 0 }}>✕</button>
+        </div>
+
+        {saved ? (
+          <div style={{ textAlign: "center", padding: "32px 0", color: "#16a34a", fontSize: 16, fontWeight: 600 }}>
+            ✅ Рефлексия сохранена!
+          </div>
+        ) : (
+          <>
+            {/* Rating */}
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 8 }}>Общая оценка урока</div>
+              <div style={{ display: "flex", gap: 8 }}>
+                {[1,2,3,4,5].map(n => (
+                  <button key={n} onClick={() => setRating(n)}
+                    style={{ fontSize: 26, background: "none", border: "none", cursor: "pointer", opacity: n <= rating ? 1 : 0.3, transition: "opacity 0.15s" }}>⭐</button>
+                ))}
+              </div>
+            </div>
+
+            {/* Timing */}
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 8 }}>Тайминг</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                {TIMING_OPTS.map(o => (
+                  <label key={o.v} style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", padding: "8px 12px", borderRadius: 8,
+                    background: timing === o.v ? "#eff6ff" : "#f8fafc", border: timing === o.v ? "1px solid #bfdbfe" : "1px solid #e2e8f0" }}>
+                    <input type="radio" name="timing" value={o.v} checked={timing === o.v} onChange={() => setTiming(o.v)} style={{ accentColor: "#1e3a5f" }} />
+                    <span style={{ fontSize: 14 }}>{o.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Mood */}
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 8 }}>Атмосфера класса</div>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                {MOOD_OPTS.map(o => (
+                  <button key={o.v} onClick={() => setMood(o.v)}
+                    style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, padding: "10px 16px", borderRadius: 10, cursor: "pointer",
+                      border: mood === o.v ? "2px solid #1e3a5f" : "1px solid #e2e8f0",
+                      background: mood === o.v ? "#eff6ff" : "#f8fafc", minWidth: 72 }}>
+                    <span style={{ fontSize: 24 }}>{o.emoji}</span>
+                    <span style={{ fontSize: 11, color: "#475569" }}>{o.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Capture */}
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 8 }}>Какой захват использовал?</div>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                {CAPTURE_OPTS.map(o => (
+                  <button key={o.v} onClick={() => setCapture(o.v)}
+                    style={{ padding: "7px 14px", borderRadius: 8, cursor: "pointer", fontSize: 13,
+                      border: capture === o.v ? "2px solid #7c3aed" : "1px solid #e2e8f0",
+                      background: capture === o.v ? "#f5f3ff" : "#f8fafc",
+                      color: capture === o.v ? "#6d28d9" : "#475569" }}>
+                    {o.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Notes */}
+            <div style={{ marginBottom: 24 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 8 }}>Что изменить в следующий раз? <span style={{ fontWeight: 400, color: "#94a3b8" }}>(необязательно)</span></div>
+              <textarea value={notes} onChange={e => setNotes(e.target.value)}
+                placeholder="Например: дать больше времени на игру, усилить хоровое закрепление..."
+                rows={3} style={{ width: "100%", padding: "10px 12px", borderRadius: 8, border: "1px solid #d1d5db", fontSize: 14, fontFamily: "inherit", boxSizing: "border-box", resize: "vertical" }} />
+            </div>
+
+            {/* Actions */}
+            <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+              <Btn variant="secondary" onClick={onClose}>Отмена</Btn>
+              <Btn onClick={handleSave} disabled={!canSave}
+                style={!canSave ? { opacity: 0.5 } : {}}>
+                💾 Сохранить рефлексию
+              </Btn>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ========== CURRICULUM SELECTOR ==========
 function CurriculumSelector({ curriculum, grade, onSelect }) {
   const [selectedId, setSelectedId] = useState("");
@@ -1464,8 +1627,13 @@ function useLessons() {
   return { lessons, libLoading, refresh };
 }
 
+const MOOD_EMOJI = { low: "😐", work: "🙂", active: "😊", fire: "🔥" };
+const TIMING_SHORT = { ok: "✅ В времени", "5min": "⏱ +5–10 мин", long: "⌛ Вышел" };
+const STAR_LABEL = ["", "★", "★★", "★★★", "★★★★", "★★★★★"];
+
 function LessonCard({ entry, onOpen }) {
   const [hovered, setHovered] = useState(false);
+  const refl = getReflection(entry.subject, entry.grade, entry.topic);
   const dateStr = entry.saved_at
     ? new Date(entry.saved_at).toLocaleDateString("ru-RU", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })
     : "";
@@ -1480,7 +1648,12 @@ function LessonCard({ entry, onOpen }) {
     >
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
         <div style={{ fontWeight: 600, fontSize: 14, color: "#1e293b", lineHeight: 1.4, flex: 1 }}>{entry.topic}</div>
-        {entry.model && <div style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", background: bg, color: fg, borderRadius: 20, whiteSpace: "nowrap" }}>{entry.model}</div>}
+        <div style={{ display: "flex", gap: 6, alignItems: "center", flexShrink: 0 }}>
+          {refl && <span title="Урок проведён" style={{ fontSize: 11, padding: "2px 7px", background: "#f0fdf4", color: "#16a34a", borderRadius: 20, border: "1px solid #bbf7d0" }}>
+            {MOOD_EMOJI[refl.mood] || "✅"} {refl.rating ? STAR_LABEL[refl.rating] : "Проведён"}
+          </span>}
+          {entry.model && <div style={{ fontSize: 11, fontWeight: 600, padding: "2px 8px", background: bg, color: fg, borderRadius: 20, whiteSpace: "nowrap" }}>{entry.model}</div>}
+        </div>
       </div>
       <div style={{ marginTop: 7, fontSize: 12, color: "#64748b", display: "flex", flexWrap: "wrap", gap: "4px 12px", alignItems: "center" }}>
         <span>📚 {entry.subject}</span>
@@ -1526,18 +1699,43 @@ function LibraryView({ onClose }) {
     const st = openData.meta || {};
     const isPrimary = st.grade && st.grade <= 4;
     const isMiddle = st.grade && st.grade >= 5 && st.grade <= 9;
+    const refl = getReflection(st.subject, st.grade, st.topic);
+    const [libReflOpen, setLibReflOpen] = useState(false);
+    const [libReflDone, setLibReflDone] = useState(!!refl);
+    const currentRefl = libReflDone ? getReflection(st.subject, st.grade, st.topic) : null;
     return (
       <div>
         <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
           <Btn variant="secondary" onClick={() => setOpenData(null)}>← Назад в библиотеку</Btn>
+          <Btn
+            variant={libReflDone ? "ghost" : "accent"}
+            onClick={() => setLibReflOpen(true)}
+            style={libReflDone ? { borderColor: "#16a34a", color: "#16a34a" } : {}}
+          >
+            {libReflDone ? "✅ Рефлексия" : "📋 Провёл урок"}
+          </Btn>
           <Btn variant="ghost" onClick={onClose} style={{ marginLeft: "auto" }}>✕ Закрыть</Btn>
         </div>
         <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 10, padding: "10px 16px", marginBottom: 18, fontSize: 13, color: "#166534" }}>
           📚 Из библиотеки · {st.subject} {st.grade} кл. · {openData.saved_at ? new Date(openData.saved_at).toLocaleDateString("ru-RU") : ""}
         </div>
+        {/* Reflection summary block */}
+        {currentRefl && (
+          <div style={{ background: "#fafafa", border: "1px solid #e2e8f0", borderRadius: 10, padding: "12px 16px", marginBottom: 18, fontSize: 13 }}>
+            <div style={{ fontWeight: 600, color: "#374151", marginBottom: 8 }}>📋 Рефлексия после урока</div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              {currentRefl.rating && <span style={{ padding: "2px 10px", background: "#fef3c7", borderRadius: 12, color: "#92400e" }}>{STAR_LABEL[currentRefl.rating]}</span>}
+              {currentRefl.timing && <span style={{ padding: "2px 10px", background: "#eff6ff", borderRadius: 12, color: "#1d4ed8" }}>{TIMING_SHORT[currentRefl.timing]}</span>}
+              {currentRefl.mood && <span style={{ padding: "2px 10px", background: "#f0fdf4", borderRadius: 12, color: "#166534" }}>{MOOD_EMOJI[currentRefl.mood]} {MOOD_OPTS.find(o => o.v === currentRefl.mood)?.label}</span>}
+              {currentRefl.capture && currentRefl.capture !== "0" && <span style={{ padding: "2px 10px", background: "#f5f3ff", borderRadius: 12, color: "#6d28d9" }}>Захват {currentRefl.capture}</span>}
+            </div>
+            {currentRefl.notes && <div style={{ marginTop: 8, color: "#64748b", fontStyle: "italic" }}>💬 {currentRefl.notes}</div>}
+          </div>
+        )}
         {isPrimary ? <PrimaryResult data={openData.lesson} state={st} />
           : isMiddle ? <MiddleResult data={openData.lesson} state={st} />
           : <StandardResult data={openData.lesson} state={st} />}
+        {libReflOpen && <ReflectionModal state={st} onClose={() => setLibReflOpen(false)} onSaved={() => setLibReflDone(true)} />}
       </div>
     );
   }
@@ -1615,6 +1813,15 @@ export default function App() {
   const [libraryOpen, setLibraryOpen] = useState(false);
   const [saveStatus, setSaveStatus] = useState(null); // null | "saving" | "saved" | "error"
   const [saveError, setSaveError] = useState(null);
+  const [reflOpen, setReflOpen] = useState(false);
+  const [reflDone, setReflDone] = useState(false);
+
+  // Check if reflection already exists when result is shown
+  useEffect(() => {
+    if (step === 3 && state.subject && state.grade && state.topic) {
+      setReflDone(!!getReflection(state.subject, state.grade, state.topic));
+    }
+  }, [step, state.subject, state.grade, state.topic]);
 
   const isPrimary = state.grade && state.grade <= 4;
   const isMiddle = state.grade && state.grade >= 5 && state.grade <= 9;
@@ -1731,7 +1938,7 @@ export default function App() {
             {step < 2 ? (
               <Btn onClick={() => setStep(s => s + 1)} disabled={!canNext}>Далее →</Btn>
             ) : step === 3 ? (
-              <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+              <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
                 <Btn variant="secondary" onClick={() => { setResult(null); setStep(2); }}>🔄 Перегенерировать</Btn>
                 <Btn
                   variant="secondary"
@@ -1741,12 +1948,20 @@ export default function App() {
                 >
                   {saveStatus === "saving" ? "⏳ Сохраняю…" : saveStatus === "saved" ? "✅ Сохранено" : saveStatus === "error" ? "❌ Ошибка" : "💾 Сохранить урок"}
                 </Btn>
+                <Btn
+                  variant={reflDone ? "ghost" : "accent"}
+                  onClick={() => setReflOpen(true)}
+                  style={reflDone ? { borderColor: "#16a34a", color: "#16a34a" } : {}}
+                >
+                  {reflDone ? "✅ Рефлексия заполнена" : "📋 Провёл урок"}
+                </Btn>
                 <Btn onClick={reset}>🎯 Новый урок</Btn>
               </div>
             ) : null}
           </div>
         </div>
       </div>
+      {reflOpen && <ReflectionModal state={state} onClose={() => setReflOpen(false)} onSaved={() => setReflDone(true)} />}
       {libraryOpen && <LibraryView onClose={() => setLibraryOpen(false)} />}
     </div>
   );
