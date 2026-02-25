@@ -30,6 +30,16 @@
 [functions."update-user-status"]
   timeout = 10
 
+[functions."get-analytics"]
+  timeout = 15
+
+# Редирект со старого Netlify-адреса на кастомный домен
+[[redirects]]
+  from = "https://constructor-zhivoi-urok.netlify.app/*"
+  to = "https://urok360.koriphey.ru/:splat"
+  status = 301
+  force = true
+
 # Regular Function: /api/save-lesson → netlify/functions/save-lesson.js
 [[redirects]]
   from = "/api/save-lesson"
