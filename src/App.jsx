@@ -1665,91 +1665,144 @@ function LessonCard({ entry, onOpen }) {
   );
 }
 
+// ── Lesson detail view (shared between library modes) ──
+function LessonDetailView({ openData, onBack, onClose }) {
+  const st = openData.meta || {};
+  const isPrimary = st.grade && st.grade <= 4;
+  const isMiddle = st.grade && st.grade >= 5 && st.grade <= 9;
+  const [libReflOpen, setLibReflOpen] = useState(false);
+  const [libReflDone, setLibReflDone] = useState(!!getReflection(st.subject, st.grade, st.topic));
+  const currentRefl = libReflDone ? getReflection(st.subject, st.grade, st.topic) : null;
+  return (
+    <div>
+      <div style={{ display: "flex", gap: 10, marginBottom: 20, flexWrap: "wrap" }}>
+        <Btn variant="secondary" onClick={onBack}>← Назад</Btn>
+        <Btn variant={libReflDone ? "ghost" : "accent"} onClick={() => setLibReflOpen(true)}
+          style={libReflDone ? { borderColor: "#16a34a", color: "#16a34a" } : {}}>
+          {libReflDone ? "✅ Рефлексия" : "📋 Провёл урок"}
+        </Btn>
+        <Btn variant="ghost" onClick={onClose} style={{ marginLeft: "auto" }}>✕ Закрыть</Btn>
+      </div>
+      <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 10, padding: "10px 16px", marginBottom: 18, fontSize: 13, color: "#166534" }}>
+        📚 {st.subject} · {st.grade} кл. · {openData.saved_at ? new Date(openData.saved_at).toLocaleDateString("ru-RU") : ""}
+      </div>
+      {currentRefl && (
+        <div style={{ background: "#fafafa", border: "1px solid #e2e8f0", borderRadius: 10, padding: "12px 16px", marginBottom: 18, fontSize: 13 }}>
+          <div style={{ fontWeight: 600, color: "#374151", marginBottom: 8 }}>📋 Рефлексия после урока</div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            {currentRefl.rating && <span style={{ padding: "2px 10px", background: "#fef3c7", borderRadius: 12, color: "#92400e" }}>{STAR_LABEL[currentRefl.rating]}</span>}
+            {currentRefl.timing && <span style={{ padding: "2px 10px", background: "#eff6ff", borderRadius: 12, color: "#1d4ed8" }}>{TIMING_SHORT[currentRefl.timing]}</span>}
+            {currentRefl.mood && <span style={{ padding: "2px 10px", background: "#f0fdf4", borderRadius: 12, color: "#166534" }}>{MOOD_EMOJI[currentRefl.mood]} {MOOD_OPTS.find(o => o.v === currentRefl.mood)?.label}</span>}
+            {currentRefl.capture && currentRefl.capture !== "0" && <span style={{ padding: "2px 10px", background: "#f5f3ff", borderRadius: 12, color: "#6d28d9" }}>Захват {currentRefl.capture}</span>}
+          </div>
+          {currentRefl.notes && <div style={{ marginTop: 8, color: "#64748b", fontStyle: "italic" }}>💬 {currentRefl.notes}</div>}
+        </div>
+      )}
+      {isPrimary ? <PrimaryResult data={openData.lesson} state={st} />
+        : isMiddle ? <MiddleResult data={openData.lesson} state={st} />
+        : <StandardResult data={openData.lesson} state={st} />}
+      {libReflOpen && <ReflectionModal state={st} onClose={() => setLibReflOpen(false)} onSaved={() => setLibReflDone(true)} />}
+    </div>
+  );
+}
+
 function LibraryView({ onClose }) {
   const { lessons, libLoading, refresh } = useLessons();
-  const [filter, setFilter] = useState({ subject: "", grade: "" });
   const [search, setSearch] = useState("");
-  const [openData, setOpenData] = useState(null); // { meta, lesson }
+  const [selectedSubject, setSelectedSubject] = useState(null); // null = subject grid
+  const [openData, setOpenData] = useState(null);
   const [loadingLesson, setLoadingLesson] = useState(false);
 
   useEffect(() => { refresh(); }, [refresh]);
-
-  const subjects = lessons ? [...new Set(lessons.map(l => l.subject))].sort() : [];
-  const filtered = (lessons || []).filter(l =>
-    (!filter.subject || l.subject === filter.subject) &&
-    (!filter.grade || String(l.grade) === filter.grade) &&
-    (!search || l.topic.toLowerCase().includes(search.toLowerCase()))
-  );
 
   const handleOpen = async (entry) => {
     setLoadingLesson(true);
     try {
       const resp = await fetch(`/lessons/${entry.filename}?t=${Date.now()}`);
-      if (!resp.ok) throw new Error("Файл не найден. Возможно, урок ещё не задеплоен.");
-      const data = await resp.json();
-      setOpenData(data);
-    } catch (e) {
-      alert("Ошибка загрузки урока: " + e.message);
-    } finally {
-      setLoadingLesson(false);
-    }
+      if (!resp.ok) throw new Error("Файл не найден. Возможно, урок ещё не задеплоен (~2-3 мин после сохранения).");
+      setOpenData(await resp.json());
+    } catch (e) { alert("Ошибка: " + e.message); }
+    finally { setLoadingLesson(false); }
   };
 
+  // Открыт конкретный урок
   if (openData) {
-    const st = openData.meta || {};
-    const isPrimary = st.grade && st.grade <= 4;
-    const isMiddle = st.grade && st.grade >= 5 && st.grade <= 9;
-    const refl = getReflection(st.subject, st.grade, st.topic);
-    const [libReflOpen, setLibReflOpen] = useState(false);
-    const [libReflDone, setLibReflDone] = useState(!!refl);
-    const currentRefl = libReflDone ? getReflection(st.subject, st.grade, st.topic) : null;
     return (
-      <div>
-        <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
-          <Btn variant="secondary" onClick={() => setOpenData(null)}>← Назад в библиотеку</Btn>
-          <Btn
-            variant={libReflDone ? "ghost" : "accent"}
-            onClick={() => setLibReflOpen(true)}
-            style={libReflDone ? { borderColor: "#16a34a", color: "#16a34a" } : {}}
-          >
-            {libReflDone ? "✅ Рефлексия" : "📋 Провёл урок"}
-          </Btn>
-          <Btn variant="ghost" onClick={onClose} style={{ marginLeft: "auto" }}>✕ Закрыть</Btn>
+      <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 900, display: "flex", alignItems: "flex-start", justifyContent: "center", overflowY: "auto", padding: "24px 16px" }}>
+        <div style={{ background: "#f8fafc", borderRadius: 20, width: "100%", maxWidth: 720, padding: 28, boxShadow: "0 8px 40px rgba(0,0,0,0.2)" }}>
+          <LessonDetailView openData={openData} onBack={() => setOpenData(null)} onClose={onClose} />
         </div>
-        <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 10, padding: "10px 16px", marginBottom: 18, fontSize: 13, color: "#166534" }}>
-          📚 Из библиотеки · {st.subject} {st.grade} кл. · {openData.saved_at ? new Date(openData.saved_at).toLocaleDateString("ru-RU") : ""}
-        </div>
-        {/* Reflection summary block */}
-        {currentRefl && (
-          <div style={{ background: "#fafafa", border: "1px solid #e2e8f0", borderRadius: 10, padding: "12px 16px", marginBottom: 18, fontSize: 13 }}>
-            <div style={{ fontWeight: 600, color: "#374151", marginBottom: 8 }}>📋 Рефлексия после урока</div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-              {currentRefl.rating && <span style={{ padding: "2px 10px", background: "#fef3c7", borderRadius: 12, color: "#92400e" }}>{STAR_LABEL[currentRefl.rating]}</span>}
-              {currentRefl.timing && <span style={{ padding: "2px 10px", background: "#eff6ff", borderRadius: 12, color: "#1d4ed8" }}>{TIMING_SHORT[currentRefl.timing]}</span>}
-              {currentRefl.mood && <span style={{ padding: "2px 10px", background: "#f0fdf4", borderRadius: 12, color: "#166534" }}>{MOOD_EMOJI[currentRefl.mood]} {MOOD_OPTS.find(o => o.v === currentRefl.mood)?.label}</span>}
-              {currentRefl.capture && currentRefl.capture !== "0" && <span style={{ padding: "2px 10px", background: "#f5f3ff", borderRadius: 12, color: "#6d28d9" }}>Захват {currentRefl.capture}</span>}
-            </div>
-            {currentRefl.notes && <div style={{ marginTop: 8, color: "#64748b", fontStyle: "italic" }}>💬 {currentRefl.notes}</div>}
-          </div>
-        )}
-        {isPrimary ? <PrimaryResult data={openData.lesson} state={st} />
-          : isMiddle ? <MiddleResult data={openData.lesson} state={st} />
-          : <StandardResult data={openData.lesson} state={st} />}
-        {libReflOpen && <ReflectionModal state={st} onClose={() => setLibReflOpen(false)} onSaved={() => setLibReflDone(true)} />}
       </div>
     );
   }
 
+  // Поиск — глобальный по всем урокам
+  const searchResults = search.trim()
+    ? (lessons || []).filter(l => l.topic.toLowerCase().includes(search.toLowerCase()) || l.subject.toLowerCase().includes(search.toLowerCase()))
+    : null;
+
+  // Группировка по предметам
+  const subjectMap = {};
+  (lessons || []).forEach(l => {
+    if (!subjectMap[l.subject]) subjectMap[l.subject] = [];
+    subjectMap[l.subject].push(l);
+  });
+  const subjectList = Object.entries(subjectMap).sort((a, b) => b[1].length - a[1].length);
+
+  // Уроки выбранного предмета, сгруппированные по классам
+  const subjectLessons = selectedSubject ? (subjectMap[selectedSubject] || []) : [];
+  const gradeMap = {};
+  subjectLessons.forEach(l => {
+    if (!gradeMap[l.grade]) gradeMap[l.grade] = [];
+    gradeMap[l.grade].push(l);
+  });
+  const gradeList = Object.entries(gradeMap)
+    .sort((a, b) => a[0] - b[0])
+    .map(([g, ls]) => [Number(g), ls.sort((a, b) => (a.lesson_num || 0) - (b.lesson_num || 0))]);
+
+  // Subject emoji map
+  const subjectEmoji = (s) => {
+    const lower = s.toLowerCase();
+    if (lower.includes("математик") || lower.includes("алгебр") || lower.includes("геометр")) return "🔢";
+    if (lower.includes("физик")) return "⚡";
+    if (lower.includes("хими")) return "🧪";
+    if (lower.includes("биолог")) return "🌿";
+    if (lower.includes("история")) return "📜";
+    if (lower.includes("общество")) return "🏛️";
+    if (lower.includes("литератур")) return "📖";
+    if (lower.includes("русский")) return "✍️";
+    if (lower.includes("английск") || lower.includes("иностранн")) return "🌍";
+    if (lower.includes("информатик")) return "💻";
+    if (lower.includes("географ")) return "🗺️";
+    if (lower.includes("окружающ")) return "🌱";
+    return "📚";
+  };
+
+  const totalLessons = (lessons || []).length;
+  const conductedCount = (lessons || []).filter(l => getReflection(l.subject, l.grade, l.topic)).length;
+
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 900, display: "flex", alignItems: "flex-start", justifyContent: "center", overflowY: "auto", padding: "24px 16px" }}>
     <div style={{ background: "#f8fafc", borderRadius: 20, width: "100%", maxWidth: 720, minHeight: 300, padding: 28, boxShadow: "0 8px 40px rgba(0,0,0,0.2)" }}>
+
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
         <div>
-          <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: "#1e293b" }}>📚 Библиотека уроков</h2>
-          <div style={{ fontSize: 12, color: "#64748b", marginTop: 3 }}>
-            {lessons === null ? "Загрузка..." : `${lessons.length} урок${lessons.length === 1 ? "" : lessons.length < 5 ? "а" : "ов"} сохранено`}
-          </div>
+          {selectedSubject
+            ? <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <button onClick={() => setSelectedSubject(null)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 20, color: "#64748b", padding: 0 }}>←</button>
+                <div>
+                  <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: "#1e293b" }}>{subjectEmoji(selectedSubject)} {selectedSubject}</h2>
+                  <div style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>{subjectLessons.length} урок{subjectLessons.length === 1 ? "" : subjectLessons.length < 5 ? "а" : "ов"}</div>
+                </div>
+              </div>
+            : <div>
+                <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: "#1e293b" }}>📚 Библиотека уроков</h2>
+                <div style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>
+                  {libLoading ? "Загрузка..." : `${totalLessons} урок${totalLessons === 1 ? "" : totalLessons < 5 ? "а" : "ов"} · ${conductedCount} проведено`}
+                </div>
+              </div>
+          }
         </div>
         <div style={{ display: "flex", gap: 8 }}>
           <Btn variant="secondary" onClick={refresh} style={{ fontSize: 12 }}>↻</Btn>
@@ -1757,54 +1810,91 @@ function LibraryView({ onClose }) {
         </div>
       </div>
 
-      {/* Filters */}
-      <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-        <input
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          placeholder="🔍 Поиск по теме..."
-          style={{ flex: 1, padding: "8px 12px", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 13, outline: "none" }}
-        />
-        <select value={filter.subject} onChange={e => setFilter(f => ({ ...f, subject: e.target.value, grade: "" }))}
-          style={{ padding: "8px 10px", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 13, color: "#374151" }}>
-          <option value="">Все предметы</option>
-          {subjects.map(s => <option key={s} value={s}>{s}</option>)}
-        </select>
-        <select value={filter.grade} onChange={e => setFilter(f => ({ ...f, grade: e.target.value }))}
-          style={{ width: 110, padding: "8px 10px", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 13, color: "#374151" }}>
-          <option value="">Все кл.</option>
-          {[1,2,3,4,5,6,7,8,9,10,11].map(g => <option key={g} value={g}>{g} кл.</option>)}
-        </select>
-      </div>
+      {/* Search (always visible) */}
+      <input value={search} onChange={e => setSearch(e.target.value)}
+        placeholder="🔍 Поиск по теме или предмету..."
+        style={{ width: "100%", padding: "10px 14px", borderRadius: 10, border: "1px solid #e2e8f0", fontSize: 14, outline: "none", marginBottom: 20, boxSizing: "border-box" }} />
 
-      {/* Content */}
+      {/* Loading */}
       {(libLoading || loadingLesson) && (
         <div style={{ textAlign: "center", padding: 48, color: "#64748b" }}>⏳ {loadingLesson ? "Открываю урок..." : "Загрузка..."}</div>
       )}
-      {!libLoading && !loadingLesson && filtered.length === 0 && (
-        <div style={{ textAlign: "center", padding: 56, color: "#94a3b8" }}>
-          <div style={{ fontSize: 40, marginBottom: 12 }}>📭</div>
-          <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 6 }}>
-            {lessons && lessons.length === 0 ? "Библиотека пустая" : "Ничего не найдено"}
-          </div>
-          <div style={{ fontSize: 13 }}>
-            {lessons && lessons.length === 0
-              ? "Сгенерируйте урок и нажмите «💾 Сохранить»"
-              : "Попробуйте изменить фильтры"}
-          </div>
-        </div>
+
+      {!libLoading && !loadingLesson && (
+        <>
+          {/* Search results */}
+          {searchResults !== null && (
+            <>
+              <div style={{ fontSize: 12, color: "#64748b", marginBottom: 12 }}>
+                {searchResults.length === 0 ? "Ничего не найдено" : `Найдено: ${searchResults.length}`}
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {searchResults.map(entry => <LessonCard key={entry.id} entry={entry} onOpen={handleOpen} />)}
+              </div>
+            </>
+          )}
+
+          {/* Subject grid */}
+          {searchResults === null && !selectedSubject && (
+            <>
+              {subjectList.length === 0 ? (
+                <div style={{ textAlign: "center", padding: 56, color: "#94a3b8" }}>
+                  <div style={{ fontSize: 40, marginBottom: 12 }}>📭</div>
+                  <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 6 }}>Библиотека пустая</div>
+                  <div style={{ fontSize: 13 }}>Сгенерируйте урок и нажмите «💾 Сохранить»</div>
+                  <div style={{ fontSize: 12, marginTop: 8, color: "#cbd5e1" }}>Уроки появятся после деплоя Netlify (~2-3 мин)</div>
+                </div>
+              ) : (
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 12 }}>
+                  {subjectList.map(([subj, ls]) => {
+                    const grades = [...new Set(ls.map(l => l.grade))].sort((a, b) => a - b);
+                    const conducted = ls.filter(l => getReflection(l.subject, l.grade, l.topic)).length;
+                    return (
+                      <button key={subj} onClick={() => setSelectedSubject(subj)}
+                        style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 14, padding: "18px 16px", cursor: "pointer", textAlign: "left", transition: "all 0.15s", fontFamily: "inherit" }}
+                        onMouseEnter={e => { e.currentTarget.style.borderColor = "#1e3a5f"; e.currentTarget.style.boxShadow = "0 4px 14px rgba(30,58,95,0.1)"; }}
+                        onMouseLeave={e => { e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.boxShadow = "none"; }}>
+                        <div style={{ fontSize: 28, marginBottom: 8 }}>{subjectEmoji(subj)}</div>
+                        <div style={{ fontWeight: 700, fontSize: 14, color: "#1e293b", marginBottom: 6, lineHeight: 1.3 }}>{subj}</div>
+                        <div style={{ fontSize: 12, color: "#64748b", marginBottom: 8 }}>
+                          {ls.length} урок{ls.length === 1 ? "" : ls.length < 5 ? "а" : "ов"}
+                          {conducted > 0 && <span style={{ color: "#16a34a", marginLeft: 6 }}>· {conducted} ✅</span>}
+                        </div>
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                          {grades.map(g => (
+                            <span key={g} style={{ fontSize: 11, padding: "1px 6px", background: "#eff6ff", color: "#1d4ed8", borderRadius: 8 }}>{g} кл.</span>
+                          ))}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </>
+          )}
+
+          {/* Subject detail — lessons by grade */}
+          {searchResults === null && selectedSubject && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+              {gradeList.map(([grade, ls]) => (
+                <div key={grade}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "#475569", marginBottom: 10, display: "flex", alignItems: "center", gap: 8 }}>
+                    <span style={{ background: "#1e3a5f", color: "#fff", borderRadius: 20, padding: "2px 10px", fontSize: 12 }}>{grade} класс</span>
+                    <span style={{ color: "#94a3b8", fontWeight: 400 }}>{ls.length} урок{ls.length === 1 ? "" : ls.length < 5 ? "а" : "ов"}</span>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    {ls.map(entry => <LessonCard key={entry.id} entry={entry} onOpen={handleOpen} />)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
       )}
-      {!libLoading && !loadingLesson && filtered.length > 0 && (
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          {filtered.map(entry => <LessonCard key={entry.id} entry={entry} onOpen={handleOpen} />)}
-        </div>
-      )}
-      {/* Save note */}
-      {lessons !== null && (
-        <div style={{ marginTop: 20, padding: "10px 14px", background: "#fff", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 12, color: "#94a3b8" }}>
-          💡 Уроки сохраняются в GitHub и появляются здесь после деплоя Netlify (~2-3 мин)
-        </div>
-      )}
+
+      <div style={{ marginTop: 20, padding: "10px 14px", background: "#fff", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 12, color: "#94a3b8" }}>
+        💡 Уроки сохраняются в GitHub и появляются здесь после деплоя Netlify (~2-3 мин)
+      </div>
     </div>
     </div>
   );
