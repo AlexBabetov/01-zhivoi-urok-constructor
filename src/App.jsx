@@ -75,6 +75,14 @@ const CURRICULUM_FILES = {
   "Музыка_1-4":                    "/curriculum/muzyka-1-4.json",
   "Технология_1-4":                "/curriculum/tekhnologiya-1-4.json",
   "Физическая культура_1-4":       "/curriculum/fizkultura-1-4.json",
+  // Средняя и старшая школа — добавлено Sprint 2
+  "Биология_5-9":        "/curriculum/biology-5-9.json",
+  "Физика_7-9":          "/curriculum/fizika-7-9.json",
+  "Информатика_7-9":     "/curriculum/informatika-7-9.json",
+  "История_5-9":         "/curriculum/istoriya-5-9.json",
+  "Обществознание_6-9":  "/curriculum/obshestvo-6-9.json",
+  "Литература_5-9":      "/curriculum/literatura-5-9.json",
+  "География_5-9":       "/curriculum/geografiya-5-9.json",
 };
 
 function getCurriculumKey(subject, grade) {
