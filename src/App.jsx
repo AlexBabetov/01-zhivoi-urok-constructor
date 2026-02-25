@@ -1741,7 +1741,8 @@ function LibraryView({ onClose }) {
   }
 
   return (
-    <div>
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 900, display: "flex", alignItems: "flex-start", justifyContent: "center", overflowY: "auto", padding: "24px 16px" }}>
+    <div style={{ background: "#f8fafc", borderRadius: 20, width: "100%", maxWidth: 720, minHeight: 300, padding: 28, boxShadow: "0 8px 40px rgba(0,0,0,0.2)" }}>
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
         <div>
@@ -1798,6 +1799,13 @@ function LibraryView({ onClose }) {
           {filtered.map(entry => <LessonCard key={entry.id} entry={entry} onOpen={handleOpen} />)}
         </div>
       )}
+      {/* Save note */}
+      {lessons !== null && (
+        <div style={{ marginTop: 20, padding: "10px 14px", background: "#fff", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 12, color: "#94a3b8" }}>
+          💡 Уроки сохраняются в GitHub и появляются здесь после деплоя Netlify (~2-3 мин)
+        </div>
+      )}
+    </div>
     </div>
   );
 }
@@ -1912,6 +1920,7 @@ export default function App() {
         </div>
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
           <Btn variant="ghost" onClick={() => setLibraryOpen(true)} style={{ color: "#fff", borderColor: "rgba(255,255,255,0.2)", fontSize: 12 }}>📚 Библиотека</Btn>
+          <a href="/feedback.html" target="_blank" rel="noopener noreferrer" style={{ color: "#fff", borderColor: "rgba(255,255,255,0.2)", fontSize: 12, padding: "10px 24px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.2)", textDecoration: "none", fontWeight: 600, fontFamily: "inherit", display: "inline-block" }}>📋 Фидбек</a>
           {step > 0 && (
             <Btn variant="ghost" onClick={reset} style={{ color: "#fff", borderColor: "rgba(255,255,255,0.2)", fontSize: 12 }}>↺ Новый урок</Btn>
           )}
