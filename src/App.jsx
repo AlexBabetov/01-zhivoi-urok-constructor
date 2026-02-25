@@ -453,8 +453,9 @@ function CurriculumSelector({ curriculum, grade, onSelect }) {
   const [selectedId, setSelectedId] = useState("");
   if (!curriculum) return null;
 
-  const gradeSections = curriculum.sections.filter(s => s.grade === grade);
+  const gradeSections = (curriculum.sections || []).filter(s => s.grade === grade);
   const gradeLessons = (curriculum.lessons || []).filter(l => l.grade === grade);
+  const sectionsOnly = gradeLessons.length === 0 && gradeSections.length > 0;
 
   const handleChange = (e) => {
     const id = e.target.value;
@@ -467,6 +468,30 @@ function CurriculumSelector({ curriculum, grade, onSelect }) {
   const modelEmoji = { "Тренажёр": "🎯", "Исследование": "🔍", "Практикум": "⚙️", "Восстановление": "🌿", "Квест": "🗺️", "Дискуссия": "💬", "Мастерская": "🎨" };
   const selected = selectedId ? gradeLessons.find(l => l.id === selectedId) : null;
   const selSection = selected ? curriculum.sections.find(s => s.id === selected.section_id) : null;
+  const meta = curriculum.meta || {};
+  const totalH = gradeSections.reduce((acc, s) => acc + (s.hours || 0), 0);
+
+  // ФРП-style JSON: только разделы, без поурочного планирования
+  if (sectionsOnly) {
+    return (
+      <div style={{ marginBottom: 20, padding: 12, borderRadius: 10, background: "#f0fdf4", border: "1px solid #86efac" }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: "#166534", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
+          ✅ Программа загружена
+          <span style={{ fontWeight: 400, color: "#16a34a", fontSize: 12 }}>— разделы ФРП учитываются при генерации</span>
+        </div>
+        <div style={{ fontSize: 12, color: "#15803d", marginBottom: 8 }}>
+          {meta.subject} {meta.grades} кл.{meta.level ? ` · ${meta.level}` : ""} · {grade} класс · {totalH}ч
+        </div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+          {gradeSections.map(sec => (
+            <span key={sec.id || sec.title} style={{ padding: "2px 8px", background: "#dcfce7", borderRadius: 12, fontSize: 11, color: "#166534" }}>
+              {sec.title} ({sec.hours}ч)
+            </span>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ marginBottom: 20 }}>
@@ -525,12 +550,21 @@ function Step1({ state, setState }) {
   const hasCurriculum = !!getCurriculumKey(state.subject, state.grade);
 
   // Auto-inject sections context when curriculum loads (ФРП-style JSONs without lesson detail)
+  // Also clears sectionsCtx when curriculum is null (subject/grade without program)
   useEffect(() => {
-    if (!curriculum || !state.grade) return;
+    if (!state.grade) return;
+    if (!curriculum) {
+      // Нет программы для этого предмета/класса — сбрасываем
+      setState(s => (s.sectionsCtx ? { ...s, sectionsCtx: null } : s));
+      return;
+    }
     const hasCurriculumLessons = !!(curriculum.lessons && curriculum.lessons.length);
     if (!hasCurriculumLessons) {
       const ctx = buildSectionsContext(curriculum, state.grade);
       setState(s => ({ ...s, sectionsCtx: ctx }));
+    } else {
+      // У этого JSON есть поурочное планирование — sectionsCtx не нужен
+      setState(s => (s.sectionsCtx ? { ...s, sectionsCtx: null } : s));
     }
   }, [curriculum, state.grade, setState]);
 
