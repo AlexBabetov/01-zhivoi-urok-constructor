@@ -163,6 +163,34 @@ exports.handler = async (event) => {
 
     console.log(`[save-lesson] OK: ${filePath} (${indexArr.length} в индексе)`);
 
+    // Логируем событие сохранения в Supabase
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (supabaseUrl && supabaseServiceKey && meta.author_email) {
+      try {
+        await fetch(`${supabaseUrl}/rest/v1/lesson_events`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "apikey": supabaseServiceKey,
+            "Authorization": `Bearer ${supabaseServiceKey}`,
+            "Prefer": "return=minimal",
+          },
+          body: JSON.stringify({
+            user_id: meta.author_id || null,
+            user_email: meta.author_email,
+            event_type: "saved",
+            subject: meta.subject,
+            grade: meta.grade,
+            lesson_title: meta.topic,
+            lesson_id: id,
+          }),
+        });
+      } catch (e) {
+        console.warn("[save-lesson] Supabase log error:", e.message);
+      }
+    }
+
     return {
       statusCode: 200,
       headers: CORS,

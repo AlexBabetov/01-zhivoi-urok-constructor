@@ -51,6 +51,48 @@ exports.handler = async (event) => {
     };
   }
 
+  // ── Логируем событие генерации в Supabase ─────────────
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  async function logEvent(eventData) {
+    if (!supabaseUrl || !supabaseKey) return;
+    try {
+      await fetch(`${supabaseUrl}/rest/v1/lesson_events`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": supabaseKey,
+          "Authorization": `Bearer ${supabaseKey}`,
+          "Prefer": "return=minimal",
+        },
+        body: JSON.stringify(eventData),
+      });
+    } catch (e) {
+      console.warn("[generate-lesson] Supabase log error:", e.message);
+    }
+  }
+
+  // Извлекаем данные пользователя из заголовка Authorization
+  let userId = null;
+  let userEmail = null;
+  const authHeader = event.headers.authorization || event.headers.Authorization;
+  if (authHeader && supabaseKey) {
+    try {
+      const token = authHeader.replace("Bearer ", "");
+      const userResp = await fetch(`${supabaseUrl}/auth/v1/user`, {
+        headers: { "Authorization": `Bearer ${token}`, "apikey": supabaseKey },
+      });
+      if (userResp.ok) {
+        const userData = await userResp.json();
+        userId = userData.id;
+        userEmail = userData.email;
+      }
+    } catch (e) {
+      console.warn("[generate-lesson] Auth check error:", e.message);
+    }
+  }
+
   try {
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -76,6 +118,19 @@ exports.handler = async (event) => {
         headers,
         body: JSON.stringify({ error: data.error?.message || "Claude API вернул ошибку" }),
       };
+    }
+
+    // Логируем успешную генерацию
+    if (userEmail) {
+      const subject = body.subject || body.userMessage?.match(/предмет[:\s]+([^\n,]+)/i)?.[1] || null;
+      const grade = body.grade || body.userMessage?.match(/класс[:\s]+([^\n,]+)/i)?.[1] || null;
+      await logEvent({
+        user_id: userId,
+        user_email: userEmail,
+        event_type: "generated",
+        subject: subject?.trim() || null,
+        grade: grade?.trim() || null,
+      });
     }
 
     return { statusCode: 200, headers, body: JSON.stringify(data) };

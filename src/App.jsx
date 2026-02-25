@@ -276,7 +276,7 @@ function buildSystemPrompt(clusterName, clusterProfile, modelName, grade, format
 ${isMiddle ? middleJsonFormat : jsonFormat}`;
 }
 
-async function generateLesson(st) {
+async function generateLesson(st, token) {
   const ck = gc(st.subject);
   const ci = CLUSTERS[ck];
   const mo = MODELS.find(m => m.id === st.model);
@@ -285,14 +285,18 @@ async function generateLesson(st) {
   const sysPrompt = buildSystemPrompt(ci.name, ci.profile, mo.name, st.grade, st.format, effectiveCtx, st.subject);
   const userMsg = `Предмет: ${st.subject}, Класс: ${st.grade}, Тема: ${st.topic}, Модель: ${mo.name} (${mo.mode}), ${st.duration} мин, ${st.format === 'online' ? 'Онлайн' : 'Очный'}${st.notes ? ', Пожелания: ' + st.notes : ''}`;
 
+  const authHeaders = token ? { "Authorization": `Bearer ${token}` } : {};
+
   let response;
   try {
     response = await fetch("/api/generate-lesson", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...authHeaders },
       body: JSON.stringify({
         system: sysPrompt,
         userMessage: userMsg,
+        subject: st.subject,
+        grade: st.grade,
         model: "claude-haiku-4-5-20251001",
         max_tokens: 8000
       })
@@ -1943,9 +1947,11 @@ export default function App({ user }) {
     setLoading(true);
     setError(null);
     let lastErr = null;
+    const { data: { session } } = await supabase.auth.getSession();
+    const token = session?.access_token || null;
     for (let attempt = 0; attempt < 2; attempt++) {
       try {
-        const data = await generateLesson(state);
+        const data = await generateLesson(state, token);
         setResult(data);
         setStep(3);
         setLoading(false);
