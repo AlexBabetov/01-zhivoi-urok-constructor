@@ -75,7 +75,7 @@ const CURRICULUM_FILES = {
   "Музыка_1-4":                    "/curriculum/muzyka-1-4.json",
   "Технология_1-4":                "/curriculum/tekhnologiya-1-4.json",
   "Физическая культура_1-4":       "/curriculum/fizkultura-1-4.json",
-  // Средняя и старшая школа — добавлено Sprint 2
+  // Средняя школа — добавлено Sprint 2
   "Биология_5-9":        "/curriculum/biology-5-9.json",
   "Физика_7-9":          "/curriculum/fizika-7-9.json",
   "Информатика_7-9":     "/curriculum/informatika-7-9.json",
@@ -83,6 +83,16 @@ const CURRICULUM_FILES = {
   "Обществознание_6-9":  "/curriculum/obshestvo-6-9.json",
   "Литература_5-9":      "/curriculum/literatura-5-9.json",
   "География_5-9":       "/curriculum/geografiya-5-9.json",
+  // Старшая школа (СОО) — добавлено Sprint 2
+  "Математика_10-11_база":          "/curriculum/matematika-10-11-baza.json",
+  "Математика_10-11_углублённый":   "/curriculum/matematika-10-11-ugl.json",
+  "Физика_10-11_база":              "/curriculum/fizika-10-11-baza.json",
+  "Физика_10-11_углублённый":       "/curriculum/fizika-10-11-ugl.json",
+  "Русский язык_10-11":             "/curriculum/russian-10-11.json",
+  "История_10-11_база":             "/curriculum/istoriya-10-11-baza.json",
+  "История_10-11_углублённый":      "/curriculum/istoriya-10-11-ugl.json",
+  "Обществознание_10-11_база":      "/curriculum/obshestvo-10-11-baza.json",
+  "Обществознание_10-11_углублённый": "/curriculum/obshestvo-10-11-ugl.json",
 };
 
 function getCurriculumKey(subject, grade) {
@@ -111,6 +121,16 @@ function getCurriculumKey(subject, grade) {
   if (subject === "Обществознание" && grade >= 6 && grade <= 9) return "Обществознание_6-9";
   if (subject === "Литература" && grade >= 5 && grade <= 9) return "Литература_5-9";
   if (subject === "География" && grade >= 5 && grade <= 9) return "География_5-9";
+  // Старшая школа (СОО) — добавлено Sprint 2
+  if (subject === "Математика" && grade >= 10 && grade <= 11) return "Математика_10-11_база";
+  if (subject === "Математика (углублённый)" && grade >= 10 && grade <= 11) return "Математика_10-11_углублённый";
+  if (subject === "Физика" && grade >= 10 && grade <= 11) return "Физика_10-11_база";
+  if (subject === "Физика (углублённый)" && grade >= 10 && grade <= 11) return "Физика_10-11_углублённый";
+  if (subject === "Русский язык" && grade >= 10 && grade <= 11) return "Русский язык_10-11";
+  if (subject === "История" && grade >= 10 && grade <= 11) return "История_10-11_база";
+  if (subject === "История (углублённый)" && grade >= 10 && grade <= 11) return "История_10-11_углублённый";
+  if (subject === "Обществознание" && grade >= 10 && grade <= 11) return "Обществознание_10-11_база";
+  if (subject === "Обществознание (углублённый)" && grade >= 10 && grade <= 11) return "Обществознание_10-11_углублённый";
   return null;
 }
 

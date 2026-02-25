@@ -1,0 +1,106 @@
+{
+  "meta": {
+    "subject": "Физика",
+    "grades": "10-11",
+    "level": "базовый",
+    "total_hours": 131,
+    "source": "ФРП СОО 2025"
+  },
+  "sections": [
+    {
+      "grade": 10,
+      "title": "Физика и методы",
+      "hours": 2
+    },
+    {
+      "grade": 10,
+      "title": "Кинематика",
+      "hours": 5
+    },
+    {
+      "grade": 10,
+      "title": "Динамика",
+      "hours": 7
+    },
+    {
+      "grade": 10,
+      "title": "Законы сохранения",
+      "hours": 6
+    },
+    {
+      "grade": 10,
+      "title": "Основы",
+      "hours": 9
+    },
+    {
+      "grade": 10,
+      "title": "Основы",
+      "hours": 10
+    },
+    {
+      "grade": 10,
+      "title": "Агрегатные",
+      "hours": 5
+    },
+    {
+      "grade": 10,
+      "title": "Электростатика",
+      "hours": 10
+    },
+    {
+      "grade": 10,
+      "title": "Постоянный",
+      "hours": 12
+    },
+    {
+      "grade": 11,
+      "title": "Магнитное поле.",
+      "hours": 11
+    },
+    {
+      "grade": 11,
+      "title": "Механические",
+      "hours": 9
+    },
+    {
+      "grade": 11,
+      "title": "Механические",
+      "hours": 5
+    },
+    {
+      "grade": 11,
+      "title": "Оптика",
+      "hours": 10
+    },
+    {
+      "grade": 11,
+      "title": "Основы специальной",
+      "hours": 4
+    },
+    {
+      "grade": 11,
+      "title": "Элементы квантовой",
+      "hours": 6
+    },
+    {
+      "grade": 11,
+      "title": "Строение атома",
+      "hours": 4
+    },
+    {
+      "grade": 11,
+      "title": "Атомное ядро",
+      "hours": 5
+    },
+    {
+      "grade": 11,
+      "title": "Элементы",
+      "hours": 7
+    },
+    {
+      "grade": 11,
+      "title": "Обобщающее",
+      "hours": 4
+    }
+  ]
+}
