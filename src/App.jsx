@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { supabase } from "./supabase";
+import AdminView from "./AdminView";
 
 // ========== DATA ==========
 const CLUSTERS = {
@@ -1919,6 +1920,7 @@ export default function App({ user }) {
   const [saveError, setSaveError] = useState(null);
   const [reflOpen, setReflOpen] = useState(false);
   const [reflDone, setReflDone] = useState(false);
+  const [adminOpen, setAdminOpen] = useState(false);
 
   // Check if reflection already exists when result is shown
   useEffect(() => {
@@ -2027,6 +2029,11 @@ export default function App({ user }) {
           {step > 0 && (
             <Btn variant="ghost" onClick={reset} style={{ color: "#fff", borderColor: "rgba(255,255,255,0.2)", fontSize: 12 }}>↺ Новый урок</Btn>
           )}
+          {user?.user_metadata?.role === "admin" && (
+            <Btn variant="ghost" onClick={() => setAdminOpen(true)} style={{ color: "#fff", borderColor: "rgba(255,255,255,0.2)", fontSize: 12 }}>
+              👥 Заявки
+            </Btn>
+          )}
           {user && (
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginLeft: 4, borderLeft: "1px solid rgba(255,255,255,0.15)", paddingLeft: 12 }}>
               <span style={{ fontSize: 11, opacity: 0.7, maxWidth: 140, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
@@ -2085,6 +2092,7 @@ export default function App({ user }) {
       </div>
       {reflOpen && <ReflectionModal state={state} onClose={() => setReflOpen(false)} onSaved={() => setReflDone(true)} />}
       {libraryOpen && <LibraryView onClose={() => setLibraryOpen(false)} user={user} />}
+      {adminOpen && <AdminView user={user} onClose={() => setAdminOpen(false)} />}
     </div>
   );
 }
