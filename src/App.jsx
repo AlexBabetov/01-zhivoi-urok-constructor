@@ -1752,7 +1752,8 @@ function useLessons() {
   const [libLoading, setLibLoading] = useState(false);
   const refresh = useCallback(() => {
     setLibLoading(true);
-    fetch(`/lessons/index.json?t=${Date.now()}`)
+    // Читаем напрямую из GitHub через API-функцию — без ожидания CF Pages деплоя
+    fetch(`/api/lessons?t=${Date.now()}`)
       .then(r => r.ok ? r.json() : [])
       .then(data => { setLessons(Array.isArray(data) ? data : []); setLibLoading(false); })
       .catch(() => { setLessons([]); setLibLoading(false); });
@@ -1856,9 +1857,12 @@ function LibraryView({ onClose, user }) {
   const handleOpen = async (entry) => {
     setLoadingLesson(true);
     try {
-      const resp = await fetch(`/lessons/${entry.filename}?t=${Date.now()}`);
-      if (!resp.ok) throw new Error("Файл не найден. Возможно, урок ещё не задеплоен (~2-3 мин после сохранения).");
-      setOpenData(await resp.json());
+      // Читаем напрямую из GitHub через API — без задержки CF Pages деплоя
+      const resp = await fetch(`/api/lessons?file=${encodeURIComponent(entry.filename)}&t=${Date.now()}`);
+      if (!resp.ok) throw new Error("Урок не найден на сервере.");
+      const data = await resp.json();
+      if (data.error) throw new Error(data.error);
+      setOpenData(data);
     } catch (e) { alert("Ошибка: " + e.message); }
     finally { setLoadingLesson(false); }
   };
