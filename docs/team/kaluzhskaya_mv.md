@@ -6,7 +6,7 @@ owner: babetov_aa@koriphey.ru
 tags: [team]
 ---
 
-# Калужская Мария Викторовна
+# Калужская Мария Владимировна
 
 **Email:** kaluzhskaya_mv@koriphey.ru
 **Роль:** teacher (пилотный пользователь)
