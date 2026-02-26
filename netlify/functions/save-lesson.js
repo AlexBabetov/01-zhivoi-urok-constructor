@@ -22,6 +22,39 @@ exports.handler = async (event) => {
     return { statusCode: 405, headers: CORS, body: JSON.stringify({ error: "Method not allowed" }) };
   }
 
+  // ── Проверяем JWT и роль пользователя ─────────────────
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !supabaseServiceKey) {
+    return { statusCode: 500, headers: CORS, body: JSON.stringify({ error: "Auth сервис не настроен" }) };
+  }
+
+  const authHeader = event.headers.authorization || event.headers.Authorization;
+  if (!authHeader) {
+    return { statusCode: 401, headers: CORS, body: JSON.stringify({ error: "Требуется авторизация" }) };
+  }
+
+  let verifiedUser;
+  try {
+    const jwtToken = authHeader.replace("Bearer ", "");
+    const userResp = await fetch(`${supabaseUrl}/auth/v1/user`, {
+      headers: { "Authorization": `Bearer ${jwtToken}`, "apikey": supabaseServiceKey },
+    });
+    if (!userResp.ok) {
+      return { statusCode: 401, headers: CORS, body: JSON.stringify({ error: "Недействительный токен" }) };
+    }
+    verifiedUser = await userResp.json();
+  } catch (e) {
+    return { statusCode: 401, headers: CORS, body: JSON.stringify({ error: "Ошибка проверки токена" }) };
+  }
+
+  const userRole = verifiedUser.user_metadata?.role;
+  if (!userRole || !["teacher", "admin"].includes(userRole)) {
+    return { statusCode: 403, headers: CORS, body: JSON.stringify({ error: "Доступ запрещён: только для учителей и администраторов" }) };
+  }
+  // ─────────────────────────────────────────────────────
+
   const token = process.env.GITHUB_TOKEN;
   const repo = process.env.GITHUB_REPO || "AlexBabetov/01-zhivoi-urok-constructor";
 
@@ -50,6 +83,10 @@ exports.handler = async (event) => {
     };
   }
 
+  // Перезаписываем автора из верифицированного JWT — не доверяем клиентским данным
+  meta.author_id = verifiedUser.id;
+  meta.author_email = verifiedUser.email;
+
   // ── Построение пути файла ─────────────────────────────
   const subjectSlug = meta.subject
     .toLowerCase()
@@ -69,7 +106,8 @@ exports.handler = async (event) => {
   const filePath = `public/lessons/${subjectSlug}/${meta.grade}/${filename}`;
   const indexPath = `public/lessons/index.json`;
   const savedAt = new Date().toISOString();
-  const id = `${subjectSlug}-${meta.grade}-${lessonNum}`;
+  // ID включает topicSlug чтобы избежать коллизий при одинаковом lesson_num для разных тем
+  const id = `${subjectSlug}-${meta.grade}-${lessonNum}-${topicSlug.slice(0, 20)}`;
 
   // ── GitHub API helpers ────────────────────────────────
   const ghHeaders = {
@@ -163,9 +201,7 @@ exports.handler = async (event) => {
 
     console.log(`[save-lesson] OK: ${filePath} (${indexArr.length} в индексе)`);
 
-    // Логируем событие сохранения в Supabase
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    // Логируем событие сохранения в Supabase (supabaseUrl/supabaseServiceKey объявлены выше)
     if (supabaseUrl && supabaseServiceKey && meta.author_email) {
       try {
         await fetch(`${supabaseUrl}/rest/v1/lesson_events`, {
