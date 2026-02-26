@@ -1,0 +1,5 @@
+# Прокси Supabase: обрабатывается через CF Pages Function functions/_supabase/[[catchall]].js
+# (CF Pages не поддерживает proxy-rewrite к внешним доменам через _redirects)
+
+# SPA catch-all — все пути отдают index.html (React Router)
+/* /index.html 200

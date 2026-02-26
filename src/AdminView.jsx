@@ -13,7 +13,7 @@ function AnalyticsTab() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
-      const res = await fetch("/.netlify/functions/get-analytics", {
+      const res = await fetch("/api/get-analytics", {
         headers: { "Authorization": `Bearer ${token}` },
       });
       if (!res.ok) throw new Error(`Ошибка сервера: ${res.status}`);
@@ -182,7 +182,7 @@ function PendingUsersTab() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
-      const res = await fetch("/.netlify/functions/list-pending-users", {
+      const res = await fetch("/api/list-pending-users", {
         headers: { "Authorization": `Bearer ${token}` },
       });
       if (!res.ok) throw new Error(`Ошибка сервера: ${res.status}`);
@@ -201,7 +201,7 @@ function PendingUsersTab() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
-      const res = await fetch("/.netlify/functions/update-user-status", {
+      const res = await fetch("/api/update-user-status", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

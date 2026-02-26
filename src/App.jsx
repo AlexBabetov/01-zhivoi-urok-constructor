@@ -152,8 +152,9 @@ function useCurriculum(subject, grade) {
   const [data, setData] = useState(null);
   const cache = useRef({});
   useEffect(() => {
+    setData(null); // always reset immediately on subject/grade change
     const key = getCurriculumKey(subject, grade);
-    if (!key) { setData(null); return; }
+    if (!key) return;
     if (cache.current[key]) { setData(cache.current[key]); return; }
     fetch(CURRICULUM_FILES[key])
       .then(r => r.json())
@@ -635,7 +636,10 @@ function ReflectionModal({ state, onClose, onSaved }) {
 
 // ========== CURRICULUM SELECTOR ==========
 function CurriculumSelector({ curriculum, grade, onSelect }) {
+  // All hooks must be declared at the top level (React rules of hooks)
   const [selectedId, setSelectedId] = useState("");
+  const [selSectionKey, setSelSectionKey] = useState("");
+
   if (!curriculum) return null;
 
   const gradeSections = (curriculum.sections || []).filter(s => s.grade === grade);
@@ -652,13 +656,12 @@ function CurriculumSelector({ curriculum, grade, onSelect }) {
 
   const modelEmoji = { "Тренажёр": "🎯", "Исследование": "🔍", "Практикум": "⚙️", "Восстановление": "🌿", "Квест": "🗺️", "Дискуссия": "💬", "Мастерская": "🎨" };
   const selected = selectedId ? gradeLessons.find(l => l.id === selectedId) : null;
-  const selSection = selected ? curriculum.sections.find(s => s.id === selected.section_id) : null;
+  const selSection = selected ? (curriculum.sections || []).find(s => s.id === selected.section_id) : null;
   const meta = curriculum.meta || {};
   const totalH = gradeSections.reduce((acc, s) => acc + (s.hours || 0), 0);
 
   // ФРП-style JSON: только разделы, без поурочного планирования
   if (sectionsOnly) {
-    const [selSectionKey, setSelSectionKey] = useState("");
     const selectedSection = selSectionKey ? gradeSections.find(s => (s.id || s.title) === selSectionKey) : null;
     const handleSectionChange = (e) => {
       const key = e.target.value;
@@ -989,7 +992,7 @@ function Step3({ state, onGenerate, loading, error }) {
 }
 
 // ========== DOCX EXPORT (HTML-based, works in iframe) ==========
-function exportPrimaryDocx(data, state) {
+function buildPrimaryHtml(data, state) {
   const p = data.passport || {};
   const w = data.warmup || {};
   const dev = data.development || {};
@@ -1099,14 +1102,16 @@ function exportPrimaryDocx(data, state) {
     }
   }
 
-  // Climax
-  html += `<h2>🎬 АКТ III: КУЛЬМИНАЦИЯ</h2>`;
-  if (cl.humanitarian_question) html += `<div class="climax-box"><b>💭 Гуманитарный вопрос:</b> ${esc(cl.humanitarian_question)}</div>`;
-  if (cl.practical_question) html += `<div class="climax-box"><b>🔍 Практический вопрос:</b> ${esc(cl.practical_question)}</div>`;
-  if (cl.choral && cl.choral.length > 0) {
-    html += `<p><b>📣 Хоровое закрепление:</b></p><ul>${cl.choral.map(c => `<li>${esc(c)}</li>`).join('')}</ul>`;
+  // Climax — только если есть хотя бы одно поле
+  if (cl.humanitarian_question || cl.practical_question || (cl.choral && cl.choral.length > 0) || cl.i_can_now) {
+    html += `<h2>🎬 АКТ III: КУЛЬМИНАЦИЯ</h2>`;
+    if (cl.humanitarian_question) html += `<div class="climax-box"><b>💭 Гуманитарный вопрос:</b> ${esc(cl.humanitarian_question)}</div>`;
+    if (cl.practical_question) html += `<div class="climax-box"><b>🔍 Практический вопрос:</b> ${esc(cl.practical_question)}</div>`;
+    if (cl.choral && cl.choral.length > 0) {
+      html += `<p><b>📣 Хоровое закрепление:</b></p><ul>${cl.choral.map(c => `<li>${esc(c)}</li>`).join('')}</ul>`;
+    }
+    if (cl.i_can_now) html += `<p style="text-align:center;font-size:13pt;font-weight:bold;color:#92400e;background:#fef3c7;padding:10px;border-radius:8px">💪 ${esc(cl.i_can_now)}</p>`;
   }
-  if (cl.i_can_now) html += `<p style="text-align:center;font-size:13pt;font-weight:bold;color:#92400e;background:#fef3c7;padding:10px;border-radius:8px">💪 ${esc(cl.i_can_now)}</p>`;
 
   // Homework
   if (hw.basic || hw.creative) {
@@ -1134,17 +1139,279 @@ function exportPrimaryDocx(data, state) {
     html += `<h2>📝 Заметки для учителя</h2><p style="background:#fffbeb;padding:12px;border-radius:8px;border:1px solid #fbbf24">${esc(data.teacher_notes)}</p>`;
   }
 
-  html += `</body></html>`;
+  // Защитный рендер стандартного формата (capture/timeline) если первичный формат не заполнен
+  if (!data.captures && !data.warmup && (data.capture || data.timeline)) {
+    if (data.capture) {
+      html += `<h2>⚡ Захват</h2><div class="capture-box">`;
+      if (data.capture.technique) html += `<p><b>Приём:</b> ${esc(data.capture.technique)} (${data.capture.duration||5} мин)</p>`;
+      if (data.capture.text)      html += `<p><b>📢 Учитель:</b> ${esc(data.capture.text)}</p>`;
+      html += `</div>`;
+    }
+    if (data.first_win) {
+      html += `<h2>🏆 Первая победа</h2><div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:12px;margin:8px 0">`;
+      html += `<p>${esc(data.first_win.task)}</p>`;
+      if (data.first_win.duration) html += `<p style="color:#64748b;font-size:10pt">⏱ ${data.first_win.duration} мин</p>`;
+      html += `</div>`;
+    }
+    if (data.timeline && data.timeline.length > 0) {
+      html += `<h2>⏱️ Таймлайн урока</h2><table><tr><th>Этап</th><th>Мин</th><th>Учитель</th><th>Ученики</th><th>Материалы / Совет</th></tr>`;
+      data.timeline.forEach(p => {
+        const tip = p.tip ? (p.materials ? '<br>' : '') + '💡 ' + esc(p.tip) : '';
+        html += `<tr><td><b>${esc(p.phase)}</b></td><td style="text-align:center">${esc(String(p.duration||''))}</td><td>${esc(p.activity||'')}</td><td>${esc(p.students||'')}</td><td><i>${esc(p.materials||'')}${tip}</i></td></tr>`;
+      });
+      html += `</table>`;
+    }
+    if (data.tasks) {
+      html += `<h2>📝 Задания по уровням</h2>`;
+      [['green','🟢 Базовый'],['yellow','🟡 Продвинутый'],['red','🔴 Босс-задача']].forEach(([k,label]) => {
+        const items = Array.isArray(data.tasks[k]) ? data.tasks[k] : (data.tasks[k] ? [data.tasks[k]] : []);
+        if (items.length) html += `<p><b>${label}:</b></p><ul>${items.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`;
+      });
+    }
+    if (data.feedback) {
+      html += `<h2>📊 Обратная связь</h2><div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0">`;
+      if (data.feedback.method)      html += `<p><b>Метод:</b> ${esc(data.feedback.method)}</p>`;
+      if (data.feedback.exit_ticket) html += `<p><b>🎫 Билет на выход:</b> ${esc(data.feedback.exit_ticket)}</p>`;
+      html += `</div>`;
+    }
+  }
 
-  // Download as .doc (Word opens HTML files natively)
+  html += `</body></html>`;
+  return html;
+}
+
+function exportPrimaryDocx(data, state) {
+  const html = buildPrimaryHtml(data, state);
+  const cleanTopic = (state.topic || 'урок').replace(/[^\wа-яА-ЯёЁ\s]/g, '').trim().replace(/\s+/g, '_').slice(0, 40);
   const blob = new Blob([html], { type: 'application/msword' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  const cleanTopic = (state.topic || 'урок').replace(/[^\wа-яА-ЯёЁ\s]/g, '').trim().replace(/\s+/g, '_').slice(0, 40);
   a.download = `Урок_${state.grade}кл_${cleanTopic}.doc`;
   document.body.appendChild(a);
   a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// Универсальная PDF-печать — открывает HTML в новом окне и вызывает print()
+function printLesson(html) {
+  const win = window.open('', '_blank');
+  if (!win) { alert("Браузер заблокировал всплывающее окно. Разрешите pop-up для этого сайта и попробуйте снова."); return; }
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+  // Флаг чтобы print() вызвался ровно один раз
+  let printed = false;
+  const doPrint = () => {
+    if (printed) return;
+    printed = true;
+    try { win.print(); } catch(e) {}
+  };
+  // Ждём события load чтобы весь контент был отрисован до вызова print()
+  win.onload = () => setTimeout(doPrint, 300);
+  // Запасной таймер на случай если onload уже сработал до назначения обработчика
+  setTimeout(doPrint, 1500);
+}
+
+// HTML для старшей школы (10+): capture, first_win, timeline, tasks, feedback
+function buildStandardHtml(data, state) {
+  const esc = (s) => (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const css = `
+    body { font-family: Arial, sans-serif; font-size: 11pt; color: #1e293b; max-width: 700px; margin: 0 auto; padding: 20px; }
+    h1 { color: #1e3a5f; font-size: 18pt; text-align: center; margin-bottom: 4px; }
+    h2 { color: #1e3a5f; font-size: 14pt; border-bottom: 2px solid #1e3a5f; padding-bottom: 4px; margin-top: 24px; }
+    .subtitle { text-align: center; color: #666; font-size: 10pt; margin-bottom: 20px; }
+    .box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 8px 0; }
+    .capture-box { background: #fffbeb; border: 1px solid #fbbf24; border-radius: 8px; padding: 12px; margin: 8px 0; }
+    .win-box { background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; padding: 12px; margin: 8px 0; }
+    table { border-collapse: collapse; width: 100%; margin: 8px 0; }
+    td, th { border: 1px solid #ccc; padding: 6px 10px; font-size: 10pt; vertical-align: top; }
+    th { background: #1e3a5f; color: #fff; font-weight: bold; }
+    ul { margin: 4px 0 4px 20px; } li { margin-bottom: 3px; }
+    @page { margin: 15mm; size: A4; }
+    @media print {
+      body { max-width: 100%; padding: 0; }
+      h2, h3 { page-break-after: avoid; break-after: avoid; }
+      .box, .capture-box, .win-box, .kori-box, .guild-box { page-break-inside: avoid; break-inside: avoid; }
+      tr { page-break-inside: avoid; break-inside: avoid; }
+      table { break-inside: auto; }
+    }
+  `;
+  let html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${esc(state.topic)}</title><style>${css}</style></head><body>`;
+  html += `<h1>${esc(state.topic)}</h1>`;
+  html += `<div class="subtitle">${esc((state.subject||'').toUpperCase())} • ${state.grade} КЛАСС • ${state.duration||45} МИН • Методология «Живой урок 360» • Образовательная сеть «Корифей» • 2026</div>`;
+
+  if (data.capture) {
+    html += `<h2>⚡ Захват</h2><div class="capture-box">`;
+    if (data.capture.technique) html += `<p><b>Приём:</b> ${esc(data.capture.technique)} (${data.capture.duration||5} мин)</p>`;
+    if (data.capture.text)      html += `<p><b>📢 Учитель:</b> ${esc(data.capture.text)}</p>`;
+    html += `</div>`;
+  }
+  if (data.first_win) {
+    html += `<h2>🏆 Первая победа (до теории)</h2><div class="win-box">`;
+    html += `<p>${esc(data.first_win.task)}</p>`;
+    if (data.first_win.duration) html += `<p style="color:#64748b;font-size:10pt">⏱ ${data.first_win.duration} мин</p>`;
+    html += `</div>`;
+  }
+  if (data.timeline && data.timeline.length > 0) {
+    html += `<h2>⏱️ Таймлайн урока</h2><table><tr><th>Этап</th><th>Мин</th><th>Учитель</th><th>Ученики</th><th>Материалы / Совет</th></tr>`;
+    data.timeline.forEach(p => {
+      html += `<tr><td><b>${esc(p.phase)}</b></td><td style="text-align:center">${esc(String(p.duration||''))}</td><td>${esc(p.activity||'')}</td><td>${esc(p.students||'')}</td><td><i>${esc(p.materials||'')}${p.tip ? (p.materials?'<br>':'') + '💡 ' + esc(p.tip) : ''}</i></td></tr>`;
+    });
+    html += `</table>`;
+  }
+  if (data.tasks) {
+    html += `<h2>📝 Задания по уровням</h2>`;
+    const levels = [['green','🟢 Базовый'],['yellow','🟡 Продвинутый'],['red','🔴 Босс-задача']];
+    levels.forEach(([k,label]) => {
+      const items = Array.isArray(data.tasks[k]) ? data.tasks[k] : (data.tasks[k] ? [data.tasks[k]] : []);
+      if (items.length) html += `<p><b>${label}:</b></p><ul>${items.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`;
+    });
+  }
+  if (data.feedback) {
+    html += `<h2>📊 Обратная связь</h2><div class="box">`;
+    if (data.feedback.method)      html += `<p><b>Метод:</b> ${esc(data.feedback.method)}</p>`;
+    if (data.feedback.exit_ticket) html += `<p><b>🎫 Билет на выход:</b> ${esc(data.feedback.exit_ticket)}</p>`;
+    html += `</div>`;
+  }
+  if (data.teacher_notes) html += `<h2>📝 Заметки для учителя</h2><div class="box"><p>${esc(data.teacher_notes)}</p></div>`;
+  html += `</body></html>`;
+  return html;
+}
+
+function exportStandardDocx(data, state) {
+  const html = buildStandardHtml(data, state);
+  const cleanTopic = (state.topic||'урок').replace(/[^\wа-яА-ЯёЁ\s]/g,'').trim().replace(/\s+/g,'_').slice(0,40);
+  const blob = new Blob([html], { type: 'application/msword' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Урок_${state.grade}кл_${cleanTopic}.doc`;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// HTML для средней школы (5-9): passport, captures, first_win, development, guild_task, tasks, reflection
+function buildMiddleHtml(data, state) {
+  const esc = (s) => (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const css = `
+    body { font-family: Arial, sans-serif; font-size: 11pt; color: #1e293b; max-width: 700px; margin: 0 auto; padding: 20px; }
+    h1 { color: #1e3a5f; font-size: 18pt; text-align: center; margin-bottom: 4px; }
+    h2 { color: #1e3a5f; font-size: 14pt; border-bottom: 2px solid #1e3a5f; padding-bottom: 4px; margin-top: 24px; }
+    h3 { color: #475569; font-size: 12pt; margin-top: 14px; }
+    .subtitle { text-align: center; color: #666; font-size: 10pt; margin-bottom: 20px; }
+    .box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 8px 0; }
+    .capture-box { background: #fffbeb; border: 1px solid #fbbf24; border-radius: 8px; padding: 12px; margin: 8px 0; }
+    .kori-box { background: #f5f3ff; border: 1px solid #c4b5fd; border-radius: 8px; padding: 10px; margin: 6px 0; }
+    .guild-box { background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 12px; margin: 6px 0; }
+    table { border-collapse: collapse; width: 100%; margin: 8px 0; }
+    td, th { border: 1px solid #ccc; padding: 6px 10px; font-size: 10pt; vertical-align: top; }
+    th { background: #1e3a5f; color: #fff; font-weight: bold; }
+    ul { margin: 4px 0 4px 20px; } li { margin-bottom: 3px; }
+    @page { margin: 15mm; size: A4; }
+    @media print {
+      body { max-width: 100%; padding: 0; }
+      h2, h3 { page-break-after: avoid; break-after: avoid; }
+      .box, .capture-box, .win-box, .kori-box, .guild-box { page-break-inside: avoid; break-inside: avoid; }
+      tr { page-break-inside: avoid; break-inside: avoid; }
+      table { break-inside: auto; }
+    }
+  `;
+  const p = data.passport || {};
+  const dev = data.development || {};
+  const guild = data.guild_task || {};
+  const refl = data.reflection || {};
+
+  let html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${esc(state.topic)}</title><style>${css}</style></head><body>`;
+  html += `<h1>${esc(state.topic)}</h1>`;
+  html += `<div class="subtitle">${esc((state.subject||'').toUpperCase())} • ${state.grade} КЛАСС • ${state.duration||45} МИН • Методология «Живой урок 360» • Образовательная сеть «Корифей» • 2026</div>`;
+
+  // Passport
+  if (p.emotional_goal || p.educational_goal || p.key_concept) {
+    html += `<h2>📋 Паспорт урока</h2><table>`;
+    if (p.type)             html += `<tr><td style="width:35%;font-weight:bold">Тип урока</td><td>${esc(p.type)}</td></tr>`;
+    if (p.emotional_goal)   html += `<tr><td style="font-weight:bold">🎯 Эмоц. цель</td><td>${esc(p.emotional_goal)}</td></tr>`;
+    if (p.educational_goal) html += `<tr><td style="font-weight:bold">📚 Образ. цель</td><td>${esc(p.educational_goal)}</td></tr>`;
+    if (p.key_concept)      html += `<tr><td style="font-weight:bold">🔑 Ключевое понятие</td><td>${esc(p.key_concept)}</td></tr>`;
+    html += `</table>`;
+  }
+
+  // Captures (3 варианта)
+  if (data.captures && data.captures.length > 0) {
+    html += `<h2>⚡ АКТ I: ЗАХВАТ — три варианта (выберите один)</h2>`;
+    data.captures.forEach((c, i) => {
+      html += `<div class="capture-box"><h3>${i+1}. ${esc(c.style)}: «${esc(c.name)}»</h3>`;
+      html += `<p><i>Приём: ${esc(c.technique)}</i></p>`;
+      if (c.text)      html += `<p><b>📢 Учитель:</b> ${esc(c.text)}</p>`;
+      if (c.kori_role) html += `<div class="kori-box"><b>🎒 Кори:</b> ${esc(c.kori_role)}</div>`;
+      html += `</div>`;
+    });
+  }
+
+  // First win
+  if (data.first_win) {
+    html += `<h2>🏆 Первая победа (${data.first_win.duration||5} мин)</h2>`;
+    html += `<div class="box"><p>${esc(data.first_win.task)}</p></div>`;
+  }
+
+  // Development
+  if (dev.key_points || dev.teacher_text || dev.kori || dev.traps) {
+    html += `<h2>📚 АКТ II: РАЗВИТИЕ</h2>`;
+    if (dev.key_points) {
+      html += `<p><b>Ключевые точки:</b></p><ul>${dev.key_points.map(k=>`<li>${esc(k)}</li>`).join('')}</ul>`;
+    }
+    if (dev.teacher_text) html += `<p><b>📢 Учитель:</b> ${esc(dev.teacher_text)}</p>`;
+    if (dev.kori) {
+      html += `<div class="kori-box"><b>🎒 Кори (${esc(dev.kori.role)}):</b> «${esc(dev.kori.text)}»</div>`;
+    }
+    if (dev.traps && dev.traps.length > 0) {
+      html += `<p><b>⚠️ Ловушки (ученики ловят ошибки учителя):</b></p><ul>${dev.traps.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`;
+    }
+  }
+
+  // Guild task
+  if (guild.guilds && guild.guilds.length > 0) {
+    html += `<h2>🏰 Задание по гильдиям</h2>`;
+    guild.guilds.forEach(g => {
+      html += `<div class="guild-box"><b>${esc(g.name)}:</b> ${esc(g.task)}</div>`;
+    });
+    if (guild.discussion_question) html += `<p><b>💬 Вопрос для общего обсуждения:</b> ${esc(guild.discussion_question)}</p>`;
+  }
+
+  // Tasks
+  if (data.tasks) {
+    html += `<h2>📝 АКТ III: ЗАДАНИЯ ПО УРОВНЯМ</h2>`;
+    const levels = [['green','🟢 Базовый'],['yellow','🟡 Продвинутый'],['red','🔴 Босс-задача']];
+    levels.forEach(([k,label]) => {
+      const items = Array.isArray(data.tasks[k]) ? data.tasks[k] : (data.tasks[k] ? [data.tasks[k]] : []);
+      if (items.length) html += `<p><b>${label}:</b></p><ul>${items.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`;
+    });
+  }
+
+  // Reflection
+  if (refl.content || refl.process) {
+    html += `<h2>🪞 Двойная рефлексия</h2><div class="box">`;
+    if (refl.content) html += `<p><b>Контент (что изменилось в понимании?):</b> ${esc(refl.content)}</p>`;
+    if (refl.process) html += `<p><b>Процесс (как работал?):</b> ${esc(refl.process)}</p>`;
+    html += `</div>`;
+  }
+
+  if (data.teacher_notes) html += `<h2>📝 Заметки для учителя</h2><div class="box"><p>${esc(data.teacher_notes)}</p></div>`;
+  html += `</body></html>`;
+  return html;
+}
+
+function exportMiddleDocx(data, state) {
+  const html = buildMiddleHtml(data, state);
+  const cleanTopic = (state.topic||'урок').replace(/[^\wа-яА-ЯёЁ\s]/g,'').trim().replace(/\s+/g,'_').slice(0,40);
+  const blob = new Blob([html], { type: 'application/msword' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Урок_${state.grade}кл_${cleanTopic}.doc`;
+  document.body.appendChild(a); a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
@@ -1187,11 +1454,16 @@ function PrimaryResult({ data, state }) {
       <div style={{ background: "#f0f4ff", borderRadius: 12, padding: 20, marginBottom: 24, border: "1px solid #c7d2fe" }}>
         <div style={{ fontSize: 20, fontWeight: 800, color: "#1e3a5f", marginBottom: 4 }}>{state.topic}</div>
         <div style={{ fontSize: 14, color: "#475569", marginBottom: 12 }}>{p.type} • {state.grade} класс • {state.subject}</div>
-        <button onClick={handleExport} disabled={exporting} style={{
-          background: "#10b981", color: "#fff", border: "none", borderRadius: 8, padding: "10px 20px",
-          fontSize: 14, fontWeight: 700, cursor: exporting ? "wait" : "pointer", opacity: exporting ? 0.6 : 1,
-          width: "100%", marginBottom: 12
-        }}>{exporting ? "⏳ Создаём документ..." : "📥 Скачать план урока (.doc)"}</button>
+        <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+          <button onClick={handleExport} disabled={exporting} style={{
+            flex: 1, background: "#10b981", color: "#fff", border: "none", borderRadius: 8, padding: "10px 16px",
+            fontSize: 13, fontWeight: 700, cursor: exporting ? "wait" : "pointer", opacity: exporting ? 0.6 : 1,
+          }}>{exporting ? "⏳..." : "📥 Word (.doc)"}</button>
+          <button onClick={() => { const h = buildPrimaryHtml(data, state); printLesson(h); }} style={{
+            flex: 1, background: "#6366f1", color: "#fff", border: "none", borderRadius: 8, padding: "10px 16px",
+            fontSize: 13, fontWeight: 700, cursor: "pointer",
+          }}>🖨️ PDF (печать)</button>
+        </div>
         <div style={{ fontSize: 14, color: "#475569", marginBottom: 12 }}>{p.type} • {state.grade} класс • {state.subject}</div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, fontSize: 13 }}>
           <div><strong>🎯 Эмоциональная цель:</strong> {p.emotional_goal}</div>
@@ -1397,17 +1669,34 @@ function PrimaryResult({ data, state }) {
 
 // ========== STEP 4: Result (Standard for 5-11) ==========
 function StandardResult({ data, state }) {
+  const [exporting, setExporting] = useState(false);
   const clInfo = CLUSTERS[gc(state.subject)];
   const model = MODELS.find(m => m.id === state.model);
+
+  const handleExport = () => {
+    setExporting(true);
+    try { exportStandardDocx(data, state); } catch(e) { alert("Ошибка экспорта: " + e.message); }
+    setExporting(false);
+  };
 
   return (
     <div>
       <div style={{ background: "#f0f4ff", borderRadius: 12, padding: 20, marginBottom: 24, border: "1px solid #c7d2fe" }}>
         <div style={{ fontSize: 20, fontWeight: 800, color: "#1e3a5f", marginBottom: 8 }}>{state.topic}</div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, fontSize: 13 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, fontSize: 13, marginBottom: 12 }}>
           <span style={{ padding: "3px 10px", background: "#e0e7ff", borderRadius: 20, color: "#3730a3" }}>{state.grade} класс • {state.subject}</span>
           <span style={{ padding: "3px 10px", background: "#fef3c7", borderRadius: 20, color: "#92400e" }}>{model?.emoji} {model?.name}</span>
           <span style={{ padding: "3px 10px", background: "#f1f5f9", borderRadius: 20, color: "#475569" }}>{state.duration} мин</span>
+        </div>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button onClick={handleExport} disabled={exporting} style={{
+            flex: 1, background: "#10b981", color: "#fff", border: "none", borderRadius: 8, padding: "10px 16px",
+            fontSize: 13, fontWeight: 700, cursor: exporting ? "wait" : "pointer", opacity: exporting ? 0.6 : 1,
+          }}>{exporting ? "⏳..." : "📥 Word (.doc)"}</button>
+          <button onClick={() => { const h = buildStandardHtml(data, state); printLesson(h); }} style={{
+            flex: 1, background: "#6366f1", color: "#fff", border: "none", borderRadius: 8, padding: "10px 16px",
+            fontSize: 13, fontWeight: 700, cursor: "pointer",
+          }}>🖨️ PDF (печать)</button>
         </div>
       </div>
 
@@ -1476,11 +1765,18 @@ function StandardResult({ data, state }) {
 // ========== STEP 4: Result (Middle School 5-9) ==========
 function MiddleResult({ data, state }) {
   const [openCapture, setOpenCapture] = useState(0);
+  const [exporting, setExporting] = useState(false);
   const clInfo = CLUSTERS[gc(state.subject)];
   const model = MODELS.find(m => m.id === state.model);
   const p = data.passport || {};
   const dev = data.development || {};
   const guild = data.guild_task || {};
+
+  const handleExport = () => {
+    setExporting(true);
+    try { exportMiddleDocx(data, state); } catch(e) { alert("Ошибка экспорта: " + e.message); }
+    setExporting(false);
+  };
 
   const InfoBox = ({ bg, border, children }) => (
     <div style={{ padding: 14, borderRadius: 10, background: bg, border: `1px solid ${border}`, marginBottom: 8, fontSize: 13, lineHeight: 1.6 }}>{children}</div>
@@ -1498,6 +1794,16 @@ function MiddleResult({ data, state }) {
       <div style={{ background: "#f0f4ff", borderRadius: 12, padding: 20, marginBottom: 24, border: "1px solid #c7d2fe" }}>
         <div style={{ fontSize: 20, fontWeight: 800, color: "#1e3a5f", marginBottom: 4 }}>{state.topic}</div>
         <div style={{ fontSize: 13, color: "#475569", marginBottom: 8 }}>{p.type} • {state.grade} класс • {state.subject}</div>
+        <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+          <button onClick={handleExport} disabled={exporting} style={{
+            flex: 1, background: "#10b981", color: "#fff", border: "none", borderRadius: 8, padding: "10px 16px",
+            fontSize: 13, fontWeight: 700, cursor: exporting ? "wait" : "pointer", opacity: exporting ? 0.6 : 1,
+          }}>{exporting ? "⏳..." : "📥 Word (.doc)"}</button>
+          <button onClick={() => { const h = buildMiddleHtml(data, state); printLesson(h); }} style={{
+            flex: 1, background: "#6366f1", color: "#fff", border: "none", borderRadius: 8, padding: "10px 16px",
+            fontSize: 13, fontWeight: 700, cursor: "pointer",
+          }}>🖨️ PDF (печать)</button>
+        </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, fontSize: 13 }}>
           {p.emotional_goal && <div><strong>🎯 Эмоц. цель:</strong> {p.emotional_goal}</div>}
           {p.educational_goal && <div><strong>📚 Образ. цель:</strong> {p.educational_goal}</div>}
@@ -1633,7 +1939,8 @@ function useLessons() {
   const [libLoading, setLibLoading] = useState(false);
   const refresh = useCallback(() => {
     setLibLoading(true);
-    fetch(`/lessons/index.json?t=${Date.now()}`)
+    // Читаем напрямую из GitHub через API-функцию — без ожидания CF Pages деплоя
+    fetch(`/api/lessons?t=${Date.now()}`)
       .then(r => r.ok ? r.json() : [])
       .then(data => { setLessons(Array.isArray(data) ? data : []); setLibLoading(false); })
       .catch(() => { setLessons([]); setLibLoading(false); });
@@ -1737,9 +2044,12 @@ function LibraryView({ onClose, user }) {
   const handleOpen = async (entry) => {
     setLoadingLesson(true);
     try {
-      const resp = await fetch(`/lessons/${entry.filename}?t=${Date.now()}`);
-      if (!resp.ok) throw new Error("Файл не найден. Возможно, урок ещё не задеплоен (~2-3 мин после сохранения).");
-      setOpenData(await resp.json());
+      // Читаем напрямую из GitHub через API — без задержки CF Pages деплоя
+      const resp = await fetch(`/api/lessons?file=${encodeURIComponent(entry.filename)}&t=${Date.now()}`);
+      if (!resp.ok) throw new Error("Урок не найден на сервере.");
+      const data = await resp.json();
+      if (data.error) throw new Error(data.error);
+      setOpenData(data);
     } catch (e) { alert("Ошибка: " + e.message); }
     finally { setLoadingLesson(false); }
   };
@@ -1996,7 +2306,7 @@ export default function App({ user }) {
       const authHeader = session?.access_token
         ? { "Authorization": `Bearer ${session.access_token}` }
         : {};
-      const resp = await fetch("/.netlify/functions/save-lesson", {
+      const resp = await fetch("/api/save-lesson", {
         method: "POST",
         headers: { "Content-Type": "application/json", ...authHeader },
         body: JSON.stringify({ lesson: result, meta }),
