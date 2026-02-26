@@ -1102,14 +1102,16 @@ function buildPrimaryHtml(data, state) {
     }
   }
 
-  // Climax
-  html += `<h2>🎬 АКТ III: КУЛЬМИНАЦИЯ</h2>`;
-  if (cl.humanitarian_question) html += `<div class="climax-box"><b>💭 Гуманитарный вопрос:</b> ${esc(cl.humanitarian_question)}</div>`;
-  if (cl.practical_question) html += `<div class="climax-box"><b>🔍 Практический вопрос:</b> ${esc(cl.practical_question)}</div>`;
-  if (cl.choral && cl.choral.length > 0) {
-    html += `<p><b>📣 Хоровое закрепление:</b></p><ul>${cl.choral.map(c => `<li>${esc(c)}</li>`).join('')}</ul>`;
+  // Climax — только если есть хотя бы одно поле
+  if (cl.humanitarian_question || cl.practical_question || (cl.choral && cl.choral.length > 0) || cl.i_can_now) {
+    html += `<h2>🎬 АКТ III: КУЛЬМИНАЦИЯ</h2>`;
+    if (cl.humanitarian_question) html += `<div class="climax-box"><b>💭 Гуманитарный вопрос:</b> ${esc(cl.humanitarian_question)}</div>`;
+    if (cl.practical_question) html += `<div class="climax-box"><b>🔍 Практический вопрос:</b> ${esc(cl.practical_question)}</div>`;
+    if (cl.choral && cl.choral.length > 0) {
+      html += `<p><b>📣 Хоровое закрепление:</b></p><ul>${cl.choral.map(c => `<li>${esc(c)}</li>`).join('')}</ul>`;
+    }
+    if (cl.i_can_now) html += `<p style="text-align:center;font-size:13pt;font-weight:bold;color:#92400e;background:#fef3c7;padding:10px;border-radius:8px">💪 ${esc(cl.i_can_now)}</p>`;
   }
-  if (cl.i_can_now) html += `<p style="text-align:center;font-size:13pt;font-weight:bold;color:#92400e;background:#fef3c7;padding:10px;border-radius:8px">💪 ${esc(cl.i_can_now)}</p>`;
 
   // Homework
   if (hw.basic || hw.creative) {
@@ -1135,6 +1137,43 @@ function buildPrimaryHtml(data, state) {
   // Teacher notes
   if (data.teacher_notes) {
     html += `<h2>📝 Заметки для учителя</h2><p style="background:#fffbeb;padding:12px;border-radius:8px;border:1px solid #fbbf24">${esc(data.teacher_notes)}</p>`;
+  }
+
+  // Защитный рендер стандартного формата (capture/timeline) если первичный формат не заполнен
+  if (!data.captures && !data.warmup && (data.capture || data.timeline)) {
+    if (data.capture) {
+      html += `<h2>⚡ Захват</h2><div class="capture-box">`;
+      if (data.capture.technique) html += `<p><b>Приём:</b> ${esc(data.capture.technique)} (${data.capture.duration||5} мин)</p>`;
+      if (data.capture.text)      html += `<p><b>📢 Учитель:</b> ${esc(data.capture.text)}</p>`;
+      html += `</div>`;
+    }
+    if (data.first_win) {
+      html += `<h2>🏆 Первая победа</h2><div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:12px;margin:8px 0">`;
+      html += `<p>${esc(data.first_win.task)}</p>`;
+      if (data.first_win.duration) html += `<p style="color:#64748b;font-size:10pt">⏱ ${data.first_win.duration} мин</p>`;
+      html += `</div>`;
+    }
+    if (data.timeline && data.timeline.length > 0) {
+      html += `<h2>⏱️ Таймлайн урока</h2><table><tr><th>Этап</th><th>Мин</th><th>Учитель</th><th>Ученики</th><th>Материалы / Совет</th></tr>`;
+      data.timeline.forEach(p => {
+        const tip = p.tip ? (p.materials ? '<br>' : '') + '💡 ' + esc(p.tip) : '';
+        html += `<tr><td><b>${esc(p.phase)}</b></td><td style="text-align:center">${esc(String(p.duration||''))}</td><td>${esc(p.activity||'')}</td><td>${esc(p.students||'')}</td><td><i>${esc(p.materials||'')}${tip}</i></td></tr>`;
+      });
+      html += `</table>`;
+    }
+    if (data.tasks) {
+      html += `<h2>📝 Задания по уровням</h2>`;
+      [['green','🟢 Базовый'],['yellow','🟡 Продвинутый'],['red','🔴 Босс-задача']].forEach(([k,label]) => {
+        const items = Array.isArray(data.tasks[k]) ? data.tasks[k] : (data.tasks[k] ? [data.tasks[k]] : []);
+        if (items.length) html += `<p><b>${label}:</b></p><ul>${items.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`;
+      });
+    }
+    if (data.feedback) {
+      html += `<h2>📊 Обратная связь</h2><div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin:8px 0">`;
+      if (data.feedback.method)      html += `<p><b>Метод:</b> ${esc(data.feedback.method)}</p>`;
+      if (data.feedback.exit_ticket) html += `<p><b>🎫 Билет на выход:</b> ${esc(data.feedback.exit_ticket)}</p>`;
+      html += `</div>`;
+    }
   }
 
   html += `</body></html>`;
