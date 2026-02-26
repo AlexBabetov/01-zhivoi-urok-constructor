@@ -1,3 +1,11 @@
+---
+status: archive
+created: 2026-02-26
+updated: 2026-02-26
+owner: babetov_aa@koriphey.ru
+tags: [refs, architecture]
+---
+
 # Universal Agent Protocol (UAP) — Architecture Review Request
 
 **Document type:** Peer LLM Review Request  
