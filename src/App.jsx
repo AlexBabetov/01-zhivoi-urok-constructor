@@ -1164,48 +1164,52 @@ function printLesson(html) {
   setTimeout(() => { win.print(); }, 400);
 }
 
-// Экспорт для старшей школы (10+): capture, timeline, tasks, feedback
-function exportStandardDocx(data, state) {
+// HTML для старшей школы (10+): capture, first_win, timeline, tasks, feedback
+function buildStandardHtml(data, state) {
   const esc = (s) => (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const css = `
     body { font-family: Arial, sans-serif; font-size: 11pt; color: #1e293b; max-width: 700px; margin: 0 auto; padding: 20px; }
     h1 { color: #1e3a5f; font-size: 18pt; text-align: center; margin-bottom: 4px; }
     h2 { color: #1e3a5f; font-size: 14pt; border-bottom: 2px solid #1e3a5f; padding-bottom: 4px; margin-top: 24px; }
-    h3 { color: #475569; font-size: 12pt; margin-top: 16px; }
     .subtitle { text-align: center; color: #666; font-size: 10pt; margin-bottom: 20px; }
     .box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 8px 0; }
     .capture-box { background: #fffbeb; border: 1px solid #fbbf24; border-radius: 8px; padding: 12px; margin: 8px 0; }
+    .win-box { background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; padding: 12px; margin: 8px 0; }
     table { border-collapse: collapse; width: 100%; margin: 8px 0; }
     td, th { border: 1px solid #ccc; padding: 6px 10px; font-size: 10pt; vertical-align: top; }
-    th { background: #1e3a5f; color: #fff; }
-    ul { margin: 4px 0 4px 20px; }
-    li { margin-bottom: 3px; }
-    @media print { body { max-width: 100%; } }
+    th { background: #1e3a5f; color: #fff; font-weight: bold; }
+    ul { margin: 4px 0 4px 20px; } li { margin-bottom: 3px; }
+    @media print { body { max-width: 100%; padding: 10px; } h2 { page-break-after: avoid; } }
   `;
   let html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${esc(state.topic)}</title><style>${css}</style></head><body>`;
   html += `<h1>${esc(state.topic)}</h1>`;
-  html += `<div class="subtitle">${esc((state.subject||'').toUpperCase())} • ${state.grade} КЛАСС • Методология «Живой урок 360» • Образовательная сеть «Корифей» • 2026</div>`;
+  html += `<div class="subtitle">${esc((state.subject||'').toUpperCase())} • ${state.grade} КЛАСС • ${state.duration||45} МИН • Методология «Живой урок 360» • Образовательная сеть «Корифей» • 2026</div>`;
 
   if (data.capture) {
     html += `<h2>⚡ Захват</h2><div class="capture-box">`;
-    if (data.capture.technique) html += `<p><i>Приём: ${esc(data.capture.technique)}</i></p>`;
+    if (data.capture.technique) html += `<p><b>Приём:</b> ${esc(data.capture.technique)} (${data.capture.duration||5} мин)</p>`;
     if (data.capture.text)      html += `<p><b>📢 Учитель:</b> ${esc(data.capture.text)}</p>`;
     html += `</div>`;
   }
   if (data.first_win) {
-    html += `<h2>🏆 Первая победа</h2><div class="box"><p>${esc(data.first_win.task)}</p></div>`;
+    html += `<h2>🏆 Первая победа (до теории)</h2><div class="win-box">`;
+    html += `<p>${esc(data.first_win.task)}</p>`;
+    if (data.first_win.duration) html += `<p style="color:#64748b;font-size:10pt">⏱ ${data.first_win.duration} мин</p>`;
+    html += `</div>`;
   }
   if (data.timeline && data.timeline.length > 0) {
-    html += `<h2>⏱️ Таймлайн урока</h2><table><tr><th>Этап</th><th>Мин</th><th>Учитель</th><th>Ученики</th><th>Совет</th></tr>`;
+    html += `<h2>⏱️ Таймлайн урока</h2><table><tr><th>Этап</th><th>Мин</th><th>Учитель</th><th>Ученики</th><th>Материалы / Совет</th></tr>`;
     data.timeline.forEach(p => {
-      html += `<tr><td><b>${esc(p.phase)}</b></td><td>${esc(String(p.duration||''))}</td><td>${esc(p.activity||'')}</td><td>${esc(p.students||'')}</td><td><i>${esc(p.tip||'')}</i></td></tr>`;
+      html += `<tr><td><b>${esc(p.phase)}</b></td><td style="text-align:center">${esc(String(p.duration||''))}</td><td>${esc(p.activity||'')}</td><td>${esc(p.students||'')}</td><td><i>${esc(p.materials||'')}${p.tip ? (p.materials?'<br>':'') + '💡 ' + esc(p.tip) : ''}</i></td></tr>`;
     });
     html += `</table>`;
   }
   if (data.tasks) {
     html += `<h2>📝 Задания по уровням</h2>`;
-    [['green','🟢 Базовый'],['yellow','🟡 Продвинутый'],['red','🔴 Босс']].forEach(([k,label]) => {
-      if (data.tasks[k]) html += `<p><b>${label}:</b></p><ul>${data.tasks[k].map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`;
+    const levels = [['green','🟢 Базовый'],['yellow','🟡 Продвинутый'],['red','🔴 Босс-задача']];
+    levels.forEach(([k,label]) => {
+      const items = Array.isArray(data.tasks[k]) ? data.tasks[k] : (data.tasks[k] ? [data.tasks[k]] : []);
+      if (items.length) html += `<p><b>${label}:</b></p><ul>${items.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`;
     });
   }
   if (data.feedback) {
@@ -1214,17 +1218,136 @@ function exportStandardDocx(data, state) {
     if (data.feedback.exit_ticket) html += `<p><b>🎫 Билет на выход:</b> ${esc(data.feedback.exit_ticket)}</p>`;
     html += `</div>`;
   }
-  if (data.teacher_notes) html += `<h2>📝 Заметки</h2><div class="box">${esc(data.teacher_notes)}</div>`;
+  if (data.teacher_notes) html += `<h2>📝 Заметки для учителя</h2><div class="box"><p>${esc(data.teacher_notes)}</p></div>`;
   html += `</body></html>`;
+  return html;
+}
 
+function exportStandardDocx(data, state) {
+  const html = buildStandardHtml(data, state);
   const cleanTopic = (state.topic||'урок').replace(/[^\wа-яА-ЯёЁ\s]/g,'').trim().replace(/\s+/g,'_').slice(0,40);
   const blob = new Blob([html], { type: 'application/msword' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
   a.download = `Урок_${state.grade}кл_${cleanTopic}.doc`;
-  document.body.appendChild(a);
-  a.click();
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// HTML для средней школы (5-9): passport, captures, first_win, development, guild_task, tasks, reflection
+function buildMiddleHtml(data, state) {
+  const esc = (s) => (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const css = `
+    body { font-family: Arial, sans-serif; font-size: 11pt; color: #1e293b; max-width: 700px; margin: 0 auto; padding: 20px; }
+    h1 { color: #1e3a5f; font-size: 18pt; text-align: center; margin-bottom: 4px; }
+    h2 { color: #1e3a5f; font-size: 14pt; border-bottom: 2px solid #1e3a5f; padding-bottom: 4px; margin-top: 24px; }
+    h3 { color: #475569; font-size: 12pt; margin-top: 14px; }
+    .subtitle { text-align: center; color: #666; font-size: 10pt; margin-bottom: 20px; }
+    .box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 8px 0; }
+    .capture-box { background: #fffbeb; border: 1px solid #fbbf24; border-radius: 8px; padding: 12px; margin: 8px 0; }
+    .kori-box { background: #f5f3ff; border: 1px solid #c4b5fd; border-radius: 8px; padding: 10px; margin: 6px 0; }
+    .guild-box { background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 12px; margin: 6px 0; }
+    table { border-collapse: collapse; width: 100%; margin: 8px 0; }
+    td, th { border: 1px solid #ccc; padding: 6px 10px; font-size: 10pt; vertical-align: top; }
+    th { background: #1e3a5f; color: #fff; font-weight: bold; }
+    ul { margin: 4px 0 4px 20px; } li { margin-bottom: 3px; }
+    @media print { body { max-width: 100%; padding: 10px; } h2 { page-break-after: avoid; } }
+  `;
+  const p = data.passport || {};
+  const dev = data.development || {};
+  const guild = data.guild_task || {};
+  const refl = data.reflection || {};
+
+  let html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${esc(state.topic)}</title><style>${css}</style></head><body>`;
+  html += `<h1>${esc(state.topic)}</h1>`;
+  html += `<div class="subtitle">${esc((state.subject||'').toUpperCase())} • ${state.grade} КЛАСС • ${state.duration||45} МИН • Методология «Живой урок 360» • Образовательная сеть «Корифей» • 2026</div>`;
+
+  // Passport
+  if (p.emotional_goal || p.educational_goal || p.key_concept) {
+    html += `<h2>📋 Паспорт урока</h2><table>`;
+    if (p.type)             html += `<tr><td style="width:35%;font-weight:bold">Тип урока</td><td>${esc(p.type)}</td></tr>`;
+    if (p.emotional_goal)   html += `<tr><td style="font-weight:bold">🎯 Эмоц. цель</td><td>${esc(p.emotional_goal)}</td></tr>`;
+    if (p.educational_goal) html += `<tr><td style="font-weight:bold">📚 Образ. цель</td><td>${esc(p.educational_goal)}</td></tr>`;
+    if (p.key_concept)      html += `<tr><td style="font-weight:bold">🔑 Ключевое понятие</td><td>${esc(p.key_concept)}</td></tr>`;
+    html += `</table>`;
+  }
+
+  // Captures (3 варианта)
+  if (data.captures && data.captures.length > 0) {
+    html += `<h2>⚡ АКТ I: ЗАХВАТ — три варианта (выберите один)</h2>`;
+    data.captures.forEach((c, i) => {
+      html += `<div class="capture-box"><h3>${i+1}. ${esc(c.style)}: «${esc(c.name)}»</h3>`;
+      html += `<p><i>Приём: ${esc(c.technique)}</i></p>`;
+      if (c.text)      html += `<p><b>📢 Учитель:</b> ${esc(c.text)}</p>`;
+      if (c.kori_role) html += `<div class="kori-box"><b>🎒 Кори:</b> ${esc(c.kori_role)}</div>`;
+      html += `</div>`;
+    });
+  }
+
+  // First win
+  if (data.first_win) {
+    html += `<h2>🏆 Первая победа (${data.first_win.duration||5} мин)</h2>`;
+    html += `<div class="box"><p>${esc(data.first_win.task)}</p></div>`;
+  }
+
+  // Development
+  if (dev.key_points || dev.teacher_text || dev.kori || dev.traps) {
+    html += `<h2>📚 АКТ II: РАЗВИТИЕ</h2>`;
+    if (dev.key_points) {
+      html += `<p><b>Ключевые точки:</b></p><ul>${dev.key_points.map(k=>`<li>${esc(k)}</li>`).join('')}</ul>`;
+    }
+    if (dev.teacher_text) html += `<p><b>📢 Учитель:</b> ${esc(dev.teacher_text)}</p>`;
+    if (dev.kori) {
+      html += `<div class="kori-box"><b>🎒 Кори (${esc(dev.kori.role)}):</b> «${esc(dev.kori.text)}»</div>`;
+    }
+    if (dev.traps && dev.traps.length > 0) {
+      html += `<p><b>⚠️ Ловушки (ученики ловят ошибки учителя):</b></p><ul>${dev.traps.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`;
+    }
+  }
+
+  // Guild task
+  if (guild.guilds && guild.guilds.length > 0) {
+    html += `<h2>🏰 Задание по гильдиям</h2>`;
+    guild.guilds.forEach(g => {
+      html += `<div class="guild-box"><b>${esc(g.name)}:</b> ${esc(g.task)}</div>`;
+    });
+    if (guild.discussion_question) html += `<p><b>💬 Вопрос для общего обсуждения:</b> ${esc(guild.discussion_question)}</p>`;
+  }
+
+  // Tasks
+  if (data.tasks) {
+    html += `<h2>📝 АКТ III: ЗАДАНИЯ ПО УРОВНЯМ</h2>`;
+    const levels = [['green','🟢 Базовый'],['yellow','🟡 Продвинутый'],['red','🔴 Босс-задача']];
+    levels.forEach(([k,label]) => {
+      const items = Array.isArray(data.tasks[k]) ? data.tasks[k] : (data.tasks[k] ? [data.tasks[k]] : []);
+      if (items.length) html += `<p><b>${label}:</b></p><ul>${items.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`;
+    });
+  }
+
+  // Reflection
+  if (refl.content || refl.process) {
+    html += `<h2>🪞 Двойная рефлексия</h2><div class="box">`;
+    if (refl.content) html += `<p><b>Контент (что изменилось в понимании?):</b> ${esc(refl.content)}</p>`;
+    if (refl.process) html += `<p><b>Процесс (как работал?):</b> ${esc(refl.process)}</p>`;
+    html += `</div>`;
+  }
+
+  if (data.teacher_notes) html += `<h2>📝 Заметки для учителя</h2><div class="box"><p>${esc(data.teacher_notes)}</p></div>`;
+  html += `</body></html>`;
+  return html;
+}
+
+function exportMiddleDocx(data, state) {
+  const html = buildMiddleHtml(data, state);
+  const cleanTopic = (state.topic||'урок').replace(/[^\wа-яА-ЯёЁ\s]/g,'').trim().replace(/\s+/g,'_').slice(0,40);
+  const blob = new Blob([html], { type: 'application/msword' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Урок_${state.grade}кл_${cleanTopic}.doc`;
+  document.body.appendChild(a); a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
@@ -1506,7 +1629,7 @@ function StandardResult({ data, state }) {
             flex: 1, background: "#10b981", color: "#fff", border: "none", borderRadius: 8, padding: "10px 16px",
             fontSize: 13, fontWeight: 700, cursor: exporting ? "wait" : "pointer", opacity: exporting ? 0.6 : 1,
           }}>{exporting ? "⏳..." : "📥 Word (.doc)"}</button>
-          <button onClick={() => { const h = buildPrimaryHtml(data, state); printLesson(h); }} style={{
+          <button onClick={() => { const h = buildStandardHtml(data, state); printLesson(h); }} style={{
             flex: 1, background: "#6366f1", color: "#fff", border: "none", borderRadius: 8, padding: "10px 16px",
             fontSize: 13, fontWeight: 700, cursor: "pointer",
           }}>🖨️ PDF (печать)</button>
@@ -1587,7 +1710,7 @@ function MiddleResult({ data, state }) {
 
   const handleExport = () => {
     setExporting(true);
-    try { exportPrimaryDocx(data, state); } catch(e) { alert("Ошибка экспорта: " + e.message); }
+    try { exportMiddleDocx(data, state); } catch(e) { alert("Ошибка экспорта: " + e.message); }
     setExporting(false);
   };
 
@@ -1612,7 +1735,7 @@ function MiddleResult({ data, state }) {
             flex: 1, background: "#10b981", color: "#fff", border: "none", borderRadius: 8, padding: "10px 16px",
             fontSize: 13, fontWeight: 700, cursor: exporting ? "wait" : "pointer", opacity: exporting ? 0.6 : 1,
           }}>{exporting ? "⏳..." : "📥 Word (.doc)"}</button>
-          <button onClick={() => { const h = buildPrimaryHtml(data, state); printLesson(h); }} style={{
+          <button onClick={() => { const h = buildMiddleHtml(data, state); printLesson(h); }} style={{
             flex: 1, background: "#6366f1", color: "#fff", border: "none", borderRadius: 8, padding: "10px 16px",
             fontSize: 13, fontWeight: 700, cursor: "pointer",
           }}>🖨️ PDF (печать)</button>
