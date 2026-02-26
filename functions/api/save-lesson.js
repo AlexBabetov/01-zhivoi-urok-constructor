@@ -118,8 +118,10 @@ export async function onRequestPost(context) {
     const resp = await fetch(url, { headers: ghHeaders });
     if (resp.status === 404) return null;
     if (!resp.ok) {
-      const err = await resp.json().catch(() => ({}));
-      throw new Error(`GitHub GET ${path}: ${resp.status} — ${err.message || resp.statusText}`);
+      const rawBody = await resp.text().catch(() => "");
+      let errMsg;
+      try { errMsg = JSON.parse(rawBody).message; } catch { errMsg = rawBody.slice(0, 200); }
+      throw new Error(`GitHub GET ${path}: ${resp.status} — ${errMsg || resp.statusText} | URL: ${url} | BRANCH: ${lessonsBranch} | TOKEN_START: ${(githubToken||"").slice(0,8)}`);
     }
     const data = await resp.json();
     return { content: base64ToUtf8(data.content), sha: data.sha };
