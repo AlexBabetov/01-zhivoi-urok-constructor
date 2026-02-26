@@ -1,3 +1,11 @@
+---
+status: active
+created: 2026-02-26
+updated: 2026-02-26
+owner: babetov_aa@koriphey.ru
+tags: [spec, feature]
+---
+
 # Библиотека уроков — Feature Spec
 
 **Фаза:** Sprint 2
