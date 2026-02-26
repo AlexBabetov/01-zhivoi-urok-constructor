@@ -1,0 +1,5 @@
+# Прокси Supabase — браузер не делает прямых запросов к supabase.co
+/_supabase/* https://wogcofceyeeouxokzpqy.supabase.co/:splat 200
+
+# SPA catch-all — все пути отдают index.html (React Router)
+/* /index.html 200

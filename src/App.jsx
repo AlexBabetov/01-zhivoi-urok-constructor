@@ -1996,7 +1996,7 @@ export default function App({ user }) {
       const authHeader = session?.access_token
         ? { "Authorization": `Bearer ${session.access_token}` }
         : {};
-      const resp = await fetch("/.netlify/functions/save-lesson", {
+      const resp = await fetch("/api/save-lesson", {
         method: "POST",
         headers: { "Content-Type": "application/json", ...authHeader },
         body: JSON.stringify({ lesson: result, meta }),

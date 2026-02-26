@@ -50,10 +50,25 @@
   status = 200
   force = true
 
-# Regular Function: /api/save-lesson → netlify/functions/save-lesson.js
+# Regular Functions: /api/* → netlify/functions/* (унифицированные пути для Netlify и Cloudflare)
 [[redirects]]
   from = "/api/save-lesson"
   to = "/.netlify/functions/save-lesson"
+  status = 200
+
+[[redirects]]
+  from = "/api/get-analytics"
+  to = "/.netlify/functions/get-analytics"
+  status = 200
+
+[[redirects]]
+  from = "/api/list-pending-users"
+  to = "/.netlify/functions/list-pending-users"
+  status = 200
+
+[[redirects]]
+  from = "/api/update-user-status"
+  to = "/.netlify/functions/update-user-status"
   status = 200
 
 # Edge Function: /api/generate-lesson → netlify/edge-functions/generate-lesson.js
