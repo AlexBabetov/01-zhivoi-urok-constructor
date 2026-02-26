@@ -1158,10 +1158,21 @@ function exportPrimaryDocx(data, state) {
 // Универсальная PDF-печать — открывает HTML в новом окне и вызывает print()
 function printLesson(html) {
   const win = window.open('', '_blank');
+  if (!win) { alert("Браузер заблокировал всплывающее окно. Разрешите pop-up для этого сайта и попробуйте снова."); return; }
   win.document.write(html);
   win.document.close();
   win.focus();
-  setTimeout(() => { win.print(); }, 400);
+  // Флаг чтобы print() вызвался ровно один раз
+  let printed = false;
+  const doPrint = () => {
+    if (printed) return;
+    printed = true;
+    try { win.print(); } catch(e) {}
+  };
+  // Ждём события load чтобы весь контент был отрисован до вызова print()
+  win.onload = () => setTimeout(doPrint, 300);
+  // Запасной таймер на случай если onload уже сработал до назначения обработчика
+  setTimeout(doPrint, 1500);
 }
 
 // HTML для старшей школы (10+): capture, first_win, timeline, tasks, feedback
@@ -1179,7 +1190,14 @@ function buildStandardHtml(data, state) {
     td, th { border: 1px solid #ccc; padding: 6px 10px; font-size: 10pt; vertical-align: top; }
     th { background: #1e3a5f; color: #fff; font-weight: bold; }
     ul { margin: 4px 0 4px 20px; } li { margin-bottom: 3px; }
-    @media print { body { max-width: 100%; padding: 10px; } h2 { page-break-after: avoid; } }
+    @page { margin: 15mm; size: A4; }
+    @media print {
+      body { max-width: 100%; padding: 0; }
+      h2, h3 { page-break-after: avoid; break-after: avoid; }
+      .box, .capture-box, .win-box, .kori-box, .guild-box { page-break-inside: avoid; break-inside: avoid; }
+      tr { page-break-inside: avoid; break-inside: avoid; }
+      table { break-inside: auto; }
+    }
   `;
   let html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${esc(state.topic)}</title><style>${css}</style></head><body>`;
   html += `<h1>${esc(state.topic)}</h1>`;
@@ -1253,7 +1271,14 @@ function buildMiddleHtml(data, state) {
     td, th { border: 1px solid #ccc; padding: 6px 10px; font-size: 10pt; vertical-align: top; }
     th { background: #1e3a5f; color: #fff; font-weight: bold; }
     ul { margin: 4px 0 4px 20px; } li { margin-bottom: 3px; }
-    @media print { body { max-width: 100%; padding: 10px; } h2 { page-break-after: avoid; } }
+    @page { margin: 15mm; size: A4; }
+    @media print {
+      body { max-width: 100%; padding: 0; }
+      h2, h3 { page-break-after: avoid; break-after: avoid; }
+      .box, .capture-box, .win-box, .kori-box, .guild-box { page-break-inside: avoid; break-inside: avoid; }
+      tr { page-break-inside: avoid; break-inside: avoid; }
+      table { break-inside: auto; }
+    }
   `;
   const p = data.passport || {};
   const dev = data.development || {};
