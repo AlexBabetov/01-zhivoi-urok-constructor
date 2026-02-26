@@ -989,7 +989,7 @@ function Step3({ state, onGenerate, loading, error }) {
 }
 
 // ========== DOCX EXPORT (HTML-based, works in iframe) ==========
-function exportPrimaryDocx(data, state) {
+function buildPrimaryHtml(data, state) {
   const p = data.passport || {};
   const w = data.warmup || {};
   const dev = data.development || {};
@@ -1135,13 +1135,90 @@ function exportPrimaryDocx(data, state) {
   }
 
   html += `</body></html>`;
+  return html;
+}
 
-  // Download as .doc (Word opens HTML files natively)
+function exportPrimaryDocx(data, state) {
+  const html = buildPrimaryHtml(data, state);
+  const cleanTopic = (state.topic || 'урок').replace(/[^\wа-яА-ЯёЁ\s]/g, '').trim().replace(/\s+/g, '_').slice(0, 40);
   const blob = new Blob([html], { type: 'application/msword' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  const cleanTopic = (state.topic || 'урок').replace(/[^\wа-яА-ЯёЁ\s]/g, '').trim().replace(/\s+/g, '_').slice(0, 40);
+  a.download = `Урок_${state.grade}кл_${cleanTopic}.doc`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// Универсальная PDF-печать — открывает HTML в новом окне и вызывает print()
+function printLesson(html) {
+  const win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+  setTimeout(() => { win.print(); }, 400);
+}
+
+// Экспорт для старшей школы (10+): capture, timeline, tasks, feedback
+function exportStandardDocx(data, state) {
+  const esc = (s) => (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const css = `
+    body { font-family: Arial, sans-serif; font-size: 11pt; color: #1e293b; max-width: 700px; margin: 0 auto; padding: 20px; }
+    h1 { color: #1e3a5f; font-size: 18pt; text-align: center; margin-bottom: 4px; }
+    h2 { color: #1e3a5f; font-size: 14pt; border-bottom: 2px solid #1e3a5f; padding-bottom: 4px; margin-top: 24px; }
+    h3 { color: #475569; font-size: 12pt; margin-top: 16px; }
+    .subtitle { text-align: center; color: #666; font-size: 10pt; margin-bottom: 20px; }
+    .box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin: 8px 0; }
+    .capture-box { background: #fffbeb; border: 1px solid #fbbf24; border-radius: 8px; padding: 12px; margin: 8px 0; }
+    table { border-collapse: collapse; width: 100%; margin: 8px 0; }
+    td, th { border: 1px solid #ccc; padding: 6px 10px; font-size: 10pt; vertical-align: top; }
+    th { background: #1e3a5f; color: #fff; }
+    ul { margin: 4px 0 4px 20px; }
+    li { margin-bottom: 3px; }
+    @media print { body { max-width: 100%; } }
+  `;
+  let html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${esc(state.topic)}</title><style>${css}</style></head><body>`;
+  html += `<h1>${esc(state.topic)}</h1>`;
+  html += `<div class="subtitle">${esc((state.subject||'').toUpperCase())} • ${state.grade} КЛАСС • Методология «Живой урок 360» • Образовательная сеть «Корифей» • 2026</div>`;
+
+  if (data.capture) {
+    html += `<h2>⚡ Захват</h2><div class="capture-box">`;
+    if (data.capture.technique) html += `<p><i>Приём: ${esc(data.capture.technique)}</i></p>`;
+    if (data.capture.text)      html += `<p><b>📢 Учитель:</b> ${esc(data.capture.text)}</p>`;
+    html += `</div>`;
+  }
+  if (data.first_win) {
+    html += `<h2>🏆 Первая победа</h2><div class="box"><p>${esc(data.first_win.task)}</p></div>`;
+  }
+  if (data.timeline && data.timeline.length > 0) {
+    html += `<h2>⏱️ Таймлайн урока</h2><table><tr><th>Этап</th><th>Мин</th><th>Учитель</th><th>Ученики</th><th>Совет</th></tr>`;
+    data.timeline.forEach(p => {
+      html += `<tr><td><b>${esc(p.phase)}</b></td><td>${esc(String(p.duration||''))}</td><td>${esc(p.activity||'')}</td><td>${esc(p.students||'')}</td><td><i>${esc(p.tip||'')}</i></td></tr>`;
+    });
+    html += `</table>`;
+  }
+  if (data.tasks) {
+    html += `<h2>📝 Задания по уровням</h2>`;
+    [['green','🟢 Базовый'],['yellow','🟡 Продвинутый'],['red','🔴 Босс']].forEach(([k,label]) => {
+      if (data.tasks[k]) html += `<p><b>${label}:</b></p><ul>${data.tasks[k].map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`;
+    });
+  }
+  if (data.feedback) {
+    html += `<h2>📊 Обратная связь</h2><div class="box">`;
+    if (data.feedback.method)      html += `<p><b>Метод:</b> ${esc(data.feedback.method)}</p>`;
+    if (data.feedback.exit_ticket) html += `<p><b>🎫 Билет на выход:</b> ${esc(data.feedback.exit_ticket)}</p>`;
+    html += `</div>`;
+  }
+  if (data.teacher_notes) html += `<h2>📝 Заметки</h2><div class="box">${esc(data.teacher_notes)}</div>`;
+  html += `</body></html>`;
+
+  const cleanTopic = (state.topic||'урок').replace(/[^\wа-яА-ЯёЁ\s]/g,'').trim().replace(/\s+/g,'_').slice(0,40);
+  const blob = new Blob([html], { type: 'application/msword' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
   a.download = `Урок_${state.grade}кл_${cleanTopic}.doc`;
   document.body.appendChild(a);
   a.click();
@@ -1187,11 +1264,16 @@ function PrimaryResult({ data, state }) {
       <div style={{ background: "#f0f4ff", borderRadius: 12, padding: 20, marginBottom: 24, border: "1px solid #c7d2fe" }}>
         <div style={{ fontSize: 20, fontWeight: 800, color: "#1e3a5f", marginBottom: 4 }}>{state.topic}</div>
         <div style={{ fontSize: 14, color: "#475569", marginBottom: 12 }}>{p.type} • {state.grade} класс • {state.subject}</div>
-        <button onClick={handleExport} disabled={exporting} style={{
-          background: "#10b981", color: "#fff", border: "none", borderRadius: 8, padding: "10px 20px",
-          fontSize: 14, fontWeight: 700, cursor: exporting ? "wait" : "pointer", opacity: exporting ? 0.6 : 1,
-          width: "100%", marginBottom: 12
-        }}>{exporting ? "⏳ Создаём документ..." : "📥 Скачать план урока (.doc)"}</button>
+        <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+          <button onClick={handleExport} disabled={exporting} style={{
+            flex: 1, background: "#10b981", color: "#fff", border: "none", borderRadius: 8, padding: "10px 16px",
+            fontSize: 13, fontWeight: 700, cursor: exporting ? "wait" : "pointer", opacity: exporting ? 0.6 : 1,
+          }}>{exporting ? "⏳..." : "📥 Word (.doc)"}</button>
+          <button onClick={() => { const h = buildPrimaryHtml(data, state); printLesson(h); }} style={{
+            flex: 1, background: "#6366f1", color: "#fff", border: "none", borderRadius: 8, padding: "10px 16px",
+            fontSize: 13, fontWeight: 700, cursor: "pointer",
+          }}>🖨️ PDF (печать)</button>
+        </div>
         <div style={{ fontSize: 14, color: "#475569", marginBottom: 12 }}>{p.type} • {state.grade} класс • {state.subject}</div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, fontSize: 13 }}>
           <div><strong>🎯 Эмоциональная цель:</strong> {p.emotional_goal}</div>
@@ -1397,17 +1479,34 @@ function PrimaryResult({ data, state }) {
 
 // ========== STEP 4: Result (Standard for 5-11) ==========
 function StandardResult({ data, state }) {
+  const [exporting, setExporting] = useState(false);
   const clInfo = CLUSTERS[gc(state.subject)];
   const model = MODELS.find(m => m.id === state.model);
+
+  const handleExport = () => {
+    setExporting(true);
+    try { exportStandardDocx(data, state); } catch(e) { alert("Ошибка экспорта: " + e.message); }
+    setExporting(false);
+  };
 
   return (
     <div>
       <div style={{ background: "#f0f4ff", borderRadius: 12, padding: 20, marginBottom: 24, border: "1px solid #c7d2fe" }}>
         <div style={{ fontSize: 20, fontWeight: 800, color: "#1e3a5f", marginBottom: 8 }}>{state.topic}</div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, fontSize: 13 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, fontSize: 13, marginBottom: 12 }}>
           <span style={{ padding: "3px 10px", background: "#e0e7ff", borderRadius: 20, color: "#3730a3" }}>{state.grade} класс • {state.subject}</span>
           <span style={{ padding: "3px 10px", background: "#fef3c7", borderRadius: 20, color: "#92400e" }}>{model?.emoji} {model?.name}</span>
           <span style={{ padding: "3px 10px", background: "#f1f5f9", borderRadius: 20, color: "#475569" }}>{state.duration} мин</span>
+        </div>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button onClick={handleExport} disabled={exporting} style={{
+            flex: 1, background: "#10b981", color: "#fff", border: "none", borderRadius: 8, padding: "10px 16px",
+            fontSize: 13, fontWeight: 700, cursor: exporting ? "wait" : "pointer", opacity: exporting ? 0.6 : 1,
+          }}>{exporting ? "⏳..." : "📥 Word (.doc)"}</button>
+          <button onClick={() => { const h = buildPrimaryHtml(data, state); printLesson(h); }} style={{
+            flex: 1, background: "#6366f1", color: "#fff", border: "none", borderRadius: 8, padding: "10px 16px",
+            fontSize: 13, fontWeight: 700, cursor: "pointer",
+          }}>🖨️ PDF (печать)</button>
         </div>
       </div>
 
@@ -1476,11 +1575,18 @@ function StandardResult({ data, state }) {
 // ========== STEP 4: Result (Middle School 5-9) ==========
 function MiddleResult({ data, state }) {
   const [openCapture, setOpenCapture] = useState(0);
+  const [exporting, setExporting] = useState(false);
   const clInfo = CLUSTERS[gc(state.subject)];
   const model = MODELS.find(m => m.id === state.model);
   const p = data.passport || {};
   const dev = data.development || {};
   const guild = data.guild_task || {};
+
+  const handleExport = () => {
+    setExporting(true);
+    try { exportPrimaryDocx(data, state); } catch(e) { alert("Ошибка экспорта: " + e.message); }
+    setExporting(false);
+  };
 
   const InfoBox = ({ bg, border, children }) => (
     <div style={{ padding: 14, borderRadius: 10, background: bg, border: `1px solid ${border}`, marginBottom: 8, fontSize: 13, lineHeight: 1.6 }}>{children}</div>
@@ -1498,6 +1604,16 @@ function MiddleResult({ data, state }) {
       <div style={{ background: "#f0f4ff", borderRadius: 12, padding: 20, marginBottom: 24, border: "1px solid #c7d2fe" }}>
         <div style={{ fontSize: 20, fontWeight: 800, color: "#1e3a5f", marginBottom: 4 }}>{state.topic}</div>
         <div style={{ fontSize: 13, color: "#475569", marginBottom: 8 }}>{p.type} • {state.grade} класс • {state.subject}</div>
+        <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+          <button onClick={handleExport} disabled={exporting} style={{
+            flex: 1, background: "#10b981", color: "#fff", border: "none", borderRadius: 8, padding: "10px 16px",
+            fontSize: 13, fontWeight: 700, cursor: exporting ? "wait" : "pointer", opacity: exporting ? 0.6 : 1,
+          }}>{exporting ? "⏳..." : "📥 Word (.doc)"}</button>
+          <button onClick={() => { const h = buildPrimaryHtml(data, state); printLesson(h); }} style={{
+            flex: 1, background: "#6366f1", color: "#fff", border: "none", borderRadius: 8, padding: "10px 16px",
+            fontSize: 13, fontWeight: 700, cursor: "pointer",
+          }}>🖨️ PDF (печать)</button>
+        </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, fontSize: 13 }}>
           {p.emotional_goal && <div><strong>🎯 Эмоц. цель:</strong> {p.emotional_goal}</div>}
           {p.educational_goal && <div><strong>📚 Образ. цель:</strong> {p.educational_goal}</div>}
