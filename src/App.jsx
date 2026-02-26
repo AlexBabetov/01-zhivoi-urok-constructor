@@ -152,8 +152,9 @@ function useCurriculum(subject, grade) {
   const [data, setData] = useState(null);
   const cache = useRef({});
   useEffect(() => {
+    setData(null); // always reset immediately on subject/grade change
     const key = getCurriculumKey(subject, grade);
-    if (!key) { setData(null); return; }
+    if (!key) return;
     if (cache.current[key]) { setData(cache.current[key]); return; }
     fetch(CURRICULUM_FILES[key])
       .then(r => r.json())
@@ -635,7 +636,10 @@ function ReflectionModal({ state, onClose, onSaved }) {
 
 // ========== CURRICULUM SELECTOR ==========
 function CurriculumSelector({ curriculum, grade, onSelect }) {
+  // All hooks must be declared at the top level (React rules of hooks)
   const [selectedId, setSelectedId] = useState("");
+  const [selSectionKey, setSelSectionKey] = useState("");
+
   if (!curriculum) return null;
 
   const gradeSections = (curriculum.sections || []).filter(s => s.grade === grade);
@@ -652,13 +656,12 @@ function CurriculumSelector({ curriculum, grade, onSelect }) {
 
   const modelEmoji = { "Тренажёр": "🎯", "Исследование": "🔍", "Практикум": "⚙️", "Восстановление": "🌿", "Квест": "🗺️", "Дискуссия": "💬", "Мастерская": "🎨" };
   const selected = selectedId ? gradeLessons.find(l => l.id === selectedId) : null;
-  const selSection = selected ? curriculum.sections.find(s => s.id === selected.section_id) : null;
+  const selSection = selected ? (curriculum.sections || []).find(s => s.id === selected.section_id) : null;
   const meta = curriculum.meta || {};
   const totalH = gradeSections.reduce((acc, s) => acc + (s.hours || 0), 0);
 
   // ФРП-style JSON: только разделы, без поурочного планирования
   if (sectionsOnly) {
-    const [selSectionKey, setSelSectionKey] = useState("");
     const selectedSection = selSectionKey ? gradeSections.find(s => (s.id || s.title) === selSectionKey) : null;
     const handleSectionChange = (e) => {
       const key = e.target.value;
