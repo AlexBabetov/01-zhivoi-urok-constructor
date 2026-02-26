@@ -5,6 +5,8 @@
 [build.environment]
   REACT_APP_SUPABASE_URL = "https://wogcofceyeeouxokzpqy.supabase.co"
   REACT_APP_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndvZ2NvZmNleWVlb3V4b2t6cHF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwMjUwNDEsImV4cCI6MjA4NzYwMTA0MX0.fWXd3TnEIyXEOE8USvTVbITHr6TqYe-2dtA51511Wc8"
+  # Браузер обращается к Supabase через прокси на своём домене — без прямых запросов к supabase.co
+  REACT_APP_SUPABASE_PROXY_URL = "https://urok360.koriphey.ru/_supabase"
   # Добавить в Netlify Dashboard → Site settings → Environment variables:
   # SUPABASE_URL              = https://wogcofceyeeouxokzpqy.supabase.co
   # SUPABASE_SERVICE_ROLE_KEY = <service_role key из Supabase Settings → API>
@@ -38,6 +40,14 @@
   from = "https://constructor-zhivoi-urok.netlify.app/*"
   to = "https://urok360.koriphey.ru/:splat"
   status = 301
+  force = true
+
+# Прокси Supabase через свой домен — браузер не делает прямых запросов к supabase.co
+# Это устраняет блокировку Supabase в РФ без VPN
+[[redirects]]
+  from = "/_supabase/*"
+  to = "https://wogcofceyeeouxokzpqy.supabase.co/:splat"
+  status = 200
   force = true
 
 # Regular Function: /api/save-lesson → netlify/functions/save-lesson.js
