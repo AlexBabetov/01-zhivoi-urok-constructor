@@ -104,9 +104,18 @@ export async function onRequestPost(context) {
     "Content-Type": "application/json",
   };
   const apiBase = `https://api.github.com/repos/${repo}/contents`;
+  // Ветка для хранения уроков (по умолчанию cf-migration, можно переопределить через env)
+  const lessonsBranch = env.GITHUB_BRANCH || "cf-migration";
+
+  // Кодируем каждый сегмент пути отдельно — иначе кириллица вызывает 403 в Cloudflare Workers
+  function encodedApiUrl(path) {
+    const encoded = path.split("/").map(s => encodeURIComponent(s)).join("/");
+    return `${apiBase}/${encoded}`;
+  }
 
   async function getFile(path) {
-    const resp = await fetch(`${apiBase}/${path}`, { headers: ghHeaders });
+    const url = encodedApiUrl(path) + `?ref=${lessonsBranch}`;
+    const resp = await fetch(url, { headers: ghHeaders });
     if (resp.status === 404) return null;
     if (!resp.ok) {
       const err = await resp.json().catch(() => ({}));
@@ -117,9 +126,9 @@ export async function onRequestPost(context) {
   }
 
   async function putFile(path, content, sha, message) {
-    const payload = { message, content: utf8ToBase64(content), branch: "main" };
+    const payload = { message, content: utf8ToBase64(content), branch: lessonsBranch };
     if (sha) payload.sha = sha;
-    const resp = await fetch(`${apiBase}/${path}`, {
+    const resp = await fetch(encodedApiUrl(path), {
       method: "PUT", headers: ghHeaders, body: JSON.stringify(payload),
     });
     if (!resp.ok) {
