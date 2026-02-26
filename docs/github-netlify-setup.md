@@ -1,3 +1,11 @@
+---
+status: active
+created: 2026-02-22
+updated: 2026-02-26
+owner: babetov_aa@koriphey.ru
+tags: [setup, ops]
+---
+
 # Подключение GitHub → Netlify: пошаговая инструкция
 
 ## Что нужно сделать один раз

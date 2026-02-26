@@ -77,11 +77,14 @@ depends_on: —
 
 **Задачи:**
 - [ ] Добавить JWT-проверку в `save-lesson.js` (минимум: валидный токен + статус `approved`)
-- [ ] Рассмотреть отвязку `public/lessons/` от auto-deploy trigger (перенос в Supabase Storage или S3)
+- [ ] Добавить JWT-проверку в `netlify/edge-functions/generate-lesson.js` (сейчас — публичный прокси)
 - [ ] Добавить whitelist моделей в Edge Function (`claude-haiku-4-5-20251001` — единственная разрешённая)
-- [ ] Добавить ceiling `max_tokens` на стороне сервера (не выше 8000, без override клиентом)
+- [ ] Добавить ceiling `max_tokens` на стороне сервера Edge Function (не выше 8000, без override клиентом)
+- [ ] Исправить default model в Edge Function: `claude-3-5-haiku-20241022` → `claude-haiku-4-5-20251001`
 - [ ] Добавить rate limiting (10 запросов/час/пользователь — начальный порог)
-- [ ] Перенести логирование `generated` в Edge Function; удалить dead code из regular function
+- [ ] Перенести логирование `generated` в Edge Function; задокументировать `netlify/functions/generate-lesson.js` как non-production
+- [ ] Добавить переменную `SUPABASE_URL` в Netlify env vars (серверная, без `REACT_APP_` префикса — нужна для `save-lesson.js`)
+- [ ] Рассмотреть отвязку `public/lessons/` от auto-deploy trigger (перенос в Supabase Storage или S3)
 
 ---
 
@@ -267,7 +270,9 @@ depends_on: G-005
 **Задачи:**
 - [ ] Исправить путь в спеке: `lessons/` → `public/lessons/`
 - [ ] Добавить поля `author_id`, `author_email` в схему `index.json` в спеке
-- [ ] Актуализировать README
+- [ ] Актуализировать README (добавить Auth, Admin, Edge Function, Analytics в архитектуру)
+- [x] Обновить `.env.example`: добавить `SUPABASE_URL` как отдельную серверную переменную (2026-02-26)
+- [x] Убрать ссылку на `docs/refs/roadmap-2026.docx` из roadmap-goals.md (файл переименован в `archive-roadmap-2026.docx`) (2026-02-26)
 
 ---
 
@@ -306,4 +311,4 @@ depends_on: G-005
 - Аудит-отчёт: `docs/audit-reports/system-health-2026-02-26.md`
 - Лог разработки: `docs/development-log.md`
 - Точка входа для агентов: `AGENTS.md`
-- Исходный roadmap (25 фев 2026): `docs/refs/roadmap-2026.docx`
+- Исходный roadmap (25 фев 2026): `docs/refs/archive-roadmap-2026.docx`
