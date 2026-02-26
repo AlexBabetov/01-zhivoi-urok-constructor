@@ -102,6 +102,9 @@ export async function onRequestPost(context) {
     "Accept": "application/vnd.github+json",
     "X-GitHub-Api-Version": "2022-11-28",
     "Content-Type": "application/json",
+    // Cloudflare Workers не добавляют User-Agent автоматически,
+    // но GitHub API требует его обязательно (иначе → 403)
+    "User-Agent": "ZhivoyUrok360-Constructor/1.0",
   };
   const apiBase = `https://api.github.com/repos/${repo}/contents`;
   // Ветка для хранения уроков (по умолчанию cf-migration, можно переопределить через env)
