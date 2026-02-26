@@ -107,8 +107,8 @@ export async function onRequestPost(context) {
     "User-Agent": "ZhivoyUrok360-Constructor/1.0",
   };
   const apiBase = `https://api.github.com/repos/${repo}/contents`;
-  // Ветка для хранения уроков (по умолчанию cf-migration, можно переопределить через env)
-  const lessonsBranch = env.GITHUB_BRANCH || "cf-migration";
+  // Ветка для хранения уроков (по умолчанию main, можно переопределить через env)
+  const lessonsBranch = env.GITHUB_BRANCH || "main";
 
   // Кодируем каждый сегмент пути отдельно — иначе кириллица вызывает 403 в Cloudflare Workers
   function encodedApiUrl(path) {

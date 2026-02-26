@@ -222,6 +222,7 @@ function buildSystemPrompt(clusterName, clusterProfile, modelName, grade, format
   const isRussian = subject === "Русский язык";
   const isLitReading = subject === "Литературное чтение";
   const isPE = subject === "Физическая культура";
+  const isOnline = format === 'online';
   const writingNorm = grade <= 2 ? "35-50 слов класс / 12-17 дом" : grade <= 3 ? "45-60 / 15-20" : "55-70 / 20-25";
 
   // Предметная разминка для начальной школы
@@ -268,19 +269,28 @@ function buildSystemPrompt(clusterName, clusterProfile, modelName, grade, format
 
   const middleJsonFormat = isMiddle ?
 `ОТВЕТ — ТОЛЬКО JSON (без markdown, без \`\`\`):
-{"passport":{"topic":"str","type":"str","emotional_goal":"str","educational_goal":"str","key_concept":"str"},"captures":[{"style":"🎭 Провокация","name":"str","technique":"str","text":"полный текст учителя 3-4 предложения","kori_role":"str"},{"style":"💭 Загадка","name":"str","technique":"другой приём","text":"другой текст","kori_role":"str"},{"style":"🌍 Связь с жизнью","name":"str","technique":"третий приём","text":"третий текст","kori_role":"str"}],"first_win":{"task":"конкретная задача — ученик пробует ДО объяснения теории","duration":5},"development":{"key_points":["п1","п2","п3"],"teacher_text":"что говорит учитель","kori":{"role":"провокатор/исследователь","text":"реплика Кори"},"traps":["Ловушка 1: утверждение — почему ошибка","Ловушка 2: утверждение — почему ошибка"]},"guild_task":{"guilds":[{"name":"🔬 Учёные","task":"конкретное задание"},{"name":"💡 Изобретатели","task":"конкретное задание"},{"name":"🌍 Исследователи","task":"конкретное задание"}],"discussion_question":"вопрос для общего обсуждения после"},"tasks":{"green":["з1 базовый","з2"],"yellow":["з1 продвинутый","з2"],"red":"босс-задача нестандартное применение"},"reflection":{"content":"Что изменилось в твоём понимании темы?","process":"Как ты работал сегодня? Что помогло думать лучше?"},"teacher_notes":"3-4 предложения"}` : '';
+{"passport":{"topic":"str","type":"str","emotional_goal":"str","educational_goal":"str","key_concept":"str"},${isOnline ? '"check_in":{"prompt":"точная фраза учителя","method":"эмодзи в чат / пальцы 1-5"},' : ''}"captures":[{"style":"🎭 Провокация","name":"str","technique":"str","text":"полный текст учителя 3-4 предложения","kori_role":"str"},{"style":"💭 Загадка","name":"str","technique":"другой приём","text":"другой текст","kori_role":"str"},{"style":"🌍 Связь с жизнью","name":"str","technique":"третий приём","text":"третий текст","kori_role":"str"}],"first_win":{"task":"конкретная задача — ученик пробует ДО объяснения теории","duration":5},"development":{"key_points":["п1","п2","п3"],"teacher_text":"что говорит учитель","kori":{"role":"провокатор/исследователь","text":"реплика Кори"},"traps":["Ловушка 1: утверждение — почему ошибка","Ловушка 2: утверждение — почему ошибка"]},"guild_task":{"guilds":[{"name":"🔬 Учёные","task":"конкретное задание"},{"name":"💡 Изобретатели","task":"конкретное задание"},{"name":"🌍 Исследователи","task":"конкретное задание"}],"discussion_question":"вопрос для общего обсуждения после"},"tasks":{"green":["з1 базовый","з2"],"yellow":["з1 продвинутый","з2"],"red":"босс-задача нестандартное применение"},"reflection":{"content":"Что изменилось в твоём понимании темы?","process":"Как ты работал сегодня? Что помогло думать лучше?"}${isOnline ? ',"digital_pause":{"prompt":"точная фраза учителя","rule":"20-20-20"},"state_reflection":{"prompt":"точная фраза учителя"}' : ''},"teacher_notes":"3-4 предложения"}` : '';
 
   const jsonFormat = isPrimary ?
 `ОТВЕТ — ТОЛЬКО JSON (без markdown, без \`\`\`):
-{"passport":{"topic":"str","type":"Урок-открытие/закрепление","emotional_goal":"str","educational_goal":"str","key_concept":"str","writing_volume":"~N слов"},${warmupSchema ? warmupSchema + ',' : ''}"captures":[{"style":"🎭 Драматический","name":"str","technique":"str","text":"ПОЛНЫЙ текст учителя 3-5 предложений","kori_role":"str","first_win":"конкретная задача"},{"style":"💭 Рефлексивный","name":"str","technique":"другой приём","text":"другой текст","kori_role":"str","first_win":"str"},{"style":"🔍 Аналитический","name":"str","technique":"третий приём","text":"третий текст","kori_role":"str","first_win":"str"}],"development":{"new_material":{"duration":7,"key_content":["п1","п2","п3"],"teacher_text":"str","kori_mistake":{"mistake":"ошибка Кори","correction":"как дети исправляют"}},"active_game":{"name":"str","type":"передвижение/жесты/пары","rules":["п1","п2","п3"],"words_or_tasks":["8+ слов"],"traps":["ловушка ⚠️ — почему"],"duration":8,"online_adaptation":"str"},"written_practice":{"volume":"~25-30 слов","variants":["вар1","вар2"],"duration":8}},"climax":{"humanitarian_question":"💭 вопрос про чувства","practical_question":"🔍 что умею + как проверить","choral":["«начало...» — ОТВЕТ!","«начало...» — ОТВЕТ!"],"i_can_now":"Теперь я умею..."},"homework":{"basic":"str","creative":"str (по желанию)"},"storylines":[{"name":"🔬 Назв","style":"str","this_lesson":"str","next_lessons":"str"},{"name":"🏙️ Назв","style":"str","this_lesson":"str","next_lessons":"str"}],"checklist":["☐ п1","☐ п2","☐ п3","☐ п4","☐ п5","☐ п6","☐ п7","☐ п8"],"teacher_notes":"3-4 предложения"}` :
+{"passport":{"topic":"str","type":"Урок-открытие/закрепление","emotional_goal":"str","educational_goal":"str","key_concept":"str","writing_volume":"~N слов"},${warmupSchema ? warmupSchema + ',' : ''}${isOnline ? '"check_in":{"prompt":"точная фраза учителя","method":"эмодзи в чат / пальцы 1-5"},' : ''}"captures":[{"style":"🎭 Драматический","name":"str","technique":"str","text":"ПОЛНЫЙ текст учителя 3-5 предложений","kori_role":"str","first_win":"конкретная задача"},{"style":"💭 Рефлексивный","name":"str","technique":"другой приём","text":"другой текст","kori_role":"str","first_win":"str"},{"style":"🔍 Аналитический","name":"str","technique":"третий приём","text":"третий текст","kori_role":"str","first_win":"str"}],"development":{"new_material":{"duration":7,"key_content":["п1","п2","п3"],"teacher_text":"str","kori_mistake":{"mistake":"ошибка Кори","correction":"как дети исправляют"}},"active_game":{"name":"str","type":"передвижение/жесты/пары","rules":["п1","п2","п3"],"words_or_tasks":["8+ слов"],"traps":["ловушка ⚠️ — почему"],"duration":8,"online_adaptation":"str"},"written_practice":{"volume":"~25-30 слов","variants":["вар1","вар2"],"duration":8}${isOnline ? ',"digital_pause":{"prompt":"точная фраза учителя","rule":"20-20-20"}' : ''}},"climax":{"humanitarian_question":"💭 вопрос про чувства","practical_question":"🔍 что умею + как проверить","choral":["«начало...» — ОТВЕТ!","«начало...» — ОТВЕТ!"],"i_can_now":"Теперь я умею..."${isOnline ? ',"state_reflection":{"prompt":"точная фраза учителя"}' : ''}},"homework":{"basic":"str","creative":"str (по желанию)"},"storylines":[{"name":"🔬 Назв","style":"str","this_lesson":"str","next_lessons":"str"},{"name":"🏙️ Назв","style":"str","this_lesson":"str","next_lessons":"str"}],"checklist":["☐ п1","☐ п2","☐ п3","☐ п4","☐ п5","☐ п6","☐ п7","☐ п8"],"teacher_notes":"3-4 предложения"}` :
 `ОТВЕТ — ТОЛЬКО JSON (без markdown):
 {"capture":{"technique":"str","text":"подробный текст 3-5 предложений","duration":5},"first_win":{"task":"конкретная задача","duration":3},"timeline":[{"phase":"str","duration":5,"activity":"учитель","students":"ученики","materials":"str","tip":"совет"}],"tasks":{"green":["з1","з2"],"yellow":["з1","з2"],"red":["босс"]},"feedback":{"method":"метод","exit_ticket":"вопрос"},"teacher_notes":"3-4 предложения"}`;
 
   const curriculumBlock = curriculumCtx ? `\n\n--- ДАННЫЕ ИЗ ПРОГРАММЫ ---\n${curriculumCtx}\n--- (используй эти данные для связи с предыдущими уроками, точных техник и ДЗ) ---` : '';
 
+  const onlineBlock = isOnline ? `
+ОНЛАЙН-УРОК ЖУ360 v5.1: онлайн ≠ очный в Zoom. Принципиально другая структура — соблюдай все 4 компонента:
+▶ ЧЕК-ИН СОСТОЯНИЯ (Акт I, сразу после приветствия, 1-2 мин, ОБЯЗАТЕЛЬНО): «Напишите в чат эмодзи настроения» или «Покажите пальцами 1-5 вашу энергию». Поле JSON: "check_in":{"prompt":"точная фраза учителя","method":"эмодзи в чат / пальцы 1-5"}.
+▶ ОНЛАЙН-АКТИВНОСТЬ (вместо игры-передвижения): Breakout Rooms / гонка MyQuiz / совместный Google Doc / реакции в чате — описать КОНКРЕТНО. active_game.online_adaptation = ПОЛНЫЙ текст инструкции (не «онлайн-версия», а конкретные шаги). ЗАПРЕЩЕНО: физические передвижения по классу.
+▶ ЦИФРОВАЯ ПАУЗА (Акт II, середина урока, 2 мин, ОБЯЗАТЕЛЬНО): «Выключите камеры, встаньте, потянитесь — правило 20-20-20». Поле JSON: "digital_pause":{"prompt":"точная фраза учителя","rule":"20-20-20"}.
+▶ РЕФЛЕКСИЯ СОСТОЯНИЯ (Акт III, финал, 1-2 мин, ОБЯЗАТЕЛЬНО): «Как ты себя чувствуешь после урока? Напиши эмодзи или одно слово в чат». Поле JSON: "state_reflection":{"prompt":"точная фраза учителя"}.
+▶ «ЧТО Я ТЕПЕРЬ УМЕЮ» → ученики пишут в чат (не хором вслух). ИНСТРУМЕНТЫ: MyQuiz, МЭО-тренажёры, Google Docs, Breakout Rooms, PiliApp, Online Test Pad.
+ХОРОВОЕ ЗАКРЕПЛЕНИЕ ВСЛУХ В ОНЛАЙНЕ ЗАПРЕЩЕНО — замени на «напишите в чат».` : '';
+
   return `${core}
 КЛАСТЕР: ${clusterName}. ${clusterProfile}
-МОДЕЛЬ: ${modelName}, КЛАСС: ${grade}, ФОРМАТ: ${format === 'online' ? 'Онлайн' : 'Очный'}${grade >= 7 && format === 'online' ? '. Онлайн 7+: Концентрат 10-22мин.' : ''}${primaryBlock}${middleBlock}${langBlock}${curriculumBlock}
+МОДЕЛЬ: ${modelName}, КЛАСС: ${grade}, ФОРМАТ: ${format === 'online' ? 'Онлайн' : 'Очный'}${isOnline && grade >= 7 ? '. Онлайн 7+: Концентрат 10-22мин.' : ''}${primaryBlock}${middleBlock}${langBlock}${onlineBlock}${curriculumBlock}
 ПРАВИЛА: конкретность (не «задача», а точная формулировка), готовый текст учителя, каждый захват — ДРУГОЙ стиль, ловушки обязательны, ошибка Кори=типичная ошибка ученика, всё на русском.
 ${isMiddle ? middleJsonFormat : jsonFormat}`;
 }
@@ -1051,6 +1061,15 @@ function buildPrimaryHtml(data, state) {
     if (w.bridge)         html += `<p><b>🌉 Мостик к теме:</b> <i>${esc(w.bridge)}</i></p>`;
   }
 
+  // Check-in (онлайн)
+  if (data.check_in) {
+    html += `<h2>🖐️ Чек-ин состояния (1-2 мин)</h2>`;
+    html += `<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px;margin-bottom:8px">`;
+    html += `<p><b>📢 Учитель:</b> ${esc(data.check_in.prompt)}</p>`;
+    if (data.check_in.method) html += `<p><b>Метод:</b> ${esc(data.check_in.method)}</p>`;
+    html += `</div>`;
+  }
+
   // Captures
   if (data.captures && data.captures.length > 0) {
     html += `<h2>⚡ АКТ I: ЗАХВАТ — три варианта</h2>`;
@@ -1094,6 +1113,14 @@ function buildPrimaryHtml(data, state) {
     html += `</div>`;
   }
 
+  // Цифровая пауза (онлайн)
+  if (dev.digital_pause) {
+    html += `<div style="background:#fef3c7;border:1px solid #fbbf24;border-radius:8px;padding:12px;margin:8px 0">`;
+    html += `<p><b>⏸️ Цифровая пауза (2 мин, обязательно):</b> ${esc(dev.digital_pause.prompt)}</p>`;
+    if (dev.digital_pause.rule) html += `<p style="color:#92400e;font-size:12pt">📐 Правило ${esc(dev.digital_pause.rule)}: каждые 20 мин смотреть 20 сек вдаль, встать и потянуться.</p>`;
+    html += `</div>`;
+  }
+
   // Written practice
   if (dev.written_practice) {
     html += `<h3>✏️ Письменная работа (${esc(dev.written_practice.volume)}, ${dev.written_practice.duration || 8} мин)</h3>`;
@@ -1111,6 +1138,11 @@ function buildPrimaryHtml(data, state) {
       html += `<p><b>📣 Хоровое закрепление:</b></p><ul>${cl.choral.map(c => `<li>${esc(c)}</li>`).join('')}</ul>`;
     }
     if (cl.i_can_now) html += `<p style="text-align:center;font-size:13pt;font-weight:bold;color:#92400e;background:#fef3c7;padding:10px;border-radius:8px">💪 ${esc(cl.i_can_now)}</p>`;
+    if (cl.state_reflection) {
+      html += `<div style="background:#f0f9ff;border:1px solid #7dd3fc;border-radius:8px;padding:12px;margin-top:8px">`;
+      html += `<p><b>🌡️ Рефлексия состояния:</b> ${esc(cl.state_reflection.prompt)}</p>`;
+      html += `</div>`;
+    }
   }
 
   // Homework
@@ -1488,6 +1520,16 @@ function PrimaryResult({ data, state }) {
         </Section>
       )}
 
+      {/* Чек-ин (онлайн) */}
+      {data.check_in && (
+        <Section title="Чек-ин состояния (1-2 мин)" icon="🖐️">
+          <InfoBox bg="#eff6ff" border="#bfdbfe">
+            <strong>📢 Учитель:</strong> {data.check_in.prompt}
+            {data.check_in.method && <div style={{ marginTop: 4 }}><strong>Метод:</strong> {data.check_in.method}</div>}
+          </InfoBox>
+        </Section>
+      )}
+
       {/* Captures - 3 variants */}
       {data.captures && data.captures.length > 0 && (
         <Section title="Захват — 3 варианта (выберите один)" icon="⚡">
@@ -1567,6 +1609,13 @@ function PrimaryResult({ data, state }) {
             </div>
           )}
 
+          {dev.digital_pause && (
+            <InfoBox bg="#fef3c7" border="#fbbf24">
+              ⏸️ <strong>Цифровая пауза (2 мин):</strong> {dev.digital_pause.prompt}
+              {dev.digital_pause.rule && <div style={{ marginTop: 4, color: "#92400e", fontSize: 12 }}>📐 Правило {dev.digital_pause.rule}: каждые 20 мин смотреть 20 сек вдаль и потянуться.</div>}
+            </InfoBox>
+          )}
+
           {dev.written_practice && (
             <InfoBox bg="#f8fafc" border="#e2e8f0">
               <strong>✏️ Письменная работа ({dev.written_practice.volume}, {dev.written_practice.duration} мин):</strong>
@@ -1592,6 +1641,11 @@ function PrimaryResult({ data, state }) {
           <div style={{ padding: 12, background: "#fef3c7", borderRadius: 8, border: "1px solid #fbbf2440", fontSize: 14, fontWeight: 600, color: "#92400e", textAlign: "center" }}>
             💪 {cl.i_can_now}
           </div>
+        )}
+        {cl.state_reflection && (
+          <InfoBox bg="#f0f9ff" border="#7dd3fc">
+            🌡️ <strong>Рефлексия состояния:</strong> {cl.state_reflection.prompt}
+          </InfoBox>
         )}
       </Section>
 

@@ -53,7 +53,7 @@ export async function onRequestGet(context) {
   const { env, request } = context;
   const githubToken = env.GITHUB_TOKEN;
   const repo        = env.GITHUB_REPO   || "AlexBabetov/01-zhivoi-urok-constructor";
-  const branch      = env.GITHUB_BRANCH || "cf-migration";
+  const branch      = env.GITHUB_BRANCH || "main";
 
   const ghHeaders = {
     "Authorization":       `Bearer ${githubToken}`,
