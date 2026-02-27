@@ -30,7 +30,7 @@
 - `functions/api/get-analytics.js` — аналитика
 - `functions/api/list-pending-users.js` — список пользователей
 - `functions/api/update-user-status.js` — статус пользователей
-- `public/curriculum/` — JSON учебных программ
+- `public/curriculum/` — JSON учебных программ (владелец: AI-агент)
 
 ## Соглашения
 
