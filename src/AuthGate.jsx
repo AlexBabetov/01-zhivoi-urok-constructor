@@ -405,9 +405,87 @@ function RejectedScreen({ user }) {
 }
 
 // ─── Auth Gate ─────────────────────────────────────────────────────────────────
+// ─── Guest Banner ──────────────────────────────────────────────────────────────
+function GuestBanner({ onLogin }) {
+  return (
+    <div style={{
+      position: "fixed",
+      bottom: 0, left: 0, right: 0,
+      background: "linear-gradient(135deg, #1e3a5f, #1a3a4a)",
+      color: "#fff",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 16,
+      padding: "10px 20px",
+      zIndex: 1000,
+      fontSize: 13,
+      boxShadow: "0 -2px 12px rgba(0,0,0,0.2)",
+    }}>
+      <span>🎓 Тестовый режим — уроки не сохраняются</span>
+      <button
+        onClick={onLogin}
+        style={{
+          background: "#fff",
+          color: "#1e3a5f",
+          border: "none",
+          borderRadius: 8,
+          padding: "6px 16px",
+          fontSize: 13,
+          fontWeight: 700,
+          cursor: "pointer",
+          whiteSpace: "nowrap",
+        }}
+      >
+        Войти →
+      </button>
+    </div>
+  );
+}
+
+// ─── Login Modal ───────────────────────────────────────────────────────────────
+function LoginModal({ onClose }) {
+  const [mode, setMode] = useState("login");
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed", inset: 0,
+        background: "rgba(0,0,0,0.6)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        zIndex: 2000,
+        padding: 20,
+      }}
+    >
+      <div onClick={e => e.stopPropagation()} style={{ width: "100%", maxWidth: 460 }}>
+        {mode === "register"
+          ? <RegisterForm onSwitchToLogin={() => setMode("login")} />
+          : <LoginForm onSwitchToRegister={() => setMode("register")} />
+        }
+        <div style={{ textAlign: "center", marginTop: 12 }}>
+          <button
+            onClick={onClose}
+            style={{
+              background: "none", border: "none", color: "#fff",
+              fontSize: 13, cursor: "pointer", opacity: 0.7,
+            }}
+          >
+            ✕ Закрыть
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Auth Gate ─────────────────────────────────────────────────────────────────
+// AUTH_REQUIRED=false: приложение доступно без входа (тестовый режим).
+// Авторизованные пользователи получают дополнительные функции (сохранение уроков).
+const AUTH_REQUIRED = false;
+
 export default function AuthGate({ children }) {
   const [session, setSession] = useState(undefined); // undefined = loading
-  const [mode, setMode] = useState("login"); // "login" | "register"
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -436,10 +514,22 @@ export default function AuthGate({ children }) {
 
   // Not logged in
   if (!session) {
-    if (mode === "register") {
-      return <RegisterForm onSwitchToLogin={() => setMode("login")} />;
+    if (AUTH_REQUIRED) {
+      return (
+        <div style={BG}>
+          {showLoginModal && <LoginModal onClose={() => setShowLoginModal(false)} />}
+          <LoginForm onSwitchToRegister={() => setShowLoginModal(true)} />
+        </div>
+      );
     }
-    return <LoginForm onSwitchToRegister={() => setMode("register")} />;
+    // Тестовый режим: пропускаем без авторизации
+    return (
+      <>
+        {children(null)}
+        <GuestBanner onLogin={() => setShowLoginModal(true)} />
+        {showLoginModal && <LoginModal onClose={() => setShowLoginModal(false)} />}
+      </>
+    );
   }
 
   // Logged in — check status

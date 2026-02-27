@@ -36,26 +36,35 @@ export async function onRequestPost(context) {
   if (!apiKey)                       return json({ error: "Нет API ключа" }, 500);
   if (!supabaseUrl || !serviceKey)   return json({ error: "Auth сервис не настроен" }, 500);
 
-  // ── JWT-верификация ───────────────────────────────────
+  // ── JWT-верификация (опциональная — тестовый режим) ──────────────────────
+  // AUTH_REQUIRED=false: разрешаем запросы без токена для тестирования.
+  // Когда авторизация будет починена — вернуть проверку.
+  const AUTH_REQUIRED = false;
+
   const authHeader = request.headers.get("Authorization");
-  if (!authHeader) return json({ error: "Требуется авторизация" }, 401);
+  let verifiedUser = null;
 
-  let verifiedUser;
-  try {
-    const userResp = await fetch(`${supabaseUrl}/auth/v1/user`, {
-      headers: { "Authorization": authHeader, "apikey": serviceKey },
-    });
-    if (!userResp.ok) return json({ error: "Недействительный токен" }, 401);
-    verifiedUser = await userResp.json();
-  } catch {
-    return json({ error: "Ошибка проверки токена" }, 401);
+  if (authHeader && supabaseUrl && serviceKey) {
+    try {
+      const userResp = await fetch(`${supabaseUrl}/auth/v1/user`, {
+        headers: { "Authorization": authHeader, "apikey": serviceKey },
+      });
+      if (userResp.ok) {
+        verifiedUser = await userResp.json();
+        const role = verifiedUser.user_metadata?.role;
+        if (!role || !["teacher", "admin"].includes(role)) {
+          verifiedUser = null; // недостаточно прав, но не блокируем (тестовый режим)
+        }
+      }
+    } catch {
+      // не критично в тестовом режиме
+    }
   }
 
-  const role = verifiedUser.user_metadata?.role;
-  if (!role || !["teacher", "admin"].includes(role)) {
-    return json({ error: "Доступ запрещён: только для учителей и администраторов" }, 403);
+  if (AUTH_REQUIRED && !verifiedUser) {
+    return json({ error: "Требуется авторизация" }, 401);
   }
-  // ─────────────────────────────────────────────────────
+  // ─────────────────────────────────────────────────────────────────────────
 
   let body;
   try { body = await request.json(); }
