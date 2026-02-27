@@ -3,6 +3,7 @@
   "outputDirectory": "build",
   "framework": "create-react-app",
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/$1" }
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/_supabase/(.*)", "destination": "https://wogcofceyeeouxokzpqy.supabase.co/$1" }
   ]
 }
