@@ -274,13 +274,13 @@ function buildSystemPrompt(clusterName, clusterProfile, modelName, grade, format
 
   const middleJsonFormat = isMiddle ?
 `ОТВЕТ — ТОЛЬКО JSON (без markdown, без \`\`\`):
-{"passport":{"topic":"str","type":"str","emotional_goal":"str","educational_goal":"str","key_concept":"str"},"check_in":{"prompt":"точная фраза учителя","method":"${isOnline ? 'эмодзи в чат / пальцы 1-5' : 'пальцы 1-5 / линия мнений / жест'}"},"captures":[{"style":"🎭 Провокация","name":"str","technique":"str","text":"полный текст учителя 3-4 предложения","kori_role":"str"},{"style":"💭 Загадка","name":"str","technique":"другой приём","text":"другой текст","kori_role":"str"},{"style":"🌍 Связь с жизнью","name":"str","technique":"третий приём","text":"третий текст","kori_role":"str"}],"first_win":{"task":"конкретная задача — ученик пробует ДО объяснения теории","duration":5},"development":{"key_points":["п1","п2","п3"],"teacher_text":"что говорит учитель","kori":{"role":"провокатор/исследователь","text":"реплика Кори"},"traps":["Ловушка 1: утверждение — почему ошибка","Ловушка 2: утверждение — почему ошибка"]${isOnline ? ',"digital_pause":{"prompt":"точная фраза учителя","rule":"20-20-20"}' : ''}},"guild_task":{"guilds":[{"name":"🔬 Учёные","task":"конкретное задание"},{"name":"💡 Изобретатели","task":"конкретное задание"},{"name":"🌍 Исследователи","task":"конкретное задание"}],"discussion_question":"вопрос для общего обсуждения после"},"tasks":{"green":["з1 базовый","з2"],"yellow":["з1 продвинутый","з2"],"red":"босс-задача нестандартное применение"},"reflection":{"content":"Что изменилось в твоём понимании темы?","process":"Как ты работал сегодня? Что помогло думать лучше?"${isOnline ? ',"state_reflection":{"prompt":"точная фраза учителя"}' : ''}},"teacher_notes":"3-4 предложения"}` : '';
+{"passport":{"topic":"str","type":"str","emotional_goal":"str","educational_goal":"str","key_concept":"str"},"check_in":{"prompt":"точная фраза учителя","method":"${isOnline ? 'эмодзи в чат / пальцы 1-5' : 'пальцы 1-5 / линия мнений / жест'}"},"captures":[{"style":"🎭 Провокация","name":"str","technique":"str","text":"полный текст учителя 3-4 предложения","kori_role":"str"},{"style":"💭 Загадка","name":"str","technique":"другой приём","text":"другой текст","kori_role":"str"},{"style":"🌍 Связь с жизнью","name":"str","technique":"третий приём","text":"третий текст","kori_role":"str"}],"first_win":{"task":"конкретная задача — ученик пробует ДО объяснения теории","duration":5},"development":{"key_points":["п1","п2","п3"],"teacher_text":"что говорит учитель","kori":{"role":"провокатор/исследователь","text":"реплика Кори"},"traps":["Ловушка 1: утверждение — почему ошибка","Ловушка 2: утверждение — почему ошибка"]${isOnline ? ',"digital_pause":{"prompt":"точная фраза учителя","rule":"20-20-20"}' : ''}},"guild_task":{"guilds":[{"name":"🔬 Учёные","task":"конкретное задание"},{"name":"💡 Изобретатели","task":"конкретное задание"},{"name":"🌍 Исследователи","task":"конкретное задание"}],"discussion_question":"вопрос для общего обсуждения после"},"tasks":{"green":["з1 базовый","з2"],"yellow":["з1 продвинутый","з2"],"red":"босс-задача нестандартное применение"},"reflection":{"content":"Что изменилось в твоём понимании темы?","process":"Как ты работал сегодня? Что помогло думать лучше?"${isOnline ? ',"state_reflection":{"prompt":"точная фраза учителя"}' : ''}},"teacher_notes":"3-4 предложения","student_notes":{"concepts":[{"term":"термин","definition":"1-2 предложения для ученика"},{"term":"термин2","definition":"объяснение"}],"rules":[{"rule":"формула или правило","comment":"что это значит на практике"}]}}` : '';
 
   const jsonFormat = isPrimary ?
 `ОТВЕТ — ТОЛЬКО JSON (без markdown, без \`\`\`):
-{"passport":{"topic":"str","type":"Урок-открытие/закрепление","emotional_goal":"str","educational_goal":"str","key_concept":"str","writing_volume":"~N слов"},${warmupSchema ? warmupSchema + ',' : ''}"check_in":{"prompt":"точная фраза учителя","method":"${isOnline ? 'эмодзи в чат / пальцы 1-5' : 'пальцы 1-5 / встать / жест'}"},"captures":[{"style":"🎭 Драматический","name":"str","technique":"str","text":"ПОЛНЫЙ текст учителя 3-5 предложений","kori_role":"str","first_win":"конкретная задача"},{"style":"💭 Рефлексивный","name":"str","technique":"другой приём","text":"другой текст","kori_role":"str","first_win":"str"},{"style":"🔍 Аналитический","name":"str","technique":"третий приём","text":"третий текст","kori_role":"str","first_win":"str"}],"development":{"new_material":{"duration":7,"key_content":["п1","п2","п3"],"teacher_text":"str","kori_mistake":{"mistake":"ошибка Кори","correction":"как дети исправляют"}},"active_game":{"name":"str","type":"передвижение/жесты/пары","rules":["п1","п2","п3"],"words_or_tasks":["8+ слов"],"traps":["ловушка ⚠️ — почему"],"duration":8,"online_adaptation":"str"},"written_practice":{"volume":"~25-30 слов","variants":["вар1","вар2"],"duration":8}${isOnline ? ',"digital_pause":{"prompt":"точная фраза учителя","rule":"20-20-20"}' : ''}},"climax":{"humanitarian_question":"💭 вопрос про чувства","practical_question":"🔍 что умею + как проверить","choral":["«начало...» — ОТВЕТ!","«начало...» — ОТВЕТ!"],"i_can_now":"Теперь я умею..."${isOnline ? ',"state_reflection":{"prompt":"точная фраза учителя"}' : ''}},"homework":{"basic":"str","creative":"str (по желанию)"},"storylines":[{"name":"🔬 Назв","style":"str","this_lesson":"str","next_lessons":"str"},{"name":"🏙️ Назв","style":"str","this_lesson":"str","next_lessons":"str"}],"checklist":["☐ п1","☐ п2","☐ п3","☐ п4","☐ п5","☐ п6","☐ п7","☐ п8"],"teacher_notes":"3-4 предложения"}` :
+{"passport":{"topic":"str","type":"Урок-открытие/закрепление","emotional_goal":"str","educational_goal":"str","key_concept":"str","writing_volume":"~N слов"},${warmupSchema ? warmupSchema + ',' : ''}"check_in":{"prompt":"точная фраза учителя","method":"${isOnline ? 'эмодзи в чат / пальцы 1-5' : 'пальцы 1-5 / встать / жест'}"},"captures":[{"style":"🎭 Драматический","name":"str","technique":"str","text":"ПОЛНЫЙ текст учителя 3-5 предложений","kori_role":"str","first_win":"конкретная задача"},{"style":"💭 Рефлексивный","name":"str","technique":"другой приём","text":"другой текст","kori_role":"str","first_win":"str"},{"style":"🔍 Аналитический","name":"str","technique":"третий приём","text":"третий текст","kori_role":"str","first_win":"str"}],"development":{"new_material":{"duration":7,"key_content":["п1","п2","п3"],"teacher_text":"str","kori_mistake":{"mistake":"ошибка Кори","correction":"как дети исправляют"}},"active_game":{"name":"str","type":"передвижение/жесты/пары","rules":["п1","п2","п3"],"words_or_tasks":["8+ слов"],"traps":["ловушка ⚠️ — почему"],"duration":8,"online_adaptation":"str"},"written_practice":{"volume":"~25-30 слов","variants":["вар1","вар2"],"duration":8}${isOnline ? ',"digital_pause":{"prompt":"точная фраза учителя","rule":"20-20-20"}' : ''}},"climax":{"humanitarian_question":"💭 вопрос про чувства","practical_question":"🔍 что умею + как проверить","choral":["«начало...» — ОТВЕТ!","«начало...» — ОТВЕТ!"],"i_can_now":"Теперь я умею..."${isOnline ? ',"state_reflection":{"prompt":"точная фраза учителя"}' : ''}},"homework":{"basic":"str","creative":"str (по желанию)"},"storylines":[{"name":"🔬 Назв","style":"str","this_lesson":"str","next_lessons":"str"},{"name":"🏙️ Назв","style":"str","this_lesson":"str","next_lessons":"str"}],"checklist":["☐ п1","☐ п2","☐ п3","☐ п4","☐ п5","☐ п6","☐ п7","☐ п8"],"teacher_notes":"3-4 предложения","student_notes":{"concepts":[{"term":"термин","definition":"объяснение для ученика"},{"term":"термин2","definition":"объяснение"}],"rules":[{"rule":"правило или формула","comment":"что это значит"}]}}` :
 `ОТВЕТ — ТОЛЬКО JSON (без markdown):
-{"capture":{"technique":"str","text":"подробный текст 3-5 предложений","duration":5},"first_win":{"task":"конкретная задача","duration":3},"timeline":[{"phase":"str","duration":5,"activity":"учитель","students":"ученики","materials":"str","tip":"совет"}],"tasks":{"green":["з1","з2"],"yellow":["з1","з2"],"red":["босс"]},"feedback":{"method":"метод","exit_ticket":"вопрос"},"teacher_notes":"3-4 предложения"}`;
+{"capture":{"technique":"str","text":"подробный текст 3-5 предложений","duration":5},"first_win":{"task":"конкретная задача","duration":3},"timeline":[{"phase":"str","duration":5,"activity":"учитель","students":"ученики","materials":"str","tip":"совет"}],"tasks":{"green":["з1","з2"],"yellow":["з1","з2"],"red":["босс"]},"feedback":{"method":"метод","exit_ticket":"вопрос"},"teacher_notes":"3-4 предложения","student_notes":{"concepts":[{"term":"термин","definition":"объяснение для ученика"}],"rules":[{"rule":"правило","comment":"что означает"}]}}`;
 
   const curriculumBlock = curriculumCtx ? `\n\n--- ДАННЫЕ ИЗ ПРОГРАММЫ ---\n${curriculumCtx}\n--- (используй эти данные для связи с предыдущими уроками, точных техник и ДЗ) ---` : '';
 
@@ -434,6 +434,175 @@ async function generateLesson(st, token) {
   }
 
   return parsed;
+}
+
+// ========== MIND MAP GENERATION ==========
+async function generateMindMap(st, token) {
+  const ck = gc(st.subject);
+  const ci = CLUSTERS[ck];
+  const curriculumInfo = st.curriculumCtx ? `\n\nДанные из учебной программы:\n${st.curriculumCtx.slice(0, 800)}` : '';
+  const sectionInfo = st.sectionTitle ? `Раздел/Модуль: ${st.sectionTitle}` : `Тема урока: ${st.topic}`;
+
+  const systemPrompt = `Ты методист. Создай mind map модуля для учителя и учеников ${st.grade} класса.
+Выведи ТОЛЬКО текстовое дерево с символами ├──, └──, │ (без объяснений, без markdown, без вступления).
+Структура (5 ветвей):
+1. Ключевые понятия (3-4 термина с кратким пояснением в скобках)
+2. Главные правила / формулы (3-4 правила)
+3. Связь с реальной жизнью (2-3 примера)
+4. Связи с другими темами (← предыдущее, → следующее)
+5. Типичные ошибки учеников (2-3 конкретные ошибки)
+Язык: русский. Конкретно — не «понятие 1», а реальный термин.${curriculumInfo}`;
+
+  const authHeaders = token ? { "Authorization": `Bearer ${token}` } : {};
+  let response;
+  try {
+    response = await fetch("/api/generate-lesson", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...authHeaders },
+      body: JSON.stringify({
+        system: systemPrompt,
+        userMessage: `${sectionInfo}\nПредмет: ${st.subject}, Класс: ${st.grade}, Кластер: ${ci.name}`,
+        subject: st.subject,
+        grade: st.grade,
+        model: "claude-haiku-4-5-20251001",
+        max_tokens: 1500,
+      })
+    });
+  } catch (fetchErr) {
+    throw new Error("Не удалось подключиться к серверу. (" + fetchErr.message + ")");
+  }
+  if (!response.ok) {
+    let errText = "";
+    try { errText = await response.text(); } catch(e) {}
+    throw new Error(`API вернул ошибку ${response.status}. ${errText.slice(0, 200)}`);
+  }
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let text = "", buffer = "";
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n");
+    buffer = lines.pop() || "";
+    for (const line of lines) {
+      if (!line.startsWith("data: ")) continue;
+      const raw = line.slice(6).trim();
+      if (raw === "[DONE]") continue;
+      try {
+        const ev = JSON.parse(raw);
+        if (ev.type === "content_block_delta" && ev.delta?.type === "text_delta") text += ev.delta.text;
+      } catch(e) {}
+    }
+  }
+  return text.trim();
+}
+
+// ========== MIND MAP MODAL ==========
+function MindMapModal({ state, onClose }) {
+  const [loading, setLoading] = useState(true);
+  const [text, setText] = useState("");
+  const [error, setError] = useState(null);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    const run = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const token = session?.access_token || null;
+        const result = await generateMindMap(state, token);
+        if (!cancelled) { setText(result); setLoading(false); }
+      } catch (e) {
+        if (!cancelled) { setError(e.message); setLoading(false); }
+      }
+    };
+    run();
+    return () => { cancelled = true; };
+  }, []); // eslint-disable-line
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    });
+  };
+
+  return (
+    <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 900, display: "flex", alignItems: "flex-start", justifyContent: "center", overflowY: "auto", padding: "24px 16px" }}>
+      <div onClick={e => e.stopPropagation()} style={{ background: "#fff", borderRadius: 20, width: "100%", maxWidth: 600, padding: 28, boxShadow: "0 8px 40px rgba(0,0,0,0.2)" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
+          <div>
+            <div style={{ fontSize: 18, fontWeight: 800, color: "#1e3a5f" }}>🗺 Mind map модуля</div>
+            <div style={{ fontSize: 13, color: "#64748b", marginTop: 2 }}>{state.topic} · {state.grade} класс · {state.subject}</div>
+          </div>
+          <button onClick={onClose} style={{ background: "none", border: "none", fontSize: 22, cursor: "pointer", color: "#94a3b8", padding: "0 4px", lineHeight: 1 }}>✕</button>
+        </div>
+
+        {loading ? (
+          <div style={{ textAlign: "center", padding: "48px 0" }}>
+            <div style={{ fontSize: 48, marginBottom: 16, animation: "pulse 1.5s infinite" }}>🗺</div>
+            <div style={{ fontSize: 14, color: "#64748b" }}>Строим карту модуля...</div>
+          </div>
+        ) : error ? (
+          <div style={{ padding: 16, background: "#fef2f2", borderRadius: 10, color: "#dc2626", fontSize: 13 }}>❌ {error}</div>
+        ) : (
+          <>
+            <pre style={{ background: "#f8fafc", borderRadius: 12, padding: 20, fontSize: 13, lineHeight: 1.8, fontFamily: "'Courier New', Consolas, monospace", whiteSpace: "pre-wrap", wordBreak: "break-word", border: "1px solid #e2e8f0", margin: "0 0 16px 0", color: "#1e293b" }}>{text}</pre>
+            <button onClick={handleCopy} style={{ width: "100%", background: copied ? "#10b981" : "#1e3a5f", color: "#fff", border: "none", borderRadius: 10, padding: "12px 16px", fontSize: 14, fontWeight: 700, cursor: "pointer", transition: "background 0.2s" }}>
+              {copied ? "✅ Скопировано!" : "📋 Скопировать → вставить в Mapify / Miro"}
+            </button>
+            <div style={{ marginTop: 8, fontSize: 11, color: "#94a3b8", textAlign: "center" }}>mapify.so · miro.com · xmind.app · любой mind map инструмент</div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ========== STUDENT NOTES SECTION ==========
+function StudentNotesSection({ data }) {
+  const notes = data?.student_notes;
+  const [exporting, setExporting] = useState(false);
+  if (!notes || (!notes.concepts?.length && !notes.rules?.length)) return null;
+
+  const handleExport = () => {
+    setExporting(true);
+    try { exportStudentNotesDocx(notes, data.passport); } catch(e) { alert("Ошибка экспорта: " + e.message); }
+    setExporting(false);
+  };
+
+  return (
+    <div style={{ marginBottom: 24 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+        <h3 style={{ fontSize: 16, color: "#6d28d9", margin: 0, display: "flex", alignItems: "center", gap: 8 }}>📄 Конспект для учеников</h3>
+        <button onClick={handleExport} disabled={exporting} style={{ background: "#7c3aed", color: "#fff", border: "none", borderRadius: 8, padding: "6px 14px", fontSize: 12, fontWeight: 700, cursor: exporting ? "wait" : "pointer", opacity: exporting ? 0.7 : 1 }}>
+          {exporting ? "⏳..." : "📥 Скачать .doc"}
+        </button>
+      </div>
+      {notes.concepts?.length > 0 && (
+        <div style={{ marginBottom: 10 }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: "#6d28d9", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>Ключевые понятия</div>
+          {notes.concepts.map((c, i) => (
+            <div key={i} style={{ padding: "10px 14px", background: "#f5f3ff", borderRadius: 8, marginBottom: 6, fontSize: 13, lineHeight: 1.5, border: "1px solid #ddd6fe" }}>
+              <strong style={{ color: "#5b21b6" }}>{c.term}</strong> — {c.definition}
+            </div>
+          ))}
+        </div>
+      )}
+      {notes.rules?.length > 0 && (
+        <div>
+          <div style={{ fontSize: 12, fontWeight: 700, color: "#065f46", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>Правила и формулы</div>
+          {notes.rules.map((r, i) => (
+            <div key={i} style={{ padding: "10px 14px", background: "#ecfdf5", borderRadius: 8, marginBottom: 6, fontSize: 13, lineHeight: 1.5, border: "1px solid #a7f3d0" }}>
+              <code style={{ background: "#d1fae5", padding: "2px 7px", borderRadius: 4, fontWeight: 700, color: "#065f46", fontSize: 13 }}>{r.rule}</code>
+              <span style={{ color: "#064e3b", marginLeft: 8 }}>{r.comment}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 // ========== UI COMPONENTS ==========
@@ -954,7 +1123,7 @@ function Step2({ state, setState }) {
 }
 
 // ========== STEP 3: Generation ==========
-function Step3({ state, onGenerate, loading, error }) {
+function Step3({ state, onGenerate, onMindMap, loading, error }) {
   const model = MODELS.find(m => m.id === state.model);
   const cluster = gc(state.subject);
   const clInfo = CLUSTERS[cluster];
@@ -1001,9 +1170,14 @@ function Step3({ state, onGenerate, loading, error }) {
       )}
 
       {!loading && (
-        <Btn variant="accent" onClick={onGenerate} style={{ padding: "14px 40px", fontSize: 16, fontWeight: 700 }}>
-          ✨ Сгенерировать сценарий
-        </Btn>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, alignItems: "center" }}>
+          <Btn variant="accent" onClick={onGenerate} style={{ padding: "14px 40px", fontSize: 16, fontWeight: 700 }}>
+            ✨ Сгенерировать сценарий
+          </Btn>
+          <button onClick={onMindMap} style={{ background: "none", border: "1px solid #c7d2fe", borderRadius: 10, padding: "10px 24px", fontSize: 13, fontWeight: 600, color: "#3730a3", cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
+            🗺 Mind map модуля
+          </button>
+        </div>
       )}
     </div>
   );
@@ -1218,6 +1392,51 @@ function buildPrimaryHtml(data, state) {
 
   html += `</body></html>`;
   return html;
+}
+
+// ========== STUDENT NOTES EXPORT ==========
+function buildStudentNotesHtml(notes, passport) {
+  const topic = passport?.topic || "Тема урока";
+  const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  let html = `<html><head><meta charset="utf-8"><style>
+    body{font-family:'Segoe UI',Arial,sans-serif;max-width:700px;margin:40px auto;padding:20px;color:#1e293b}
+    h1{color:#1e3a5f;font-size:16pt;text-align:center;margin-bottom:4px}
+    .subtitle{text-align:center;color:#64748b;font-size:10pt;margin-bottom:24px}
+    h2{color:#5b21b6;font-size:12pt;margin-top:20px;border-bottom:1px solid #ddd6fe;padding-bottom:4px}
+    h2.rules{color:#065f46;border-bottom-color:#a7f3d0}
+    .concept{background:#f5f3ff;border:1px solid #ddd6fe;border-radius:6px;padding:10px 14px;margin-bottom:8px;font-size:11pt}
+    .concept strong{color:#5b21b6}
+    .rule{background:#ecfdf5;border:1px solid #a7f3d0;border-radius:6px;padding:10px 14px;margin-bottom:8px;font-size:11pt}
+    .rule code{background:#d1fae5;padding:1px 6px;border-radius:3px;font-weight:bold;color:#065f46;font-family:monospace}
+  </style></head><body>
+  <h1>${esc(topic)}</h1>
+  <p class="subtitle">Конспект для ученика</p>`;
+
+  if (notes.concepts?.length) {
+    html += `<h2>Ключевые понятия</h2>`;
+    for (const c of notes.concepts) {
+      html += `<div class="concept"><strong>${esc(c.term)}</strong> — ${esc(c.definition)}</div>`;
+    }
+  }
+  if (notes.rules?.length) {
+    html += `<h2 class="rules">Правила и формулы</h2>`;
+    for (const r of notes.rules) {
+      html += `<div class="rule"><code>${esc(r.rule)}</code> — ${esc(r.comment)}</div>`;
+    }
+  }
+  html += `</body></html>`;
+  return html;
+}
+
+function exportStudentNotesDocx(notes, passport) {
+  const html = buildStudentNotesHtml(notes, passport);
+  const topic = (passport?.topic || 'конспект').replace(/[^\wа-яА-ЯёЁ\s]/g, '').trim().replace(/\s+/g, '_').slice(0, 40);
+  const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `конспект_${topic}.doc`;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
 }
 
 function exportPrimaryDocx(data, state) {
@@ -1716,6 +1935,9 @@ function PrimaryResult({ data, state }) {
         </Section>
       )}
 
+      {/* Student notes */}
+      <StudentNotesSection data={data} />
+
       {/* Bottom export button */}
       <div style={{ marginTop: 24, padding: 20, background: "linear-gradient(135deg, #10b981, #059669)", borderRadius: 12, textAlign: "center" }}>
         <button onClick={handleExport} disabled={exporting} style={{
@@ -1820,6 +2042,9 @@ function StandardResult({ data, state }) {
           📝 <strong>Заметки:</strong> {data.teacher_notes}
         </div>
       )}
+
+      {/* Student notes */}
+      <StudentNotesSection data={data} />
     </div>
   );
 }
@@ -1987,6 +2212,9 @@ function MiddleResult({ data, state }) {
           <InfoBox bg="#fffbeb" border="#fbbf2440">{data.teacher_notes}</InfoBox>
         </Section>
       )}
+
+      {/* Student notes */}
+      <StudentNotesSection data={data} />
     </div>
   );
 }
@@ -2305,6 +2533,7 @@ export default function App({ user }) {
   const [reflOpen, setReflOpen] = useState(false);
   const [reflDone, setReflDone] = useState(false);
   const [adminOpen, setAdminOpen] = useState(false);
+  const [showMindMap, setShowMindMap] = useState(false);
 
   // Check if reflection already exists when result is shown
   useEffect(() => {
@@ -2438,7 +2667,7 @@ export default function App({ user }) {
         <div style={{ background: "#fff", borderRadius: 16, padding: 28, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #e2e8f0", marginBottom: 24 }}>
           {step === 0 && <Step1 state={state} setState={setState} />}
           {step === 1 && <Step2 state={state} setState={setState} />}
-          {step === 2 && <Step3 state={state} onGenerate={handleGenerate} loading={loading} error={error} />}
+          {step === 2 && <Step3 state={state} onGenerate={handleGenerate} onMindMap={() => setShowMindMap(true)} loading={loading} error={error} />}
           {step === 3 && result && (isPrimary ? <PrimaryResult data={result} state={state} /> : isMiddle ? <MiddleResult data={result} state={state} /> : <StandardResult data={result} state={state} />)}
         </div>
 
@@ -2479,6 +2708,7 @@ export default function App({ user }) {
       {reflOpen && <ReflectionModal state={state} onClose={() => setReflOpen(false)} onSaved={() => setReflDone(true)} />}
       {libraryOpen && <LibraryView onClose={() => setLibraryOpen(false)} user={user} />}
       {adminOpen && <AdminView user={user} onClose={() => setAdminOpen(false)} />}
+      {showMindMap && <MindMapModal state={state} onClose={() => setShowMindMap(false)} />}
     </div>
   );
 }
