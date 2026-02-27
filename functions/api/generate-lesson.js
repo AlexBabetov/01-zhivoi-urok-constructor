@@ -105,8 +105,8 @@ export async function onRequestPost(context) {
       "Prefer": "return=minimal",
     },
     body: JSON.stringify({
-      user_id: verifiedUser.id,
-      user_email: verifiedUser.email,
+      user_id: verifiedUser?.id || null,
+      user_email: verifiedUser?.email || null,
       event_type: "generated",
       subject: subject || null,
       grade: grade || null,
