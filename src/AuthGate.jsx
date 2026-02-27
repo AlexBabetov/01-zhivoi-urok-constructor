@@ -525,7 +525,9 @@ export default function AuthGate({ children }) {
     // Тестовый режим: пропускаем без авторизации
     return (
       <>
-        {children(null)}
+        <div style={{ paddingBottom: 60 }}>
+          {children(null)}
+        </div>
         <GuestBanner onLogin={() => setShowLoginModal(true)} />
         {showLoginModal && <LoginModal onClose={() => setShowLoginModal(false)} />}
       </>
