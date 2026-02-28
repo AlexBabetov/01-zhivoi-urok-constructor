@@ -254,7 +254,8 @@ function buildSystemPrompt(clusterName, clusterProfile, modelName, grade, format
 РАЗМИНКА (обязательно, 5-7 мин): ${warmupDesc}.
 МИКРО-ПАУЗЫ между блоками (30 сек): «три глубоких вдоха», «потянитесь к потолку», «встряхните руки» — вставляй между крупными активностями.
 ОБЯЗАТЕЛЬНО ТАКЖЕ: игра-передвижение/физминутка ПО ТЕМЕ, хоровое закрепление, «Что я теперь умею» — ученики формулируют навык вслух, светофор 🟢🟡🔴, рефлексия состояния в финале («Как себя чувствуешь? Покажи пальцами»).
-ШАГ ПОЙЯ (только Математика, Алгебра, Геометрия): используй в задачах на открытие; для других предметов НЕ применяй.` : '';
+ШАГ ПОЙЯ (только Математика, Алгебра, Геометрия): используй в задачах на открытие; для других предметов НЕ применяй.
+СПИСОК МАТЕРИАЛОВ (обязательно): перечисли конкретно что нужно напечатать, нарисовать на доске или подготовить. Поле JSON: materials.visuals (карточки и наглядности), materials.handouts (раздатки), materials.prep (что подготовить до урока).` : '';
 
   const middleBlock = isMiddle ? `
 СРЕДНЯЯ ШКОЛА (${grade}кл): абстрактно-логическое мышление, концентрация 12-15 мин, потребность в автономности и значимости.
@@ -267,20 +268,21 @@ function buildSystemPrompt(clusterName, clusterProfile, modelName, grade, format
 МИКРО-ПАУЗЫ между блоками (30 сек): «три глубоких вдоха», «потянитесь», «встряхните руки» — ненавязчиво, без «детских» физминуток.
 ТРОЙНАЯ РЕФЛЕКСИЯ в финале: контент («Что изменилось в понимании?») + процесс («Как работал? Что помогло думать?») + состояние («Как себя чувствуешь после урока? Одно слово или жест»).
 «ЧТО Я ТЕПЕРЬ УМЕЮ» — ученик формулирует конкретный навык (не «я узнал про...», а «я умею...»).
-3 ЗАХВАТА разных стилей — учитель выбирает один перед уроком.` : '';
+3 ЗАХВАТА разных стилей — учитель выбирает один перед уроком.
+СПИСОК МАТЕРИАЛОВ (обязательно): перечисли конкретно что нужно напечатать, нарисовать на доске или подготовить. Поле JSON: materials.visuals (карточки и наглядности), materials.handouts (раздатки), materials.prep (что подготовить до урока).` : '';
 
   const langBlock = isLang ? `
 РУССКИЙ ЯЗЫК: drilling правил + порождение речи.${isPrimary ? ' Каллиграфия→словарь→тема.' : ''} Мостик: «На какой вопрос отвечают эти слова?». Стыдные вопросы, слова-ловушки обязательны.` : '';
 
   const middleJsonFormat = isMiddle ?
 `ОТВЕТ — ТОЛЬКО JSON (без markdown, без \`\`\`):
-{"passport":{"topic":"str","type":"str","emotional_goal":"str","educational_goal":"str","key_concept":"str"},"check_in":{"prompt":"точная фраза учителя","method":"${isOnline ? 'эмодзи в чат / пальцы 1-5' : 'пальцы 1-5 / линия мнений / жест'}"},"captures":[{"style":"🎭 Провокация","name":"str","technique":"str","text":"полный текст учителя 3-4 предложения","kori_role":"str"},{"style":"💭 Загадка","name":"str","technique":"другой приём","text":"другой текст","kori_role":"str"},{"style":"🌍 Связь с жизнью","name":"str","technique":"третий приём","text":"третий текст","kori_role":"str"}],"first_win":{"task":"конкретная задача — ученик пробует ДО объяснения теории","duration":5},"development":{"key_points":["п1","п2","п3"],"teacher_text":"что говорит учитель","kori":{"role":"провокатор/исследователь","text":"реплика Кори"},"traps":["Ловушка 1: утверждение — почему ошибка","Ловушка 2: утверждение — почему ошибка"]${isOnline ? ',"digital_pause":{"prompt":"точная фраза учителя","rule":"20-20-20"}' : ''}},"guild_task":{"guilds":[{"name":"🔬 Учёные","task":"конкретное задание"},{"name":"💡 Изобретатели","task":"конкретное задание"},{"name":"🌍 Исследователи","task":"конкретное задание"}],"discussion_question":"вопрос для общего обсуждения после"},"tasks":{"green":["з1 базовый","з2"],"yellow":["з1 продвинутый","з2"],"red":"босс-задача нестандартное применение"},"reflection":{"content":"Что изменилось в твоём понимании темы?","process":"Как ты работал сегодня? Что помогло думать лучше?"${isOnline ? ',"state_reflection":{"prompt":"точная фраза учителя"}' : ''}},"teacher_notes":"3-4 предложения","student_notes":{"concepts":[{"term":"термин","definition":"1-2 предложения для ученика"},{"term":"термин2","definition":"объяснение"}],"rules":[{"rule":"формула или правило","comment":"что это значит на практике"}]}}` : '';
+{"passport":{"topic":"str","type":"str","emotional_goal":"str","educational_goal":"str","key_concept":"str"},"check_in":{"prompt":"точная фраза учителя","method":"${isOnline ? 'эмодзи в чат / пальцы 1-5' : 'пальцы 1-5 / линия мнений / жест'}"},"captures":[{"style":"🎭 Провокация","name":"str","technique":"str","text":"полный текст учителя 3-4 предложения","kori_role":"str"},{"style":"💭 Загадка","name":"str","technique":"другой приём","text":"другой текст","kori_role":"str"},{"style":"🌍 Связь с жизнью","name":"str","technique":"третий приём","text":"третий текст","kori_role":"str"}],"first_win":{"task":"конкретная задача — ученик пробует ДО объяснения теории","duration":5},"development":{"key_points":["п1","п2","п3"],"teacher_text":"что говорит учитель","kori":{"role":"провокатор/исследователь","text":"реплика Кори"},"traps":["Ловушка 1: утверждение — почему ошибка","Ловушка 2: утверждение — почему ошибка"]${isOnline ? ',"digital_pause":{"prompt":"точная фраза учителя","rule":"20-20-20"}' : ''}},"guild_task":{"guilds":[{"name":"🔬 Учёные","task":"конкретное задание"},{"name":"💡 Изобретатели","task":"конкретное задание"},{"name":"🌍 Исследователи","task":"конкретное задание"}],"discussion_question":"вопрос для общего обсуждения после"},"tasks":{"green":["з1 базовый","з2"],"yellow":["з1 продвинутый","з2"],"red":"босс-задача нестандартное применение"},"reflection":{"content":"Что изменилось в твоём понимании темы?","process":"Как ты работал сегодня? Что помогло думать лучше?"${isOnline ? ',"state_reflection":{"prompt":"точная фраза учителя"}' : ''}}${isOnline ? ',"online_tools":{"platforms":["название инструмента + роль в уроке"],"prep":["что настроить/создать заранее"],"links":["ссылка или инструкция по созданию"]}' : ''},"materials":{"visuals":["наглядность 1","наглядность 2"],"handouts":["раздатка 1"],"prep":["написать на доске: ...","подготовить до урока: ..."]},"teacher_notes":"3-4 предложения","student_notes":{"concepts":[{"term":"термин","definition":"1-2 предложения для ученика"},{"term":"термин2","definition":"объяснение"}],"rules":[{"rule":"формула или правило","comment":"что это значит на практике"}]}}` : '';
 
   const jsonFormat = isPrimary ?
 `ОТВЕТ — ТОЛЬКО JSON (без markdown, без \`\`\`):
-{"passport":{"topic":"str","type":"Урок-открытие/закрепление","emotional_goal":"str","educational_goal":"str","key_concept":"str","writing_volume":"~N слов"},${warmupSchema ? warmupSchema + ',' : ''}"check_in":{"prompt":"точная фраза учителя","method":"${isOnline ? 'эмодзи в чат / пальцы 1-5' : 'пальцы 1-5 / встать / жест'}"},"captures":[{"style":"🎭 Драматический","name":"str","technique":"str","text":"ПОЛНЫЙ текст учителя 3-5 предложений","kori_role":"str","first_win":"конкретная задача"},{"style":"💭 Рефлексивный","name":"str","technique":"другой приём","text":"другой текст","kori_role":"str","first_win":"str"},{"style":"🔍 Аналитический","name":"str","technique":"третий приём","text":"третий текст","kori_role":"str","first_win":"str"}],"development":{"new_material":{"duration":7,"key_content":["п1","п2","п3"],"teacher_text":"str","kori_mistake":{"mistake":"ошибка Кори","correction":"как дети исправляют"}},"active_game":{"name":"str","type":"передвижение/жесты/пары","rules":["п1","п2","п3"],"words_or_tasks":["8+ слов"],"traps":["ловушка ⚠️ — почему"],"duration":8,"online_adaptation":"str"},"written_practice":{"volume":"~25-30 слов","variants":["вар1","вар2"],"duration":8}${isOnline ? ',"digital_pause":{"prompt":"точная фраза учителя","rule":"20-20-20"}' : ''}},"climax":{"humanitarian_question":"💭 вопрос про чувства","practical_question":"🔍 что умею + как проверить","choral":["«начало...» — ОТВЕТ!","«начало...» — ОТВЕТ!"],"i_can_now":"Теперь я умею..."${isOnline ? ',"state_reflection":{"prompt":"точная фраза учителя"}' : ''}},"homework":{"basic":"str","creative":"str (по желанию)"},"storylines":[{"name":"🔬 Назв","style":"str","this_lesson":"str","next_lessons":"str"},{"name":"🏙️ Назв","style":"str","this_lesson":"str","next_lessons":"str"}],"checklist":["☐ п1","☐ п2","☐ п3","☐ п4","☐ п5","☐ п6","☐ п7","☐ п8"],"teacher_notes":"3-4 предложения","student_notes":{"concepts":[{"term":"термин","definition":"объяснение для ученика"},{"term":"термин2","definition":"объяснение"}],"rules":[{"rule":"правило или формула","comment":"что это значит"}]}}` :
+{"passport":{"topic":"str","type":"Урок-открытие/закрепление","emotional_goal":"str","educational_goal":"str","key_concept":"str","writing_volume":"~N слов"},${warmupSchema ? warmupSchema + ',' : ''}"check_in":{"prompt":"точная фраза учителя","method":"${isOnline ? 'эмодзи в чат / пальцы 1-5' : 'пальцы 1-5 / встать / жест'}"},"captures":[{"style":"🎭 Драматический","name":"str","technique":"str","text":"ПОЛНЫЙ текст учителя 3-5 предложений","kori_role":"str","first_win":"конкретная задача"},{"style":"💭 Рефлексивный","name":"str","technique":"другой приём","text":"другой текст","kori_role":"str","first_win":"str"},{"style":"🔍 Аналитический","name":"str","technique":"третий приём","text":"третий текст","kori_role":"str","first_win":"str"}],"development":{"new_material":{"duration":7,"key_content":["п1","п2","п3"],"teacher_text":"str","kori_mistake":{"mistake":"ошибка Кори","correction":"как дети исправляют"}},"active_game":{"name":"str","type":"передвижение/жесты/пары","rules":["п1","п2","п3"],"words_or_tasks":["8+ слов"],"traps":["ловушка ⚠️ — почему"],"duration":8,"online_adaptation":"str"},"written_practice":{"volume":"~25-30 слов","variants":["вар1","вар2"],"duration":8}${isOnline ? ',"digital_pause":{"prompt":"точная фраза учителя","rule":"20-20-20"}' : ''}},"climax":{"humanitarian_question":"💭 вопрос про чувства","practical_question":"🔍 что умею + как проверить","choral":["«начало...» — ОТВЕТ!","«начало...» — ОТВЕТ!"],"i_can_now":"Теперь я умею..."${isOnline ? ',"state_reflection":{"prompt":"точная фраза учителя"}' : ''}},"homework":{"basic":"str","creative":"str (по желанию)"},"storylines":[{"name":"🔬 Назв","style":"str","this_lesson":"str","next_lessons":"str"},{"name":"🏙️ Назв","style":"str","this_lesson":"str","next_lessons":"str"}],"checklist":["☐ п1","☐ п2","☐ п3","☐ п4","☐ п5","☐ п6","☐ п7","☐ п8"]${isOnline ? ',"online_tools":{"platforms":["название инструмента + роль в уроке"],"prep":["что настроить/создать заранее"],"links":["ссылка или инструкция по созданию"]}' : ''},"materials":{"visuals":["наглядность 1","наглядность 2"],"handouts":["раздатка 1"],"prep":["написать на доске: ...","подготовить до урока: ..."]},"teacher_notes":"3-4 предложения","student_notes":{"concepts":[{"term":"термин","definition":"объяснение для ученика"},{"term":"термин2","definition":"объяснение"}],"rules":[{"rule":"правило или формула","comment":"что это значит"}]}}` :
 `ОТВЕТ — ТОЛЬКО JSON (без markdown):
-{"capture":{"technique":"str","text":"подробный текст 3-5 предложений","duration":5},"first_win":{"task":"конкретная задача","duration":3},"timeline":[{"phase":"str","duration":5,"activity":"учитель","students":"ученики","materials":"str","tip":"совет"}],"tasks":{"green":["з1","з2"],"yellow":["з1","з2"],"red":["босс"]},"feedback":{"method":"метод","exit_ticket":"вопрос"},"teacher_notes":"3-4 предложения","student_notes":{"concepts":[{"term":"термин","definition":"объяснение для ученика"}],"rules":[{"rule":"правило","comment":"что означает"}]}}`;
+{"capture":{"technique":"str","text":"подробный текст 3-5 предложений","duration":5},"first_win":{"task":"конкретная задача","duration":3},"timeline":[{"phase":"str","duration":5,"activity":"учитель","students":"ученики","materials":"str","tip":"совет"}],"tasks":{"green":["з1","з2"],"yellow":["з1","з2"],"red":["босс"]},"feedback":{"method":"метод","exit_ticket":"вопрос"}${isOnline ? ',"online_tools":{"platforms":["название инструмента + роль в уроке"],"prep":["что настроить/создать заранее"],"links":["ссылка или инструкция по созданию"]}' : ''},"materials":{"visuals":["наглядность 1","наглядность 2"],"handouts":["раздатка 1"],"prep":["написать на доске: ...","подготовить до урока: ..."]},"teacher_notes":"3-4 предложения","student_notes":{"concepts":[{"term":"термин","definition":"объяснение для ученика"}],"rules":[{"rule":"правило","comment":"что означает"}]}}`;
 
   const curriculumBlock = curriculumCtx ? `\n\n--- ДАННЫЕ ИЗ ПРОГРАММЫ ---\n${curriculumCtx}\n--- (используй эти данные для связи с предыдущими уроками, точных техник и ДЗ) ---` : '';
 
@@ -294,7 +296,8 @@ function buildSystemPrompt(clusterName, clusterProfile, modelName, grade, format
 ▶ РЕФЛЕКСИЯ СОСТОЯНИЯ (финал, 1-2 мин, ОБЯЗАТЕЛЬНО): «Как себя чувствуешь? Напиши эмодзи или слово в чат». JSON: reflection.state_reflection.prompt.
 ▶ «ЧТО Я ТЕПЕРЬ УМЕЮ» — ученики пишут ФОРМУЛИРОВКУ НАВЫКА в чат (не хором вслух).
 ИНСТРУМЕНТЫ: MyQuiz (опросы, гонка), Breakout Rooms (малые группы), Google Docs (совместный), PiliApp (жребий, таймер), Online Test Pad (серии), МЭО (тренажёры), WordClouds (облако слов), Mapify (майнд-мэп), Яндекс.Телемост (видеосвязь).
-ЗАПРЕЩЕНО: физические передвижения по классу, хоровое закрепление вслух (→ замени на «напишите в чат»), лекция > 5 мин подряд без интерактива.` : '';
+ЗАПРЕЩЕНО: физические передвижения по классу, хоровое закрепление вслух (→ замени на «напишите в чат»), лекция > 5 мин подряд без интерактива.
+СПИСОК ОНЛАЙН-ИНСТРУМЕНТОВ (обязательно): укажи конкретные платформы и что в них делать на этом уроке. Поле JSON: online_tools.platforms (название инструмента + конкретная роль в уроке), online_tools.prep (что настроить/создать заранее в каждом инструменте до урока), online_tools.links (если нужно создать ссылки или комнаты — опиши что именно).` : '';
 
   return `${core}
 КЛАСТЕР: ${clusterName}. ${clusterProfile}
@@ -1348,6 +1351,24 @@ function buildPrimaryHtml(data, state) {
     html += `<h2>✅ Чек-лист урока</h2><ul class="checklist">${data.checklist.map(c => `<li>${esc(c.replace('☐ ',''))}</li>`).join('')}</ul>`;
   }
 
+  // Online tools
+  if (data.online_tools) {
+    html += `<h2>💻 Онлайн-инструменты к уроку</h2><div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px;margin:8px 0">`;
+    if (data.online_tools.platforms?.length) html += `<p><b>🛠️ Платформы и инструменты:</b></p><ul>${data.online_tools.platforms.map(p=>`<li>${esc(p)}</li>`).join('')}</ul>`;
+    if (data.online_tools.prep?.length) html += `<p><b>⚙️ Подготовить в инструментах до урока:</b></p><ul>${data.online_tools.prep.map(p=>`<li>${esc(p)}</li>`).join('')}</ul>`;
+    if (data.online_tools.links?.length) html += `<p><b>🔗 Ссылки и комнаты:</b></p><ul>${data.online_tools.links.map(l=>`<li>${esc(l)}</li>`).join('')}</ul>`;
+    html += `</div>`;
+  }
+
+  // Materials
+  if (data.materials) {
+    html += `<h2>📦 Материалы к уроку</h2><div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px;margin:8px 0">`;
+    if (data.materials.visuals?.length) html += `<p><b>🖼️ Наглядности и карточки:</b></p><ul>${data.materials.visuals.map(v=>`<li>${esc(v)}</li>`).join('')}</ul>`;
+    if (data.materials.handouts?.length) html += `<p><b>📄 Раздаточный материал:</b></p><ul>${data.materials.handouts.map(h=>`<li>${esc(h)}</li>`).join('')}</ul>`;
+    if (data.materials.prep?.length) html += `<p><b>✏️ Подготовить до урока:</b></p><ul>${data.materials.prep.map(p=>`<li>${esc(p)}</li>`).join('')}</ul>`;
+    html += `</div>`;
+  }
+
   // Teacher notes
   if (data.teacher_notes) {
     html += `<h2>📝 Заметки для учителя</h2><p style="background:#fffbeb;padding:12px;border-radius:8px;border:1px solid #fbbf24">${esc(data.teacher_notes)}</p>`;
@@ -1534,6 +1555,20 @@ function buildStandardHtml(data, state) {
     if (data.feedback.exit_ticket) html += `<p><b>🎫 Билет на выход:</b> ${esc(data.feedback.exit_ticket)}</p>`;
     html += `</div>`;
   }
+  if (data.online_tools) {
+    html += `<h2>💻 Онлайн-инструменты к уроку</h2><div class="box">`;
+    if (data.online_tools.platforms?.length) html += `<p><b>🛠️ Платформы и инструменты:</b></p><ul>${data.online_tools.platforms.map(p=>`<li>${esc(p)}</li>`).join('')}</ul>`;
+    if (data.online_tools.prep?.length) html += `<p><b>⚙️ Подготовить до урока:</b></p><ul>${data.online_tools.prep.map(p=>`<li>${esc(p)}</li>`).join('')}</ul>`;
+    if (data.online_tools.links?.length) html += `<p><b>🔗 Ссылки и комнаты:</b></p><ul>${data.online_tools.links.map(l=>`<li>${esc(l)}</li>`).join('')}</ul>`;
+    html += `</div>`;
+  }
+  if (data.materials) {
+    html += `<h2>📦 Материалы к уроку</h2><div class="box">`;
+    if (data.materials.visuals?.length) html += `<p><b>🖼️ Наглядности и карточки:</b></p><ul>${data.materials.visuals.map(v=>`<li>${esc(v)}</li>`).join('')}</ul>`;
+    if (data.materials.handouts?.length) html += `<p><b>📄 Раздаточный материал:</b></p><ul>${data.materials.handouts.map(h=>`<li>${esc(h)}</li>`).join('')}</ul>`;
+    if (data.materials.prep?.length) html += `<p><b>✏️ Подготовить до урока:</b></p><ul>${data.materials.prep.map(p=>`<li>${esc(p)}</li>`).join('')}</ul>`;
+    html += `</div>`;
+  }
   if (data.teacher_notes) html += `<h2>📝 Заметки для учителя</h2><div class="box"><p>${esc(data.teacher_notes)}</p></div>`;
   html += `</body></html>`;
   return html;
@@ -1657,6 +1692,20 @@ function buildMiddleHtml(data, state) {
     html += `</div>`;
   }
 
+  if (data.online_tools) {
+    html += `<h2>💻 Онлайн-инструменты к уроку</h2><div class="box">`;
+    if (data.online_tools.platforms?.length) html += `<p><b>🛠️ Платформы и инструменты:</b></p><ul>${data.online_tools.platforms.map(p=>`<li>${esc(p)}</li>`).join('')}</ul>`;
+    if (data.online_tools.prep?.length) html += `<p><b>⚙️ Подготовить до урока:</b></p><ul>${data.online_tools.prep.map(p=>`<li>${esc(p)}</li>`).join('')}</ul>`;
+    if (data.online_tools.links?.length) html += `<p><b>🔗 Ссылки и комнаты:</b></p><ul>${data.online_tools.links.map(l=>`<li>${esc(l)}</li>`).join('')}</ul>`;
+    html += `</div>`;
+  }
+  if (data.materials) {
+    html += `<h2>📦 Материалы к уроку</h2><div class="box">`;
+    if (data.materials.visuals?.length) html += `<p><b>🖼️ Наглядности и карточки:</b></p><ul>${data.materials.visuals.map(v=>`<li>${esc(v)}</li>`).join('')}</ul>`;
+    if (data.materials.handouts?.length) html += `<p><b>📄 Раздаточный материал:</b></p><ul>${data.materials.handouts.map(h=>`<li>${esc(h)}</li>`).join('')}</ul>`;
+    if (data.materials.prep?.length) html += `<p><b>✏️ Подготовить до урока:</b></p><ul>${data.materials.prep.map(p=>`<li>${esc(p)}</li>`).join('')}</ul>`;
+    html += `</div>`;
+  }
   if (data.teacher_notes) html += `<h2>📝 Заметки для учителя</h2><div class="box"><p>${esc(data.teacher_notes)}</p></div>`;
   html += `</body></html>`;
   return html;
@@ -1928,6 +1977,28 @@ function PrimaryResult({ data, state }) {
         </Section>
       )}
 
+      {/* Online tools */}
+      {data.online_tools && (
+        <Section title="Онлайн-инструменты к уроку" icon="💻">
+          <InfoBox bg="#eff6ff" border="#bfdbfe">
+            {data.online_tools.platforms?.length > 0 && <div style={{ marginBottom: 6 }}><strong>🛠️ Платформы:</strong><ul style={{ margin: "4px 0 0 20px", padding: 0 }}>{data.online_tools.platforms.map((p,i) => <li key={i}>{p}</li>)}</ul></div>}
+            {data.online_tools.prep?.length > 0 && <div style={{ marginBottom: 6 }}><strong>⚙️ Подготовить:</strong><ul style={{ margin: "4px 0 0 20px", padding: 0 }}>{data.online_tools.prep.map((p,i) => <li key={i}>{p}</li>)}</ul></div>}
+            {data.online_tools.links?.length > 0 && <div><strong>🔗 Ссылки:</strong><ul style={{ margin: "4px 0 0 20px", padding: 0 }}>{data.online_tools.links.map((l,i) => <li key={i}>{l}</li>)}</ul></div>}
+          </InfoBox>
+        </Section>
+      )}
+
+      {/* Materials */}
+      {data.materials && (
+        <Section title="Материалы к уроку" icon="📦">
+          <InfoBox bg="#f0fdf4" border="#bbf7d0">
+            {data.materials.visuals?.length > 0 && <div style={{ marginBottom: 6 }}><strong>🖼️ Наглядности:</strong><ul style={{ margin: "4px 0 0 20px", padding: 0 }}>{data.materials.visuals.map((v,i) => <li key={i}>{v}</li>)}</ul></div>}
+            {data.materials.handouts?.length > 0 && <div style={{ marginBottom: 6 }}><strong>📄 Раздатки:</strong><ul style={{ margin: "4px 0 0 20px", padding: 0 }}>{data.materials.handouts.map((h,i) => <li key={i}>{h}</li>)}</ul></div>}
+            {data.materials.prep?.length > 0 && <div><strong>✏️ Подготовить:</strong><ul style={{ margin: "4px 0 0 20px", padding: 0 }}>{data.materials.prep.map((p,i) => <li key={i}>{p}</li>)}</ul></div>}
+          </InfoBox>
+        </Section>
+      )}
+
       {/* Teacher notes */}
       {data.teacher_notes && (
         <Section title="Заметки для учителя" icon="📝">
@@ -2034,6 +2105,24 @@ function StandardResult({ data, state }) {
             <div><strong>Метод:</strong> {data.feedback.method}</div>
             <div style={{ marginTop: 4 }}><strong>🎫 Билет на выход:</strong> {data.feedback.exit_ticket}</div>
           </div>
+        </div>
+      )}
+
+      {data.online_tools && (
+        <div style={{ padding: 14, background: "#eff6ff", borderRadius: 10, border: "1px solid #bfdbfe", fontSize: 13, marginBottom: 12 }}>
+          <strong>💻 Онлайн-инструменты к уроку</strong>
+          {data.online_tools.platforms?.length > 0 && <div style={{ marginTop: 6 }}><strong>🛠️ Инструменты:</strong><ul style={{ margin: "4px 0 0 20px", padding: 0 }}>{data.online_tools.platforms.map((p,i) => <li key={i}>{p}</li>)}</ul></div>}
+          {data.online_tools.prep?.length > 0 && <div style={{ marginTop: 6 }}><strong>⚙️ Подготовить:</strong><ul style={{ margin: "4px 0 0 20px", padding: 0 }}>{data.online_tools.prep.map((p,i) => <li key={i}>{p}</li>)}</ul></div>}
+          {data.online_tools.links?.length > 0 && <div style={{ marginTop: 6 }}><strong>🔗 Ссылки:</strong><ul style={{ margin: "4px 0 0 20px", padding: 0 }}>{data.online_tools.links.map((l,i) => <li key={i}>{l}</li>)}</ul></div>}
+        </div>
+      )}
+
+      {data.materials && (
+        <div style={{ padding: 14, background: "#f0fdf4", borderRadius: 10, border: "1px solid #bbf7d0", fontSize: 13, marginBottom: 12 }}>
+          <strong>📦 Материалы к уроку</strong>
+          {data.materials.visuals?.length > 0 && <div style={{ marginTop: 6 }}><strong>🖼️ Наглядности:</strong><ul style={{ margin: "4px 0 0 20px", padding: 0 }}>{data.materials.visuals.map((v,i) => <li key={i}>{v}</li>)}</ul></div>}
+          {data.materials.handouts?.length > 0 && <div style={{ marginTop: 6 }}><strong>📄 Раздатки:</strong><ul style={{ margin: "4px 0 0 20px", padding: 0 }}>{data.materials.handouts.map((h,i) => <li key={i}>{h}</li>)}</ul></div>}
+          {data.materials.prep?.length > 0 && <div style={{ marginTop: 6 }}><strong>✏️ Подготовить:</strong><ul style={{ margin: "4px 0 0 20px", padding: 0 }}>{data.materials.prep.map((p,i) => <li key={i}>{p}</li>)}</ul></div>}
         </div>
       )}
 
@@ -2202,6 +2291,28 @@ function MiddleResult({ data, state }) {
           <InfoBox bg="#f0fdf4" border="#bbf7d0">
             <div><strong>📖 Контент:</strong> {data.reflection.content}</div>
             <div style={{ marginTop: 6 }}><strong>⚙️ Процесс:</strong> {data.reflection.process}</div>
+          </InfoBox>
+        </Section>
+      )}
+
+      {/* Online tools */}
+      {data.online_tools && (
+        <Section title="Онлайн-инструменты к уроку" icon="💻">
+          <InfoBox bg="#eff6ff" border="#bfdbfe">
+            {data.online_tools.platforms?.length > 0 && <div style={{ marginBottom: 6 }}><strong>🛠️ Платформы:</strong><ul style={{ margin: "4px 0 0 20px", padding: 0 }}>{data.online_tools.platforms.map((p,i) => <li key={i}>{p}</li>)}</ul></div>}
+            {data.online_tools.prep?.length > 0 && <div style={{ marginBottom: 6 }}><strong>⚙️ Подготовить:</strong><ul style={{ margin: "4px 0 0 20px", padding: 0 }}>{data.online_tools.prep.map((p,i) => <li key={i}>{p}</li>)}</ul></div>}
+            {data.online_tools.links?.length > 0 && <div><strong>🔗 Ссылки:</strong><ul style={{ margin: "4px 0 0 20px", padding: 0 }}>{data.online_tools.links.map((l,i) => <li key={i}>{l}</li>)}</ul></div>}
+          </InfoBox>
+        </Section>
+      )}
+
+      {/* Materials */}
+      {data.materials && (
+        <Section title="Материалы к уроку" icon="📦">
+          <InfoBox bg="#f0fdf4" border="#bbf7d0">
+            {data.materials.visuals?.length > 0 && <div style={{ marginBottom: 6 }}><strong>🖼️ Наглядности:</strong><ul style={{ margin: "4px 0 0 20px", padding: 0 }}>{data.materials.visuals.map((v,i) => <li key={i}>{v}</li>)}</ul></div>}
+            {data.materials.handouts?.length > 0 && <div style={{ marginBottom: 6 }}><strong>📄 Раздатки:</strong><ul style={{ margin: "4px 0 0 20px", padding: 0 }}>{data.materials.handouts.map((h,i) => <li key={i}>{h}</li>)}</ul></div>}
+            {data.materials.prep?.length > 0 && <div><strong>✏️ Подготовить:</strong><ul style={{ margin: "4px 0 0 20px", padding: 0 }}>{data.materials.prep.map((p,i) => <li key={i}>{p}</li>)}</ul></div>}
           </InfoBox>
         </Section>
       )}
