@@ -68,8 +68,11 @@ export default async (request, context) => {
     });
   }
 
+  // Роль: teacher/admin обязательна в проде, но пропускаем если роль ещё не выставлена в Supabase
+  // (Sprint 3: когда Supabase roles будут настроены — убрать allowNoRole)
   const userRole = verifiedUser.user_metadata?.role;
-  if (!userRole || !["teacher", "admin"].includes(userRole)) {
+  const allowNoRole = true; // TODO Sprint 3: поменять на false после настройки ролей
+  if (!allowNoRole && !userRole || (userRole && !["teacher", "admin"].includes(userRole))) {
     return new Response(JSON.stringify({ error: "Доступ запрещён: только для учителей и администраторов" }), {
       status: 403, headers: { ...cors, "Content-Type": "application/json" },
     });
