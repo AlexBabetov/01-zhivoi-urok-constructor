@@ -221,7 +221,7 @@ function buildCurriculumContext(curriculum, lessonId) {
 }
 
 // ========== AI PROMPT ==========
-function buildSystemPrompt(clusterName, clusterProfile, modelName, grade, format, curriculumCtx, subject = "") {
+function buildSystemPrompt(clusterName, clusterProfile, modelName, grade, format, curriculumCtx, subject = "", modelId = "") {
   const isPrimary = grade <= 4;
   const isMiddle = grade >= 5 && grade <= 9;
   const isLang = clusterName === "Язык и коммуникация";
@@ -230,6 +230,9 @@ function buildSystemPrompt(clusterName, clusterProfile, modelName, grade, format
   const isLitReading = subject === "Литературное чтение";
   const isPE = subject === "Физическая культура";
   const isOnline = format === 'online';
+  const isOpenLesson = ['research', 'discussion', 'project', 'quest'].includes(modelId);
+  const needsKontsentrat = isOnline && grade >= 7 && isOpenLesson;
+  const kontsentratDuration = grade >= 10 ? '18–22' : grade === 9 ? '15–18' : grade === 8 ? '12–15' : '10–12';
   const writingNorm = grade <= 2 ? "35-50 слов класс / 12-17 дом" : grade <= 3 ? "45-60 / 15-20" : "55-70 / 20-25";
 
   // Предметная разминка для начальной школы
@@ -283,15 +286,26 @@ function buildSystemPrompt(clusterName, clusterProfile, modelName, grade, format
 
   const middleJsonFormat = isMiddle ?
 `ОТВЕТ — ТОЛЬКО JSON (без markdown, без \`\`\`):
-{"passport":{"topic":"str","type":"str","emotional_goal":"str","educational_goal":"str","key_concept":"str"},"check_in":{"prompt":"точная фраза учителя","method":"${isOnline ? 'эмодзи в чат / пальцы 1-5' : 'пальцы 1-5 / линия мнений / жест'}"},"captures":[{"style":"🎭 Провокация","name":"str","technique":"str","text":"полный текст учителя 3-4 предложения","kori_role":"str"},{"style":"💭 Загадка","name":"str","technique":"другой приём","text":"другой текст","kori_role":"str"},{"style":"🌍 Связь с жизнью","name":"str","technique":"третий приём","text":"третий текст","kori_role":"str"}],"first_win":{"task":"конкретная задача — ученик пробует ДО объяснения теории","duration":5},"development":{"key_points":["п1","п2","п3"],"teacher_text":"что говорит учитель","kori":{"role":"провокатор/исследователь","text":"реплика Кори"},"traps":["Ловушка 1: утверждение — почему ошибка","Ловушка 2: утверждение — почему ошибка"]${isOnline ? ',"digital_pause":{"prompt":"точная фраза учителя","rule":"20-20-20"}' : ''}},"guild_task":{"guilds":[{"name":"🔬 Учёные","task":"конкретное задание"},{"name":"💡 Изобретатели","task":"конкретное задание"},{"name":"🌍 Исследователи","task":"конкретное задание"}],"discussion_question":"вопрос для общего обсуждения после"},"tasks":{"green":["з1 базовый","з2"],"yellow":["з1 продвинутый","з2"],"red":"босс-задача нестандартное применение"},"reflection":{"content":"Что изменилось в твоём понимании темы?","process":"Как ты работал сегодня? Что помогло думать лучше?"${isOnline ? ',"state_reflection":{"prompt":"точная фраза учителя"}' : ''}}${isOnline ? ',"online_tools":{"platforms":["название инструмента + роль в уроке"],"prep":["что настроить/создать заранее"],"links":["ссылка или инструкция по созданию"]}' : ''},"materials":{"visuals":["наглядность 1","наглядность 2"],"handouts":["раздатка 1"],"prep":["написать на доске: ...","подготовить до урока: ..."]},"teacher_notes":"3-4 предложения","student_notes":{"concepts":[{"term":"термин","definition":"1-2 предложения для ученика"},{"term":"термин2","definition":"объяснение"}],"rules":[{"rule":"формула или правило","comment":"что это значит на практике"}]}}` : '';
+{"passport":{"topic":"str","type":"str","emotional_goal":"str","educational_goal":"str","key_concept":"str"},"check_in":{"prompt":"точная фраза учителя","method":"${isOnline ? 'эмодзи в чат / пальцы 1-5' : 'пальцы 1-5 / линия мнений / жест'}"},"captures":[{"style":"🎭 Провокация","name":"str","technique":"str","text":"полный текст учителя 3-4 предложения","kori_role":"str"},{"style":"💭 Загадка","name":"str","technique":"другой приём","text":"другой текст","kori_role":"str"},{"style":"🌍 Связь с жизнью","name":"str","technique":"третий приём","text":"третий текст","kori_role":"str"}]${needsKontsentrat ? `,"kontsentrat":{"duration_min":"${kontsentratDuration}","recording_note":"⏺ ЗАПИСЬ от интриги до мостика — формулируй микро-активности универсально","intriga":"провокационный вопрос/парадокс/невозможный факт для старта концентрата","first_win":"интуитивный вопрос в чат ДО объяснения теории","block_1_title":"название первого блока","block_1_content":"что объяснять: ключевое понятие/алгоритм/идея + аналогии из жизни (4-5 мин)","micro_1":"вопрос на понимание для MyQuiz или чата (1 мин)","block_2_title":"название второго блока","block_2_content":"углубление: второй шаг/нюансы/контрпримеры (4-5 мин)","micro_2":"предсказание — ответы в чат (1 мин)","block_3_title":"название третьего блока","block_3_content":"связь с изученным + практическое применение + зачем это нужно (3-4 мин)","micro_3":"резюме: главная мысль одним предложением в чат (1 мин)","bridge":"точная фраза учителя для перехода к Живому уроку"},"digital_pause":{"prompt":"точная фраза — пауза между теорией и практикой","rule":"встаньте, потянитесь, правило 20-20-20"}` : `,"first_win":{"task":"конкретная задача — ученик пробует ДО объяснения теории","duration":5},"development":{"key_points":["п1","п2","п3"],"teacher_text":"что говорит учитель","kori":{"role":"провокатор/исследователь","text":"реплика Кори"},"traps":["Ловушка 1: утверждение — почему ошибка","Ловушка 2: утверждение — почему ошибка"]${isOnline ? ',"digital_pause":{"prompt":"точная фраза учителя","rule":"20-20-20"}' : ''}}`},"guild_task":{"guilds":[{"name":"🔬 Учёные","task":"конкретное задание"},{"name":"💡 Изобретатели","task":"конкретное задание"},{"name":"🌍 Исследователи","task":"конкретное задание"}],"discussion_question":"вопрос для общего обсуждения после"},"tasks":{"green":["з1 базовый","з2"],"yellow":["з1 продвинутый","з2"],"red":"босс-задача нестандартное применение"},"reflection":{"content":"Что изменилось в твоём понимании темы?","process":"Как ты работал сегодня? Что помогло думать лучше?"${isOnline ? ',"state_reflection":{"prompt":"точная фраза учителя"}' : ''}}${isOnline ? ',"online_tools":{"platforms":["название инструмента + роль в уроке"],"prep":["что настроить/создать заранее"],"links":["ссылка или инструкция по созданию"]}' : ''},"materials":{"visuals":["наглядность 1","наглядность 2"],"handouts":["раздатка 1"],"prep":["написать на доске: ...","подготовить до урока: ..."]},"teacher_notes":"3-4 предложения","student_notes":{"concepts":[{"term":"термин","definition":"1-2 предложения для ученика"},{"term":"термин2","definition":"объяснение"}],"rules":[{"rule":"формула или правило","comment":"что это значит на практике"}]}}` : '';
 
   const jsonFormat = isPrimary ?
 `ОТВЕТ — ТОЛЬКО JSON (без markdown, без \`\`\`):
 {"passport":{"topic":"str","type":"Урок-открытие/закрепление","emotional_goal":"str","educational_goal":"str","key_concept":"str","writing_volume":"~N слов"},${warmupSchema ? warmupSchema + ',' : ''}"check_in":{"prompt":"точная фраза учителя","method":"${isOnline ? 'эмодзи в чат / пальцы 1-5' : 'пальцы 1-5 / встать / жест'}"},"captures":[{"style":"🎭 Драматический","name":"str","technique":"str","text":"ПОЛНЫЙ текст учителя 3-5 предложений","kori_role":"str","first_win":"конкретная задача"},{"style":"💭 Рефлексивный","name":"str","technique":"другой приём","text":"другой текст","kori_role":"str","first_win":"str"},{"style":"🔍 Аналитический","name":"str","technique":"третий приём","text":"третий текст","kori_role":"str","first_win":"str"}],"development":{"new_material":{"duration":7,"key_content":["п1","п2","п3"],"teacher_text":"str","kori_mistake":{"mistake":"ошибка Кори","correction":"как дети исправляют"}},"active_game":{"name":"str","type":"передвижение/жесты/пары","rules":["п1","п2","п3"],"words_or_tasks":["8+ слов"],"traps":["ловушка ⚠️ — почему"],"duration":8,"online_adaptation":"str"},"written_practice":{"volume":"~25-30 слов","variants":["вар1","вар2"],"duration":8}${isOnline ? ',"digital_pause":{"prompt":"точная фраза учителя","rule":"20-20-20"}' : ''}},"climax":{"humanitarian_question":"💭 вопрос про чувства","practical_question":"🔍 что умею + как проверить","choral":["«начало...» — ОТВЕТ!","«начало...» — ОТВЕТ!"],"i_can_now":"Теперь я умею..."${isOnline ? ',"state_reflection":{"prompt":"точная фраза учителя"}' : ''}},"homework":{"basic":"str","creative":"str (по желанию)"},"storylines":[{"name":"🔬 Назв","style":"str","this_lesson":"str","next_lessons":"str"},{"name":"🏙️ Назв","style":"str","this_lesson":"str","next_lessons":"str"}],"checklist":["☐ п1","☐ п2","☐ п3","☐ п4","☐ п5","☐ п6","☐ п7","☐ п8"]${isOnline ? ',"online_tools":{"platforms":["название инструмента + роль в уроке"],"prep":["что настроить/создать заранее"],"links":["ссылка или инструкция по созданию"]}' : ''},"materials":{"visuals":["наглядность 1","наглядность 2"],"handouts":["раздатка 1"],"prep":["написать на доске: ...","подготовить до урока: ..."]},"teacher_notes":"3-4 предложения","student_notes":{"concepts":[{"term":"термин","definition":"объяснение для ученика"},{"term":"термин2","definition":"объяснение"}],"rules":[{"rule":"правило или формула","comment":"что это значит"}]}}` :
 `ОТВЕТ — ТОЛЬКО JSON (без markdown):
-{"capture":{"technique":"str","text":"подробный текст 3-5 предложений","duration":5},"first_win":{"task":"конкретная задача","duration":3},"timeline":[{"phase":"str","duration":5,"activity":"учитель","students":"ученики","materials":"str","tip":"совет"}],"tasks":{"green":["з1","з2"],"yellow":["з1","з2"],"red":["босс"]},"feedback":{"method":"метод","exit_ticket":"вопрос"}${isOnline ? ',"online_tools":{"platforms":["название инструмента + роль в уроке"],"prep":["что настроить/создать заранее"],"links":["ссылка или инструкция по созданию"]}' : ''},"materials":{"visuals":["наглядность 1","наглядность 2"],"handouts":["раздатка 1"],"prep":["написать на доске: ...","подготовить до урока: ..."]},"teacher_notes":"3-4 предложения","student_notes":{"concepts":[{"term":"термин","definition":"объяснение для ученика"}],"rules":[{"rule":"правило","comment":"что означает"}]}}`;
+{"capture":{"technique":"str","text":"подробный текст 3-5 предложений","duration":5}${needsKontsentrat ? `,"kontsentrat":{"duration_min":"${kontsentratDuration}","recording_note":"⏺ ЗАПИСЬ от интриги до мостика — формулируй микро-активности универсально","intriga":"провокационный вопрос/парадокс/невозможный факт для старта концентрата","first_win":"интуитивный вопрос в чат ДО объяснения теории","block_1_title":"название первого блока","block_1_content":"что объяснять: ключевое понятие/алгоритм/идея + аналогии из жизни (4-5 мин)","micro_1":"вопрос на понимание для MyQuiz или чата (1 мин)","block_2_title":"название второго блока","block_2_content":"углубление: второй шаг/нюансы/контрпримеры (4-5 мин)","micro_2":"предсказание — ответы в чат (1 мин)","block_3_title":"название третьего блока","block_3_content":"связь с изученным + практическое применение + зачем это нужно (3-4 мин)","micro_3":"резюме: главная мысль одним предложением в чат (1 мин)","bridge":"точная фраза учителя для перехода к Живому уроку"},"digital_pause":{"prompt":"точная фраза — пауза между теорией и практикой","rule":"встаньте, потянитесь, правило 20-20-20"}` : `,"first_win":{"task":"конкретная задача","duration":3}`},"timeline":[{"phase":"str","duration":5,"activity":"учитель","students":"ученики","materials":"str","tip":"совет"}],"tasks":{"green":["з1","з2"],"yellow":["з1","з2"],"red":["босс"]},"feedback":{"method":"метод","exit_ticket":"вопрос"}${isOnline ? ',"online_tools":{"platforms":["название инструмента + роль в уроке"],"prep":["что настроить/создать заранее"],"links":["ссылка или инструкция по созданию"]}' : ''},"materials":{"visuals":["наглядность 1","наглядность 2"],"handouts":["раздатка 1"],"prep":["написать на доске: ...","подготовить до урока: ..."]},"teacher_notes":"3-4 предложения","student_notes":{"concepts":[{"term":"термин","definition":"объяснение для ученика"}],"rules":[{"rule":"правило","comment":"что означает"}]}}`;
 
   const curriculumBlock = curriculumCtx ? `\n\n--- ДАННЫЕ ИЗ ПРОГРАММЫ ---\n${curriculumCtx}\n--- (используй эти данные для связи с предыдущими уроками, точных техник и ДЗ) ---` : '';
+
+  const kontsentratBlock = needsKontsentrat ? `
+МОДЕЛЬ «КОНЦЕНТРАТ» (${kontsentratDuration} мин): онлайн ${grade} кл. + модель Открытия = структурированная подача теории ПЕРЕД практикой.
+Это НЕ монолог. Ритм: «4–5 мин подача → 1 мин активность → 4–5 мин подача → 1 мин активность...».
+Внутренняя структура концентрата: Интрига (0–2 мин) → Первая победа (2–3 мин) → Блок 1 (4–5 мин) → Микро-1 (1 мин) → Блок 2 (4–5 мин) → Микро-2 (1 мин) → Блок 3 (3–4 мин) → Микро-3 (1 мин) → Мостик (1 мин).
+Структура объяснения: сначала ЗАЧЕМ (мотивация), потом ЧТО (теория), потом КАК (алгоритм).
+Аналогии из жизни для каждого абстрактного понятия. Контрпримеры: «Это НЕ работает, когда...».
+Маркеры вслух: «Первое... Второе... И наконец...» — помогают при просмотре записи.
+⏺ ЗАПИСЬ: от Интриги до Мостика. Микро-активности формулируй универсально: «Подумайте...» вместо «Маша, напиши...».
+${isMath ? 'СТИЛЬ (точные науки): пошаговый алгоритм «Шаг 1 → Шаг 2 → Шаг 3», визуализация через виртуальную доску/GeoGebra, предсказание следующего шага.' : isLang ? 'СТИЛЬ (язык): двуязычный переход, правило в контексте аутентичного материала, «найди ошибку» в качестве микро-активности.' : 'СТИЛЬ (гуманитарные): нарративный — рассказ-история, источник или цитата, парадокс или провокация для постановки проблемы.'}
+JSON: поле "kontsentrat" заменяет first_win и development в этом уроке.` : '';
 
   const onlineBlock = isOnline ? `
 ОНЛАЙН-УРОК ЖУ360 v5.1 — онлайн ≠ очный в Zoom. Принципиально другая структура.
@@ -308,7 +322,7 @@ function buildSystemPrompt(clusterName, clusterProfile, modelName, grade, format
 
   return `${core}
 КЛАСТЕР: ${clusterName}. ${clusterProfile}
-МОДЕЛЬ: ${modelName}, КЛАСС: ${grade}, ФОРМАТ: ${format === 'online' ? 'Онлайн' : 'Очный'}${isOnline && grade >= 7 ? '. Онлайн 7+: Концентрат 10-22мин.' : ''}${primaryBlock}${middleBlock}${langBlock}${onlineBlock}${curriculumBlock}
+МОДЕЛЬ: ${modelName}, КЛАСС: ${grade}, ФОРМАТ: ${format === 'online' ? 'Онлайн' : 'Очный'}${primaryBlock}${middleBlock}${langBlock}${onlineBlock}${kontsentratBlock}${curriculumBlock}
 ПРАВИЛА: конкретность (не «задача», а точная формулировка), готовый текст учителя, каждый захват — ДРУГОЙ стиль, ловушки обязательны, ошибка Кори=типичная ошибка ученика, всё на русском.
 ${isMiddle ? middleJsonFormat : jsonFormat}`;
 }
@@ -319,7 +333,7 @@ async function generateLesson(st, token) {
   const mo = MODELS.find(m => m.id === st.model);
   // curriculumCtx = lesson-level (from detailed JSONs); sectionsCtx = auto-built from ФРП sections
   const effectiveCtx = st.curriculumCtx || st.sectionsCtx || null;
-  const sysPrompt = buildSystemPrompt(ci.name, ci.profile, mo.name, st.grade, st.format, effectiveCtx, st.subject);
+  const sysPrompt = buildSystemPrompt(ci.name, ci.profile, mo.name, st.grade, st.format, effectiveCtx, st.subject, st.model);
   const userMsg = `Предмет: ${st.subject}, Класс: ${st.grade}, Тема: ${st.topic}, Модель: ${mo.name} (${mo.mode}), ${st.duration} мин, ${st.format === 'online' ? 'Онлайн' : 'Очный'}${st.notes ? ', Пожелания: ' + st.notes : ''}`;
 
   const authHeaders = token ? { "Authorization": `Bearer ${token}` } : {};
@@ -1535,7 +1549,34 @@ function buildStandardHtml(data, state) {
     if (data.capture.text)      html += `<p><b>📢 Учитель:</b> ${esc(data.capture.text)}</p>`;
     html += `</div>`;
   }
-  if (data.first_win) {
+  if (data.kontsentrat) {
+    const k = data.kontsentrat;
+    html += `<h2>🎬 КОНЦЕНТРАТ — подача теории (${esc(k.duration_min)} мин)</h2>`;
+    html += `<div style="background:#fff7ed;border:2px solid #f97316;border-radius:8px;padding:14px;margin:8px 0">`;
+    html += `<p style="background:#fed7aa;border-radius:4px;padding:6px 10px;font-size:10pt;margin:0 0 10px 0;font-weight:bold">⏺ ${esc(k.recording_note)}</p>`;
+    if (k.intriga)     html += `<p><b>💡 Интрига:</b> ${esc(k.intriga)}</p>`;
+    if (k.first_win)   html += `<p style="background:#ecfdf5;border-radius:4px;padding:8px;border:1px solid #a7f3d0"><b>🏆 Первая победа:</b> ${esc(k.first_win)}</p>`;
+    if (k.block_1_title) {
+      html += `<p><b>📚 Блок 1: ${esc(k.block_1_title)}</b></p><p>${esc(k.block_1_content)}</p>`;
+      html += `<div style="background:#ffedd5;border-radius:4px;padding:8px;margin:4px 0"><b>⚡ Микро-1:</b> ${esc(k.micro_1)}</div>`;
+    }
+    if (k.block_2_title) {
+      html += `<p><b>📚 Блок 2: ${esc(k.block_2_title)}</b></p><p>${esc(k.block_2_content)}</p>`;
+      html += `<div style="background:#ffedd5;border-radius:4px;padding:8px;margin:4px 0"><b>⚡ Микро-2:</b> ${esc(k.micro_2)}</div>`;
+    }
+    if (k.block_3_title) {
+      html += `<p><b>📚 Блок 3: ${esc(k.block_3_title)}</b></p><p>${esc(k.block_3_content)}</p>`;
+      html += `<div style="background:#ffedd5;border-radius:4px;padding:8px;margin:4px 0"><b>⚡ Микро-3:</b> ${esc(k.micro_3)}</div>`;
+    }
+    if (k.bridge) html += `<p style="margin-top:10px"><b>🌉 Мостик к практике:</b> «${esc(k.bridge)}»</p>`;
+    html += `</div>`;
+    if (data.digital_pause) {
+      html += `<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:6px;padding:8px 12px;margin:8px 0;font-size:10pt">`;
+      html += `<b>🧘 Цифровая пауза:</b> ${esc(data.digital_pause.prompt)} <span style="color:#64748b">(${esc(data.digital_pause.rule)})</span>`;
+      html += `</div>`;
+    }
+  }
+  if (!data.kontsentrat && data.first_win) {
     html += `<h2>🏆 Первая победа (до теории)</h2><div class="win-box">`;
     html += `<p>${esc(data.first_win.task)}</p>`;
     if (data.first_win.duration) html += `<p style="color:#64748b;font-size:10pt">⏱ ${data.first_win.duration} мин</p>`;
@@ -1651,14 +1692,38 @@ function buildMiddleHtml(data, state) {
     });
   }
 
-  // First win
-  if (data.first_win) {
+  // Концентрат (онлайн 7+ кл., только Открытие)
+  if (data.kontsentrat) {
+    const k = data.kontsentrat;
+    html += `<h2>🎬 КОНЦЕНТРАТ — подача теории (${esc(k.duration_min)} мин)</h2>`;
+    html += `<div style="background:#fff7ed;border:2px solid #f97316;border-radius:8px;padding:14px;margin:8px 0">`;
+    html += `<p style="background:#fed7aa;border-radius:4px;padding:6px 10px;font-size:10pt;margin:0 0 10px 0;font-weight:bold">⏺ ${esc(k.recording_note)}</p>`;
+    if (k.intriga)     html += `<p><b>💡 Интрига (0:00–2:00):</b> ${esc(k.intriga)}</p>`;
+    if (k.first_win)   html += `<p style="background:#ecfdf5;border-radius:4px;padding:8px;border:1px solid #a7f3d0"><b>🏆 Первая победа (2:00–3:00):</b> ${esc(k.first_win)}</p>`;
+    if (k.block_1_title) {
+      html += `<p><b>📚 Блок 1: ${esc(k.block_1_title)}</b></p><p>${esc(k.block_1_content)}</p>`;
+      html += `<div style="background:#ffedd5;border-radius:4px;padding:8px;margin:4px 0"><b>⚡ Микро-1:</b> ${esc(k.micro_1)}</div>`;
+    }
+    if (k.block_2_title) {
+      html += `<p><b>📚 Блок 2: ${esc(k.block_2_title)}</b></p><p>${esc(k.block_2_content)}</p>`;
+      html += `<div style="background:#ffedd5;border-radius:4px;padding:8px;margin:4px 0"><b>⚡ Микро-2:</b> ${esc(k.micro_2)}</div>`;
+    }
+    if (k.block_3_title) {
+      html += `<p><b>📚 Блок 3: ${esc(k.block_3_title)}</b></p><p>${esc(k.block_3_content)}</p>`;
+      html += `<div style="background:#ffedd5;border-radius:4px;padding:8px;margin:4px 0"><b>⚡ Микро-3:</b> ${esc(k.micro_3)}</div>`;
+    }
+    if (k.bridge) html += `<p style="margin-top:10px"><b>🌉 Мостик к практике:</b> «${esc(k.bridge)}»</p>`;
+    html += `</div>`;
+  }
+
+  // First win (только без концентрата)
+  if (data.first_win && !data.kontsentrat) {
     html += `<h2>🏆 Первая победа (${data.first_win.duration||5} мин)</h2>`;
     html += `<div class="box"><p>${esc(data.first_win.task)}</p></div>`;
   }
 
-  // Development
-  if (dev.key_points || dev.teacher_text || dev.kori || dev.traps) {
+  // Development (только без концентрата)
+  if (!data.kontsentrat && (dev.key_points || dev.teacher_text || dev.kori || dev.traps)) {
     html += `<h2>📚 АКТ II: РАЗВИТИЕ</h2>`;
     if (dev.key_points) {
       html += `<p><b>Ключевые точки:</b></p><ul>${dev.key_points.map(k=>`<li>${esc(k)}</li>`).join('')}</ul>`;
@@ -1672,9 +1737,16 @@ function buildMiddleHtml(data, state) {
     }
   }
 
+  // Цифровая пауза (между концентратом и практикой)
+  if (data.digital_pause) {
+    html += `<div style="background:#f0fdf4;border:1px solid #86efac;border-radius:6px;padding:8px 12px;margin:8px 0;font-size:10pt">`;
+    html += `<b>🧘 Цифровая пауза:</b> ${esc(data.digital_pause.prompt)} <span style="color:#64748b">(${esc(data.digital_pause.rule)})</span>`;
+    html += `</div>`;
+  }
+
   // Guild task
   if (guild.guilds && guild.guilds.length > 0) {
-    html += `<h2>🏰 Задание по гильдиям</h2>`;
+    html += `<h2>🏰 ЖИВОЙ УРОК — Задание по гильдиям</h2>`;
     guild.guilds.forEach(g => {
       html += `<div class="guild-box"><b>${esc(g.name)}:</b> ${esc(g.task)}</div>`;
     });
@@ -2072,7 +2144,46 @@ function StandardResult({ data, state }) {
         </div>
       )}
 
-      {data.first_win && (
+      {/* Концентрат (онлайн 10-11 кл., Открытие) */}
+      {data.kontsentrat && (
+        <div style={{ marginBottom: 20 }}>
+          <h3 style={{ fontSize: 16, color: "#1e3a5f", marginBottom: 8 }}>🎬 Концентрат — подача теории ({data.kontsentrat.duration_min} мин)</h3>
+          <div style={{ background: "#fff7ed", border: "2px solid #f97316", borderRadius: 10, padding: 14 }}>
+            <div style={{ background: "#fed7aa", borderRadius: 6, padding: "6px 12px", fontSize: 12, fontWeight: 700, marginBottom: 12, color: "#9a3412" }}>
+              ⏺ {data.kontsentrat.recording_note}
+            </div>
+            {data.kontsentrat.intriga && <div style={{ marginBottom: 8 }}><strong>💡 Интрига:</strong> {data.kontsentrat.intriga}</div>}
+            {data.kontsentrat.first_win && (
+              <div style={{ marginBottom: 12, padding: 8, background: "#ecfdf5", borderRadius: 8, border: "1px solid #a7f3d0", fontSize: 13 }}>
+                <strong>🏆 Первая победа:</strong> {data.kontsentrat.first_win}
+              </div>
+            )}
+            {['1','2','3'].map(n => data.kontsentrat[`block_${n}_title`] && (
+              <div key={n} style={{ marginBottom: 10 }}>
+                <div style={{ fontWeight: 700, color: "#1e3a5f", marginBottom: 4 }}>📚 Блок {n}: {data.kontsentrat[`block_${n}_title`]}</div>
+                <div style={{ fontSize: 13, color: "#374151", marginBottom: 6 }}>{data.kontsentrat[`block_${n}_content`]}</div>
+                {data.kontsentrat[`micro_${n}`] && (
+                  <div style={{ background: "#ffedd5", borderRadius: 6, padding: "6px 12px", fontSize: 12 }}>
+                    ⚡ <strong>Микро-{n}:</strong> {data.kontsentrat[`micro_${n}`]}
+                  </div>
+                )}
+              </div>
+            ))}
+            {data.kontsentrat.bridge && (
+              <div style={{ marginTop: 10, padding: 10, background: "#f0fdf4", borderRadius: 8, border: "1px solid #bbf7d0" }}>
+                🌉 <strong>Мостик:</strong> «{data.kontsentrat.bridge}»
+              </div>
+            )}
+          </div>
+          {data.digital_pause && (
+            <div style={{ marginTop: 8, padding: "8px 12px", background: "#f0fdf4", borderRadius: 8, border: "1px solid #86efac", fontSize: 13 }}>
+              🧘 <strong>Цифровая пауза:</strong> {data.digital_pause.prompt} <em style={{ color: "#64748b" }}>({data.digital_pause.rule})</em>
+            </div>
+          )}
+        </div>
+      )}
+
+      {!data.kontsentrat && data.first_win && (
         <div style={{ marginBottom: 20 }}>
           <h3 style={{ fontSize: 16, color: "#1e3a5f", marginBottom: 8 }}>🏆 Первая победа</h3>
           <div style={{ padding: 14, background: "#ecfdf5", borderRadius: 10, border: "1px solid #a7f3d0", fontSize: 14 }}>{data.first_win.task}</div>
@@ -2222,8 +2333,54 @@ function MiddleResult({ data, state }) {
         </Section>
       )}
 
-      {/* First win */}
-      {data.first_win && (
+      {/* Концентрат (онлайн 7+ кл., Открытие) */}
+      {data.kontsentrat && (
+        <Section title={`Концентрат — подача теории (${data.kontsentrat.duration_min} мин)`} icon="🎬">
+          <div style={{ background: "#fff7ed", border: "2px solid #f97316", borderRadius: 10, padding: 14 }}>
+            <div style={{ background: "#fed7aa", borderRadius: 6, padding: "6px 12px", fontSize: 12, fontWeight: 700, marginBottom: 12, color: "#9a3412" }}>
+              ⏺ {data.kontsentrat.recording_note}
+            </div>
+            {data.kontsentrat.intriga && (
+              <div style={{ marginBottom: 10 }}>
+                <strong>💡 Интрига:</strong> {data.kontsentrat.intriga}
+              </div>
+            )}
+            {data.kontsentrat.first_win && (
+              <div style={{ marginBottom: 12, padding: 10, background: "#ecfdf5", borderRadius: 8, border: "1px solid #a7f3d0" }}>
+                <strong>🏆 Первая победа:</strong> {data.kontsentrat.first_win}
+              </div>
+            )}
+            {['1','2','3'].map(n => data.kontsentrat[`block_${n}_title`] && (
+              <div key={n} style={{ marginBottom: 12 }}>
+                <div style={{ fontWeight: 700, color: "#1e3a5f", marginBottom: 4 }}>
+                  📚 Блок {n}: {data.kontsentrat[`block_${n}_title`]}
+                </div>
+                <div style={{ fontSize: 13, color: "#374151", marginBottom: 6, lineHeight: 1.5 }}>
+                  {data.kontsentrat[`block_${n}_content`]}
+                </div>
+                {data.kontsentrat[`micro_${n}`] && (
+                  <div style={{ background: "#ffedd5", borderRadius: 6, padding: "6px 12px", fontSize: 12 }}>
+                    ⚡ <strong>Микро-{n}:</strong> {data.kontsentrat[`micro_${n}`]}
+                  </div>
+                )}
+              </div>
+            ))}
+            {data.kontsentrat.bridge && (
+              <div style={{ marginTop: 10, padding: 10, background: "#f0fdf4", borderRadius: 8, border: "1px solid #bbf7d0" }}>
+                🌉 <strong>Мостик к практике:</strong> «{data.kontsentrat.bridge}»
+              </div>
+            )}
+          </div>
+          {data.digital_pause && (
+            <InfoBox bg="#f0fdf4" border="#86efac">
+              🧘 <strong>Цифровая пауза:</strong> {data.digital_pause.prompt} <em style={{ color: "#64748b" }}>({data.digital_pause.rule})</em>
+            </InfoBox>
+          )}
+        </Section>
+      )}
+
+      {/* First win (только без концентрата) */}
+      {!data.kontsentrat && data.first_win && (
         <Section title="Победа до теории" icon="🏆">
           <InfoBox bg="#ecfdf5" border="#a7f3d0">
             <strong>Задача ({data.first_win.duration} мин):</strong> {data.first_win.task}
@@ -2231,8 +2388,8 @@ function MiddleResult({ data, state }) {
         </Section>
       )}
 
-      {/* Development */}
-      {dev.key_points && (
+      {/* Development (только без концентрата) */}
+      {!data.kontsentrat && dev.key_points && (
         <Section title="Развитие" icon="📚">
           <InfoBox bg="#eff6ff" border="#bfdbfe">
             <strong>Ключевые точки:</strong>
