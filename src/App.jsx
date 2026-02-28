@@ -1809,6 +1809,7 @@ function PrimaryResult({ data, state }) {
   const [openStory, setOpenStory] = useState(null);
   const [checks, setChecks] = useState({});
   const [exporting, setExporting] = useState(false);
+  const [lessonTab, setLessonTab] = useState('lesson');
   const p = data.passport || {};
   const w = data.warmup || {};
   const dev = data.development || {};
@@ -1859,6 +1860,16 @@ function PrimaryResult({ data, state }) {
           <div><strong>✏️ Объём письма:</strong> {p.writing_volume}</div>
         </div>
       </div>
+
+      {/* Tab bar */}
+      <LessonTabBar
+        tab={lessonTab} setTab={setLessonTab}
+        hasPrep={!!(data.online_tools || data.materials || data.teacher_notes || data.checklist || data.storylines?.length)}
+        hasStudent={!!(data.student_notes?.concepts?.length || data.student_notes?.rules?.length)}
+      />
+
+      {/* ── УРОК TAB ── */}
+      {lessonTab === 'lesson' && <>
 
       {/* Warmup — универсальный: Russian / Math / другие */}
       {(w.calligraphy || w.oral_count || w.activity) && (
@@ -2014,6 +2025,11 @@ function PrimaryResult({ data, state }) {
         </Section>
       )}
 
+      </> /* end lessonTab === 'lesson' */}
+
+      {/* ── ПОДГОТОВКА TAB ── */}
+      {lessonTab === 'prep' && <>
+
       {/* Storylines */}
       {data.storylines && data.storylines.length > 0 && (
         <Section title="Сюжетные линии (на серию уроков)" icon="📖">
@@ -2085,8 +2101,10 @@ function PrimaryResult({ data, state }) {
         </Section>
       )}
 
-      {/* Student notes */}
-      <StudentNotesSection data={data} />
+      </> /* end lessonTab === 'prep' */}
+
+      {/* ── УЧЕНИКУ TAB ── */}
+      {lessonTab === 'student' && <StudentNotesSection data={data} />}
 
       {/* Bottom export button */}
       <div style={{ marginTop: 24, padding: 20, background: "linear-gradient(135deg, #10b981, #059669)", borderRadius: 12, textAlign: "center" }}>
@@ -2104,6 +2122,7 @@ function PrimaryResult({ data, state }) {
 // ========== STEP 4: Result (Standard for 5-11) ==========
 function StandardResult({ data, state }) {
   const [exporting, setExporting] = useState(false);
+  const [lessonTab, setLessonTab] = useState('lesson');
   const clInfo = CLUSTERS[gc(state.subject)];
   const model = MODELS.find(m => m.id === state.model);
 
@@ -2133,6 +2152,16 @@ function StandardResult({ data, state }) {
           }}>🖨️ PDF (печать)</button>
         </div>
       </div>
+
+      {/* Tab bar */}
+      <LessonTabBar
+        tab={lessonTab} setTab={setLessonTab}
+        hasPrep={!!(data.online_tools || data.materials || data.teacher_notes)}
+        hasStudent={!!(data.student_notes?.concepts?.length || data.student_notes?.rules?.length)}
+      />
+
+      {/* ── УРОК TAB ── */}
+      {lessonTab === 'lesson' && <>
 
       {data.capture && (
         <div style={{ marginBottom: 20 }}>
@@ -2226,6 +2255,11 @@ function StandardResult({ data, state }) {
         </div>
       )}
 
+      </> /* end lessonTab === 'lesson' */}
+
+      {/* ── ПОДГОТОВКА TAB ── */}
+      {lessonTab === 'prep' && <>
+
       {data.online_tools && (
         <div style={{ padding: 14, background: "#eff6ff", borderRadius: 10, border: "1px solid #bfdbfe", fontSize: 13, marginBottom: 12 }}>
           <strong>💻 Онлайн-инструменты к уроку</strong>
@@ -2250,8 +2284,31 @@ function StandardResult({ data, state }) {
         </div>
       )}
 
-      {/* Student notes */}
-      <StudentNotesSection data={data} />
+      </> /* end lessonTab === 'prep' */}
+
+      {/* ── УЧЕНИКУ TAB ── */}
+      {lessonTab === 'student' && <StudentNotesSection data={data} />}
+    </div>
+  );
+}
+
+// ========== SHARED: Lesson Tab Bar ==========
+function LessonTabBar({ tab, setTab, hasPrep, hasStudent }) {
+  const tabs = [
+    { id: 'lesson', label: '📋 Урок' },
+    ...(hasPrep ? [{ id: 'prep', label: '⚙️ Подготовка' }] : []),
+    ...(hasStudent ? [{ id: 'student', label: '🎒 Ученику' }] : []),
+  ];
+  return (
+    <div style={{ display: 'flex', gap: 4, marginBottom: 20, background: '#f1f5f9', borderRadius: 10, padding: 4 }}>
+      {tabs.map(t => (
+        <button key={t.id} onClick={() => setTab(t.id)} style={{
+          flex: 1, padding: '9px 4px', borderRadius: 8, fontSize: 13, fontWeight: tab === t.id ? 700 : 400,
+          background: tab === t.id ? '#fff' : 'transparent', color: tab === t.id ? '#1e3a5f' : '#64748b',
+          border: 'none', cursor: 'pointer', boxShadow: tab === t.id ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
+          transition: 'all 0.15s'
+        }}>{t.label}</button>
+      ))}
     </div>
   );
 }
@@ -2260,6 +2317,7 @@ function StandardResult({ data, state }) {
 function MiddleResult({ data, state }) {
   const [openCapture, setOpenCapture] = useState(0);
   const [exporting, setExporting] = useState(false);
+  const [lessonTab, setLessonTab] = useState('lesson');
   const clInfo = CLUSTERS[gc(state.subject)];
   const model = MODELS.find(m => m.id === state.model);
   const p = data.passport || {};
@@ -2304,6 +2362,16 @@ function MiddleResult({ data, state }) {
           {p.key_concept && <div style={{ gridColumn: "span 2" }}><strong>🔑 Ключевое понятие:</strong> {p.key_concept}</div>}
         </div>
       </div>
+
+      {/* Tab bar */}
+      <LessonTabBar
+        tab={lessonTab} setTab={setLessonTab}
+        hasPrep={!!(data.online_tools || data.materials || data.teacher_notes)}
+        hasStudent={!!(data.student_notes?.concepts?.length || data.student_notes?.rules?.length)}
+      />
+
+      {/* ── УРОК TAB ── */}
+      {lessonTab === 'lesson' && <>
 
       {/* Captures */}
       {data.captures && data.captures.length > 0 && (
@@ -2459,6 +2527,11 @@ function MiddleResult({ data, state }) {
         </Section>
       )}
 
+      </> /* end lessonTab === 'lesson' */}
+
+      {/* ── ПОДГОТОВКА TAB ── */}
+      {lessonTab === 'prep' && <>
+
       {/* Online tools */}
       {data.online_tools && (
         <Section title="Онлайн-инструменты к уроку" icon="💻">
@@ -2488,8 +2561,10 @@ function MiddleResult({ data, state }) {
         </Section>
       )}
 
-      {/* Student notes */}
-      <StudentNotesSection data={data} />
+      </> /* end lessonTab === 'prep' */}
+
+      {/* ── УЧЕНИКУ TAB ── */}
+      {lessonTab === 'student' && <StudentNotesSection data={data} />}
     </div>
   );
 }
