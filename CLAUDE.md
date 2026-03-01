@@ -8,8 +8,20 @@
 ## Репозиторий
 
 - GitHub: `AlexBabetov/01-zhivoi-urok-constructor` (ветка `main`)
-- Деплой: Cloudflare Pages → `urok360.koriphey.ru`
-- Автодеплой: каждый push в `main` → CF Pages `urok360-git`
+- Деплой: Vercel → `v2.koriphey.ru` (production)
+- Пользовательский домен: `urok360.ru` (nginx reverse proxy на NetAngels VDS → Vercel)
+- Автодеплой: каждый push в `main` → Vercel
+
+## Архитектура домена (с 01.03.2026)
+
+```
+urok360.ru (CloudFlare DNS) → NetAngels VDS 193.107.236.29
+  nginx (SSL termination, Let's Encrypt ECC) → proxy_pass → Vercel
+    Host: v2.koriphey.ru → приложение ЖУ360
+```
+
+- SSL: Let's Encrypt ECC (E7), expires 2026-05-29, файлы в `/etc/nginx/ssl/urok360.ru.*`
+- Nginx конфиг: `/etc/nginx/conf.d/urok360.ru.conf` на VDS
 
 ## Стек
 
@@ -17,7 +29,7 @@
 - **Backend**: Cloudflare Pages Functions (Node.js) в `/functions/api/`
 - **AI**: Anthropic Claude API (`generate-lesson.js`)
 - **БД**: Supabase (PostgreSQL)
-- **Хостинг**: Cloudflare Pages
+- **Хостинг**: Vercel (production), NetAngels VDS (nginx proxy для urok360.ru)
 
 ## Ключевые файлы
 
