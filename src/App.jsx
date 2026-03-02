@@ -3295,8 +3295,8 @@ function ProfileDrawer({ user, onClose }) {
     setSaving(false);
   };
 
-  const providerLabel = { google: "Google", vk: "ВКонтакте", email: "Email" }[meta.provider] || "Email";
-  const providerColor = { google: "#4285F4", vk: "#0077FF", email: "#64748b" }[meta.provider] || "#64748b";
+  const providerLabel = { google: "Google", email: "Email" }[meta.provider] || "Email";
+  const providerColor = { google: "#4285F4", email: "#64748b" }[meta.provider] || "#64748b";
 
   return (
     <>

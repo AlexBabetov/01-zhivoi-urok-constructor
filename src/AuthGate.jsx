@@ -141,11 +141,10 @@ function OAuthButtons({ loading, setLoading, setError }) {
       provider,
       options: {
         redirectTo: window.location.origin,
-        scopes: provider === "vk" ? "email" : undefined,
       },
     });
     if (error) {
-      setError("Ошибка входа через " + (provider === "google" ? "Google" : "ВКонтакте") + ": " + error.message);
+      setError("Ошибка входа через Google: " + error.message);
       setLoading(false);
     }
     // При успехе — редирект, setLoading не нужен
@@ -173,19 +172,10 @@ function OAuthButtons({ loading, setLoading, setError }) {
         type="button"
         disabled={loading}
         onClick={() => handleOAuth("google")}
-        style={{ ...baseBtn, background: "#fff", border: "1.5px solid #e2e8f0", color: "#374151", marginBottom: 10 }}
+        style={{ ...baseBtn, background: "#fff", border: "1.5px solid #e2e8f0", color: "#374151" }}
       >
         <img src="/google-icon.svg" width={18} height={18} alt="" />
         Войти через Google
-      </button>
-      <button
-        type="button"
-        disabled={loading}
-        onClick={() => handleOAuth("vk")}
-        style={{ ...baseBtn, background: "#0077FF", color: "#fff" }}
-      >
-        <img src="/vk-icon.svg" width={18} height={18} alt="" />
-        Войти через ВКонтакте
       </button>
     </div>
   );
@@ -419,7 +409,7 @@ function RegisterForm({ onSwitchToLogin }) {
 }
 
 // ─── Pending Screen ─────────────────────────────────────────────────────────────
-function PendingScreen({ user, noEmail }) {
+function PendingScreen({ user }) {
   return (
     <div style={BG}>
       <div style={{ ...CARD, textAlign: "center" }}>
@@ -427,21 +417,10 @@ function PendingScreen({ user, noEmail }) {
         <div style={{ fontSize: 20, fontWeight: 800, color: "#1e3a5f", marginBottom: 12 }}>
           Заявка на рассмотрении
         </div>
-        {noEmail ? (
-          <div style={{
-            background: "#fffbeb", border: "1px solid #fde68a",
-            borderRadius: 10, padding: "12px 14px", marginBottom: 16,
-            fontSize: 13, color: "#92400e", textAlign: "left", lineHeight: 1.6,
-          }}>
-            ⚠️ ВКонтакте не передал ваш email. Укажите email в настройках профиля ВКонтакте и войдите заново,
-            или напишите администратору: <b>info@koriphey.ru</b>
-          </div>
-        ) : (
-          <p style={{ fontSize: 14, color: "#475569", lineHeight: 1.6, marginBottom: 8 }}>
+        <p style={{ fontSize: 14, color: "#475569", lineHeight: 1.6, marginBottom: 8 }}>
             Ваша заявка ещё не рассмотрена администратором.
           </p>
-        )}
-        {user?.email && !noEmail && (
+        {user?.email && (
           <p style={{ fontSize: 13, color: "#94a3b8", marginBottom: 28 }}>
             Вы получите письмо на <b>{user.email}</b>, когда заявка будет одобрена.
           </p>
@@ -702,7 +681,6 @@ export default function AuthGate({ children }) {
                 name,
                 avatar_url: meta.picture || meta.avatar_url || null,
                 provider,
-                no_email: !email,
               },
             });
             // После updateUser сработает ещё один SIGNED_IN — он подхватит обновлённые данные
@@ -777,7 +755,7 @@ export default function AuthGate({ children }) {
   }
 
   // Teacher: check status
-  if (status === "pending") return <PendingScreen user={session.user} noEmail={meta.no_email} />;
+  if (status === "pending") return <PendingScreen user={session.user} />;
   if (status === "rejected") return <RejectedScreen user={session.user} />;
 
   // approved (or legacy without status)
