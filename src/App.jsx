@@ -523,20 +523,26 @@ async function generateMindMap(st, token) {
 }
 
 // ========== MIND MAP MODAL ==========
-function MindMapModal({ state, onClose }) {
-  const [loading, setLoading] = useState(true);
-  const [text, setText] = useState("");
+function MindMapModal({ state, onClose, cachedText, onCached }) {
+  // BUG-02: start with cached result if available — no API call needed
+  const [loading, setLoading] = useState(!cachedText);
+  const [text, setText] = useState(cachedText || "");
   const [error, setError] = useState(null);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
+    if (cachedText) return; // already have it — skip API call
     let cancelled = false;
     const run = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         const token = session?.access_token || null;
         const result = await generateMindMap(state, token);
-        if (!cancelled) { setText(result); setLoading(false); }
+        if (!cancelled) {
+          setText(result);
+          setLoading(false);
+          if (onCached) onCached(result); // store in parent so re-open is instant
+        }
       } catch (e) {
         if (!cancelled) { setError(e.message); setLoading(false); }
       }
@@ -632,22 +638,31 @@ function StudentNotesSection({ data }) {
 // ========== UI COMPONENTS ==========
 const STEPS_BASIC = ["Параметры", "Модель", "Генерация", "Результат"];
 
-function StepIndicator({ current, steps }) {
+function StepIndicator({ current, steps, onGoTo }) {
   return (
     <div style={{ display: "flex", gap: 0, marginBottom: 32, position: "relative" }}>
-      {steps.map((s, i) => (
-        <div key={s} style={{ flex: 1, textAlign: "center", position: "relative" }}>
-          <div style={{
-            width: 36, height: 36, borderRadius: "50%", margin: "0 auto 6px",
-            background: i <= current ? "#1e3a5f" : "#e2e8f0",
-            color: i <= current ? "#fff" : "#94a3b8",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 14, fontWeight: 700, transition: "all 0.3s",
-            boxShadow: i === current ? "0 0 0 4px rgba(30,58,95,0.2)" : "none"
-          }}>{i + 1}</div>
-          <div style={{ fontSize: 11, color: i <= current ? "#1e3a5f" : "#94a3b8", fontWeight: i === current ? 700 : 400 }}>{s}</div>
-        </div>
-      ))}
+      {steps.map((s, i) => {
+        // UX-02: completed steps (i < current) are clickable
+        const isCompleted = i < current;
+        const isActive = i === current;
+        const clickable = isCompleted && !!onGoTo;
+        return (
+          <div key={s}
+            onClick={clickable ? () => onGoTo(i) : undefined}
+            style={{ flex: 1, textAlign: "center", position: "relative", cursor: clickable ? "pointer" : "default" }}>
+            <div style={{
+              width: 36, height: 36, borderRadius: "50%", margin: "0 auto 6px",
+              background: i <= current ? "#1e3a5f" : "#e2e8f0",
+              color: i <= current ? "#fff" : "#94a3b8",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 14, fontWeight: 700, transition: "all 0.3s",
+              boxShadow: isActive ? "0 0 0 4px rgba(30,58,95,0.2)" : "none",
+              outline: clickable ? "2px solid transparent" : "none",
+            }}>{i + 1}</div>
+            <div style={{ fontSize: 11, color: i <= current ? "#1e3a5f" : "#94a3b8", fontWeight: isActive ? 700 : 400, textDecoration: clickable ? "underline dotted" : "none" }}>{s}</div>
+          </div>
+        );
+      })}
       <div style={{ position: "absolute", top: 18, left: "8%", right: "8%", height: 2, background: "#e2e8f0", zIndex: -1 }} />
       <div style={{ position: "absolute", top: 18, left: "8%", height: 2, background: "#1e3a5f", zIndex: -1, width: `${(current / (steps.length - 1)) * 84}%`, transition: "width 0.4s" }} />
     </div>
@@ -846,10 +861,11 @@ function ReflectionModal({ state, onClose, onSaved }) {
 }
 
 // ========== CURRICULUM SELECTOR ==========
-function CurriculumSelector({ curriculum, grade, onSelect }) {
+function CurriculumSelector({ curriculum, grade, onSelect, selectedLesson, selectedSection }) {
   // All hooks must be declared at the top level (React rules of hooks)
-  const [selectedId, setSelectedId] = useState("");
-  const [selSectionKey, setSelSectionKey] = useState("");
+  // BUG-01 fix: initialize from props so selection survives back-navigation
+  const [selectedId, setSelectedId] = useState(selectedLesson || "");
+  const [selSectionKey, setSelSectionKey] = useState(selectedSection || "");
 
   if (!curriculum) return null;
 
@@ -976,18 +992,26 @@ function Step1({ state, setState }) {
     }
     const hasCurriculumLessons = !!(curriculum.lessons && curriculum.lessons.length);
     if (!hasCurriculumLessons) {
-      const ctx = buildSectionsContext(curriculum, state.grade);
+      // BUG-01 fix: restore focused section context on back-navigation.
+      // If state.curriculumSection is set (user already picked a section before going to Step 2),
+      // rebuild the focused sectionsCtx so it isn't lost on remount.
+      let focusSection = null;
+      if (state.curriculumSection) {
+        const gradeSections = (curriculum.sections || []).filter(s => s.grade === state.grade);
+        focusSection = gradeSections.find(s => (s.id || s.title) === state.curriculumSection) || null;
+      }
+      const ctx = buildSectionsContext(curriculum, state.grade, focusSection);
       setState(s => ({ ...s, sectionsCtx: ctx }));
     } else {
       // У этого JSON есть поурочное планирование — sectionsCtx не нужен
       setState(s => (s.sectionsCtx ? { ...s, sectionsCtx: null } : s));
     }
-  }, [curriculum, state.grade, setState]);
+  }, [curriculum, state.grade, state.curriculumSection, setState]);
 
   const handleCurriculumSelect = useCallback((item) => {
     if (!item) {
       // Сброс — восстанавливаем полный sectionsCtx если есть sections
-      setState(s => ({ ...s, curriculumLesson: null, curriculumCtx: null }));
+      setState(s => ({ ...s, curriculumLesson: null, curriculumCtx: null, curriculumSection: null }));
       if (curriculum && !(curriculum.lessons && curriculum.lessons.length)) {
         const ctx = buildSectionsContext(curriculum, state.grade);
         setState(s => ({ ...s, sectionsCtx: ctx }));
@@ -995,7 +1019,9 @@ function Step1({ state, setState }) {
     } else if (item.sectionMode) {
       // Выбран раздел из ФРП — обновляем sectionsCtx с фокусом на разделе
       const ctx = buildSectionsContext(curriculum, state.grade, item.section);
-      setState(s => ({ ...s, sectionsCtx: ctx, curriculumLesson: null, curriculumCtx: null }));
+      // BUG-01 fix: persist section key so CurriculumSelector can restore it on back-navigation
+      const sectionKey = item.section?.id || item.section?.title || "";
+      setState(s => ({ ...s, sectionsCtx: ctx, curriculumLesson: null, curriculumCtx: null, curriculumSection: sectionKey }));
     } else {
       // Выбран конкретный урок из поурочного планирования
       const ctx = buildCurriculumContext(curriculum, item.id);
@@ -1048,6 +1074,8 @@ function Step1({ state, setState }) {
           curriculum={curriculum}
           grade={state.grade}
           onSelect={handleCurriculumSelect}
+          selectedLesson={state.curriculumLesson || ""}
+          selectedSection={state.curriculumSection || ""}
         />
       )}
       {hasCurriculum && !curriculum && (
@@ -1128,13 +1156,18 @@ function Step2({ state, setState }) {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
         {sorted.map(m => {
           const w = m.w[cluster] || 0;
+          // UX-01: removed opacity:0.4 for zero-weight models — all models are selectable
           return (
-            <Card key={m.id} active={state.model === m.id} onClick={() => setState(s => ({ ...s, model: m.id }))} style={{ opacity: w === 0 ? 0.4 : 1 }}>
+            <Card key={m.id} active={state.model === m.id} onClick={() => setState(s => ({ ...s, model: m.id }))}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
                 <span style={{ fontSize: 17 }}>{m.emoji} <strong>{m.name}</strong></span>
-                <span style={{ fontSize: 12, padding: "2px 8px", borderRadius: 20,
-                  background: w >= 20 ? "#dcfce7" : w > 0 ? "#fef3c7" : "#fee2e2",
-                  color: w >= 20 ? "#166534" : w > 0 ? "#92400e" : "#991b1b" }}>{w}%</span>
+                {w === 0 ? (
+                  <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 20, background: "#f1f5f9", color: "#94a3b8" }}>Редко</span>
+                ) : (
+                  <span style={{ fontSize: 12, padding: "2px 8px", borderRadius: 20,
+                    background: w >= 20 ? "#dcfce7" : "#fef3c7",
+                    color: w >= 20 ? "#166534" : "#92400e" }}>{w}%</span>
+                )}
               </div>
               <div style={{ fontSize: 12, color: "#64748b" }}>{m.desc}</div>
               <div style={{ fontSize: 11, color: "#94a3b8", marginTop: 4 }}>Режим: {m.mode}</div>
@@ -1152,6 +1185,15 @@ function Step3({ state, onGenerate, onMindMap, loading, error }) {
   const cluster = gc(state.subject);
   const clInfo = CLUSTERS[cluster];
   const isPrimary = state.grade <= 4;
+
+  // BUG-05: elapsed timer — shows seconds so user knows generation is alive
+  const [elapsed, setElapsed] = useState(0);
+  useEffect(() => {
+    if (!loading) { setElapsed(0); return; }
+    setElapsed(0);
+    const id = setInterval(() => setElapsed(s => s + 1), 1000);
+    return () => clearInterval(id);
+  }, [loading]);
 
   return (
     <div style={{ textAlign: "center" }}>
@@ -1173,8 +1215,16 @@ function Step3({ state, onGenerate, onMindMap, loading, error }) {
         <div style={{ padding: 40 }}>
           <div style={{ fontSize: 48, marginBottom: 16, animation: "pulse 1.5s infinite" }}>✨</div>
           <div style={{ fontSize: 16, fontWeight: 600, color: "#1e3a5f", marginBottom: 8 }}>AI генерирует сценарий...</div>
-          <div style={{ fontSize: 13, color: "#64748b" }}>
+          <div style={{ fontSize: 13, color: "#64748b", marginBottom: 16 }}>
             {isPrimary ? "Создаём 3 варианта захвата, игру-передвижение, ошибки Кори и хоровое закрепление" : "Создаём захват, таймлайн и задачи трёх уровней"}
+          </div>
+          {/* BUG-05: progress indicator — elapsed timer + status hint */}
+          <div style={{ fontSize: 13, color: "#94a3b8", marginBottom: 12 }}>
+            {elapsed < 5 ? "Запускаем..." : elapsed < 20 ? "Обычно 15–25 с, уже идёт..." : elapsed < 45 ? "Почти готово..." : "Ждём ответа от Claude..."}
+            {" "}⏱ {elapsed}с
+          </div>
+          <div style={{ height: 4, borderRadius: 2, background: "#e2e8f0", overflow: "hidden", maxWidth: 240, margin: "0 auto" }}>
+            <div style={{ height: "100%", borderRadius: 2, background: "#1e3a5f", transition: "width 1s linear", width: `${Math.min(elapsed * 3, 95)}%` }} />
           </div>
           <style>{`@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }`}</style>
         </div>
@@ -2884,6 +2934,8 @@ export default function App({ user }) {
   const [reflDone, setReflDone] = useState(false);
   const [adminOpen, setAdminOpen] = useState(false);
   const [showMindMap, setShowMindMap] = useState(false);
+  // BUG-02: cache mind map text so re-opening the modal skips the API call
+  const [mindMapCache, setMindMapCache] = useState(null);
 
   // Check if reflection already exists when result is shown
   useEffect(() => {
@@ -2970,12 +3022,21 @@ export default function App({ user }) {
   }, [result, state, saveStatus]);
 
   const reset = () => {
+    // UX-03: preserve grade/subject/duration/format so the next lesson starts pre-filled
+    const keepParams = {
+      grade: state.grade,
+      subject: state.subject,
+      duration: state.duration || 45,
+      format: state.format || "offline",
+    };
     setStep(0);
-    setState({ duration: 45, format: "offline" });
+    setState(keepParams);
     setResult(null);
     setError(null);
     setSaveStatus(null);
     setSaveError(null);
+    setReflDone(false);
+    setMindMapCache(null);
   };
 
   return (
@@ -3013,7 +3074,7 @@ export default function App({ user }) {
       </div>
 
       <div style={{ maxWidth: 720, margin: "0 auto", padding: "24px 16px" }}>
-        <StepIndicator current={step} steps={steps} />
+        <StepIndicator current={step} steps={steps} onGoTo={(i) => { if (i < step) setStep(i); }} />
         <div style={{ background: "#fff", borderRadius: 16, padding: 28, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #e2e8f0", marginBottom: 24 }}>
           {step === 0 && <Step1 state={state} setState={setState} />}
           {step === 1 && <Step2 state={state} setState={setState} />}
@@ -3033,7 +3094,7 @@ export default function App({ user }) {
               <Btn onClick={() => setStep(s => s + 1)} disabled={!canNext}>Далее →</Btn>
             ) : step === 3 ? (
               <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-                <Btn variant="secondary" onClick={() => { setResult(null); setStep(2); }}>🔄 Перегенерировать</Btn>
+                <Btn variant="secondary" onClick={() => { setResult(null); setReflDone(false); setMindMapCache(null); setStep(2); }}>🔄 Перегенерировать</Btn>
                 <Btn
                   variant="secondary"
                   onClick={handleSave}
@@ -3042,13 +3103,22 @@ export default function App({ user }) {
                 >
                   {saveStatus === "saving" ? "⏳ Сохраняю…" : saveStatus === "saved" ? "✅ Сохранено" : saveStatus === "error" ? "❌ Ошибка" : "💾 Сохранить урок"}
                 </Btn>
-                <Btn
-                  variant={reflDone ? "ghost" : "accent"}
-                  onClick={() => setReflOpen(true)}
-                  style={reflDone ? { borderColor: "#16a34a", color: "#16a34a" } : {}}
-                >
-                  {reflDone ? "✅ Рефлексия заполнена" : "📋 Провёл урок"}
-                </Btn>
+                {/* UX-04: guest mode — prompt to log in instead of opening reflection */}
+                {user ? (
+                  <Btn
+                    variant={reflDone ? "ghost" : "accent"}
+                    onClick={() => setReflOpen(true)}
+                    style={reflDone ? { borderColor: "#16a34a", color: "#16a34a" } : {}}
+                  >
+                    {reflDone ? "✅ Рефлексия заполнена" : "📋 Провёл урок"}
+                  </Btn>
+                ) : (
+                  <Btn variant="ghost" onClick={() => window.location.href = "/"}
+                    style={{ borderColor: "#94a3b8", color: "#64748b", fontSize: 13 }}
+                    title="Войдите, чтобы сохранять рефлексию">
+                    🔒 Войдите, чтобы отметить урок
+                  </Btn>
+                )}
                 <Btn onClick={reset}>🎯 Новый урок</Btn>
               </div>
             ) : null}
@@ -3058,7 +3128,7 @@ export default function App({ user }) {
       {reflOpen && <ReflectionModal state={state} onClose={() => setReflOpen(false)} onSaved={() => setReflDone(true)} />}
       {libraryOpen && <LibraryView onClose={() => setLibraryOpen(false)} user={user} />}
       {adminOpen && <AdminView user={user} onClose={() => setAdminOpen(false)} />}
-      {showMindMap && <MindMapModal state={state} onClose={() => setShowMindMap(false)} />}
+      {showMindMap && <MindMapModal state={state} onClose={() => setShowMindMap(false)} cachedText={mindMapCache} onCached={setMindMapCache} />}
     </div>
   );
 }
