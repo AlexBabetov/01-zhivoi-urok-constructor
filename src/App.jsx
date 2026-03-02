@@ -3252,6 +3252,173 @@ function LibraryView({ onClose, user }) {
   );
 }
 
+// ─── Profile Drawer ────────────────────────────────────────────────────────────
+function ProfileDrawer({ user, onClose }) {
+  const meta = user?.user_metadata || {};
+  const [editing, setEditing] = useState(false);
+  const [form, setForm] = useState({ name: meta.name || "", school: meta.school || "", city: meta.city || "" });
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [reflStats, setReflStats] = useState(null);
+
+  // Статистика уроков из localStorage
+  const lessons = React.useMemo(() => {
+    try { return JSON.parse(localStorage.getItem("zh360_lessons") || "[]"); } catch { return []; }
+  }, []);
+  const myLessons = lessons.filter(l => l.author_id === user?.id);
+
+  // Статистика рефлексий из Supabase
+  React.useEffect(() => {
+    if (!user) return;
+    supabase.from("reflections")
+      .select("id, rating, saved_at")
+      .eq("user_id", user.id)
+      .then(({ data }) => {
+        if (!data) return;
+        const avg = data.length
+          ? (data.reduce((s, r) => s + (r.rating || 0), 0) / data.length).toFixed(1)
+          : null;
+        setReflStats({ count: data.length, avgRating: avg });
+      });
+  }, [user]);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await supabase.auth.updateUser({ data: { name: form.name, school: form.school, city: form.city } });
+      setSaved(true);
+      setEditing(false);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (e) {
+      console.warn("Profile save error:", e);
+    }
+    setSaving(false);
+  };
+
+  const providerLabel = { google: "Google", vk: "ВКонтакте", email: "Email" }[meta.provider] || "Email";
+  const providerColor = { google: "#4285F4", vk: "#0077FF", email: "#64748b" }[meta.provider] || "#64748b";
+
+  return (
+    <>
+      {/* Overlay */}
+      <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 4000 }} />
+      {/* Drawer */}
+      <div style={{
+        position: "fixed", top: 0, right: 0, bottom: 0, width: 360,
+        background: "#fff", zIndex: 4001, boxShadow: "-4px 0 24px rgba(0,0,0,0.15)",
+        display: "flex", flexDirection: "column", fontFamily: "'Segoe UI', system-ui, sans-serif",
+        overflowY: "auto",
+      }}>
+        {/* Header */}
+        <div style={{ background: "#1e3a5f", padding: "24px 20px 20px", color: "#fff" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
+            <div style={{ fontSize: 13, opacity: 0.7 }}>Профиль учителя</div>
+            <button onClick={onClose} style={{ background: "none", border: "none", color: "#fff", cursor: "pointer", fontSize: 18, opacity: 0.7, padding: 0 }}>✕</button>
+          </div>
+          {/* Avatar + Name */}
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            {meta.avatar_url ? (
+              <img src={meta.avatar_url} alt="" width={52} height={52}
+                style={{ borderRadius: "50%", border: "2px solid rgba(255,255,255,0.3)", objectFit: "cover" }} />
+            ) : (
+              <div style={{ width: 52, height: 52, borderRadius: "50%", background: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>
+                👤
+              </div>
+            )}
+            <div>
+              <div style={{ fontWeight: 700, fontSize: 16 }}>{meta.name || user?.email?.split("@")[0] || "Учитель"}</div>
+              <div style={{ fontSize: 12, opacity: 0.75, marginTop: 2 }}>{user?.email || "—"}</div>
+              <div style={{ marginTop: 6, display: "inline-block", background: providerColor, borderRadius: 4, padding: "2px 8px", fontSize: 11, fontWeight: 600 }}>
+                {providerLabel}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style={{ padding: "20px", flex: 1 }}>
+          {/* Stats */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 24 }}>
+            <div style={{ background: "#f8fafc", borderRadius: 12, padding: "14px 16px", textAlign: "center" }}>
+              <div style={{ fontSize: 26, fontWeight: 800, color: "#1e3a5f" }}>{myLessons.length}</div>
+              <div style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>уроков создано</div>
+            </div>
+            <div style={{ background: "#f8fafc", borderRadius: 12, padding: "14px 16px", textAlign: "center" }}>
+              <div style={{ fontSize: 26, fontWeight: 800, color: "#1e3a5f" }}>
+                {reflStats === null ? "…" : reflStats.count}
+              </div>
+              <div style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>
+                рефлексий{reflStats?.avgRating ? ` · ★ ${reflStats.avgRating}` : ""}
+              </div>
+            </div>
+          </div>
+
+          {/* Info / Edit */}
+          {saved && (
+            <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 8, padding: "8px 12px", fontSize: 13, color: "#16a34a", marginBottom: 14 }}>
+              ✅ Профиль обновлён
+            </div>
+          )}
+
+          {editing ? (
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#1e3a5f", marginBottom: 14 }}>Редактировать профиль</div>
+              {[
+                { key: "name", label: "Имя и фамилия", placeholder: "Иванова Мария Петровна" },
+                { key: "school", label: "Школа", placeholder: 'Гимназия №210 "Корифей"' },
+                { key: "city", label: "Город", placeholder: "Екатеринбург" },
+              ].map(({ key, label, placeholder }) => (
+                <div key={key} style={{ marginBottom: 12 }}>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#374151", marginBottom: 4 }}>{label}</label>
+                  <input
+                    value={form[key]}
+                    onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
+                    placeholder={placeholder}
+                    style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1.5px solid #e2e8f0", fontSize: 13, outline: "none", boxSizing: "border-box" }}
+                  />
+                </div>
+              ))}
+              <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
+                <button onClick={() => setEditing(false)} style={{ flex: 1, padding: "9px", border: "1px solid #e2e8f0", borderRadius: 8, background: "none", cursor: "pointer", fontSize: 13, color: "#64748b" }}>
+                  Отмена
+                </button>
+                <button onClick={handleSave} disabled={saving} style={{ flex: 2, padding: "9px", border: "none", borderRadius: 8, background: "#1e3a5f", color: "#fff", fontSize: 13, fontWeight: 700, cursor: saving ? "not-allowed" : "pointer" }}>
+                  {saving ? "Сохраняем…" : "Сохранить"}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div>
+              {[
+                { label: "Школа", value: meta.school },
+                { label: "Город", value: meta.city },
+                { label: "Роль", value: meta.role === "admin" ? "Администратор" : "Учитель" },
+              ].map(({ label, value }) => (
+                <div key={label} style={{ marginBottom: 12, paddingBottom: 12, borderBottom: "1px solid #f1f5f9" }}>
+                  <div style={{ fontSize: 11, color: "#94a3b8", marginBottom: 2 }}>{label}</div>
+                  <div style={{ fontSize: 14, color: value ? "#1e293b" : "#cbd5e1" }}>{value || "—"}</div>
+                </div>
+              ))}
+              <button onClick={() => setEditing(true)} style={{ width: "100%", padding: "10px", border: "1.5px solid #e2e8f0", borderRadius: 10, background: "none", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#1e3a5f", marginTop: 4 }}>
+                ✏️ Редактировать
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Footer — Sign out */}
+        <div style={{ padding: "16px 20px", borderTop: "1px solid #f1f5f9" }}>
+          <button
+            onClick={() => supabase.auth.signOut()}
+            style={{ width: "100%", padding: "11px", border: "1px solid #fecaca", borderRadius: 10, background: "#fff", color: "#dc2626", fontSize: 13, fontWeight: 600, cursor: "pointer" }}
+          >
+            Выйти из аккаунта
+          </button>
+        </div>
+      </div>
+    </>
+  );
+}
+
 // ─────────────────────────────────────────────────────────
 
 export default function App({ user }) {
@@ -3269,6 +3436,7 @@ export default function App({ user }) {
   const [reflOpen, setReflOpen] = useState(false);
   const [reflDone, setReflDone] = useState(false);
   const [adminOpen, setAdminOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const [showMindMap, setShowMindMap] = useState(false);
   // BUG-02: cache mind map text so re-opening the modal skips the API call
   const [mindMapCache, setMindMapCache] = useState(null);
@@ -3397,14 +3565,28 @@ export default function App({ user }) {
             </Btn>
           )}
           {user && (
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginLeft: 4, borderLeft: "1px solid rgba(255,255,255,0.15)", paddingLeft: 12 }}>
-              <span style={{ fontSize: 11, opacity: 0.7, maxWidth: 140, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                👤 {user.email}
+            <button
+              onClick={() => setProfileOpen(true)}
+              title="Профиль"
+              style={{
+                display: "flex", alignItems: "center", gap: 8,
+                marginLeft: 4, paddingLeft: 12,
+                borderLeft: "1px solid rgba(255,255,255,0.15)",
+                background: "none", border: "none", cursor: "pointer", color: "#fff",
+              }}
+            >
+              {user.user_metadata?.avatar_url ? (
+                <img src={user.user_metadata.avatar_url} alt="" width={28} height={28}
+                  style={{ borderRadius: "50%", objectFit: "cover", border: "1.5px solid rgba(255,255,255,0.4)" }} />
+              ) : (
+                <div style={{ width: 28, height: 28, borderRadius: "50%", background: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>
+                  👤
+                </div>
+              )}
+              <span style={{ fontSize: 11, opacity: 0.8, maxWidth: 100, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {user.user_metadata?.name || user.email?.split("@")[0] || "Профиль"}
               </span>
-              <Btn variant="ghost" onClick={() => supabase.auth.signOut()} style={{ color: "#fff", borderColor: "rgba(255,255,255,0.2)", fontSize: 11, padding: "6px 12px" }}>
-                Выйти
-              </Btn>
-            </div>
+            </button>
           )}
         </div>
       </div>
@@ -3464,6 +3646,7 @@ export default function App({ user }) {
       {reflOpen && <ReflectionModal state={state} user={user} onClose={() => setReflOpen(false)} onSaved={() => setReflDone(true)} />}
       {libraryOpen && <LibraryView onClose={() => setLibraryOpen(false)} user={user} />}
       {adminOpen && <AdminView user={user} onClose={() => setAdminOpen(false)} />}
+      {profileOpen && <ProfileDrawer user={user} onClose={() => setProfileOpen(false)} />}
       {showMindMap && <MindMapModal state={state} onClose={() => setShowMindMap(false)} cachedText={mindMapCache} onCached={setMindMapCache} />}
     </div>
   );
