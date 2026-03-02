@@ -1,0 +1,74 @@
+[
+  {
+    "id": "logika-korifey",
+    "title": "Логика Корифей",
+    "subtitle": "Развитие логического мышления",
+    "pool": "НШ",
+    "grades": "3–4 класс",
+    "ages": "9–10 лет",
+    "total_modules": 6,
+    "total_lessons": 28,
+    "status": "published",
+    "published_at": "2026-03-02",
+    "author": "Образовательная сеть «Корифей»",
+    "tags": ["логика", "факультатив", "НШ", "мышление"],
+    "description": "Модульный курс развития логического мышления по методологии «Живой урок 360». 6 самостоятельных модулей — от базовых понятий до авторских задач. Каждый модуль 4–5 занятий по 35–40 минут.",
+    "cover_emoji": "🧩",
+    "modules": [
+      {
+        "id": "l-nsh-01",
+        "title": "Что такое логика? Факты и мнения",
+        "lessons": 5,
+        "duration_min": "35–40",
+        "filename": "logika-korifey/l-nsh-01.md",
+        "prerequisite": null,
+        "description": "Вводный модуль. Учимся отличать факты от мнений, строить цепочки умозаключений, задавать точные вопросы."
+      },
+      {
+        "id": "l-nsh-02",
+        "title": "Закономерности и ряды",
+        "lessons": 4,
+        "duration_min": "35–40",
+        "filename": "logika-korifey/l-nsh-02.md",
+        "prerequisite": "l-nsh-01",
+        "description": "Распознаём паттерны, строим и продолжаем ряды. От простых цветовых закономерностей до двойных числовых."
+      },
+      {
+        "id": "l-nsh-03",
+        "title": "Группы и круги",
+        "lessons": 5,
+        "duration_min": "35–40",
+        "filename": "logika-korifey/l-nsh-03.md",
+        "prerequisite": null,
+        "description": "Классификация и диаграммы Эйлера. Учимся разбивать множества и работать с пересечениями."
+      },
+      {
+        "id": "l-nsh-04",
+        "title": "Правда и ложь",
+        "lessons": 5,
+        "duration_min": "35–40",
+        "filename": "logika-korifey/l-nsh-04.md",
+        "prerequisite": null,
+        "description": "Задачи про рыцарей и лжецов. Алгоритм «4 шага путешественника», таблица проверки двух предположений."
+      },
+      {
+        "id": "l-nsh-05",
+        "title": "Стратегические игры",
+        "lessons": 4,
+        "duration_min": "35–40",
+        "filename": "logika-korifey/l-nsh-05.md",
+        "prerequisite": null,
+        "description": "Игра Nim, В/П-позиции, зеркальная стратегия. Учимся мыслить на ходы вперёд."
+      },
+      {
+        "id": "l-nsh-07",
+        "title": "Логический проект",
+        "lessons": 5,
+        "duration_min": "35–40",
+        "filename": "logika-korifey/l-nsh-07.md",
+        "prerequisite": "l-nsh-01",
+        "description": "Капстоун-модуль. Группы из 2–3 человек создают корректную логическую задачу с единственным решением."
+      }
+    ]
+  }
+]

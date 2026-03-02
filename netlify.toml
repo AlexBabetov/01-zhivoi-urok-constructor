@@ -35,6 +35,12 @@
 [functions."get-analytics"]
   timeout = 15
 
+[functions."lessons"]
+  timeout = 10
+
+[functions."courses"]
+  timeout = 10
+
 # Редирект со старого Netlify-адреса на кастомный домен
 [[redirects]]
   from = "https://constructor-zhivoi-urok.netlify.app/*"
@@ -69,6 +75,16 @@
 [[redirects]]
   from = "/api/update-user-status"
   to = "/.netlify/functions/update-user-status"
+  status = 200
+
+[[redirects]]
+  from = "/api/lessons"
+  to = "/.netlify/functions/lessons"
+  status = 200
+
+[[redirects]]
+  from = "/api/courses"
+  to = "/.netlify/functions/courses"
   status = 200
 
 # Edge Function: /api/generate-lesson → netlify/edge-functions/generate-lesson.js

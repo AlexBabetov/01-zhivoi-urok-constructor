@@ -2717,14 +2717,225 @@ function LessonDetailView({ openData, onBack, onClose }) {
   );
 }
 
+// ─────────────────────────────────────────────────────────
+// АВТОРСКИЕ КУРСЫ — компоненты
+// ─────────────────────────────────────────────────────────
+
+function useCourses() {
+  const [courses, setCourses] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const load = useCallback(() => {
+    setLoading(true);
+    fetch(`/api/courses?t=${Date.now()}`)
+      .then(r => r.ok ? r.json() : [])
+      .then(data => { setCourses(Array.isArray(data) ? data : []); setLoading(false); })
+      .catch(() => { setCourses([]); setLoading(false); });
+  }, []);
+  return { courses, loading, load };
+}
+
+// Простой Markdown → HTML рендерер (без зависимостей)
+function renderMarkdown(md) {
+  if (!md) return "";
+  return md
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    // Заголовки
+    .replace(/^#{4} (.+)$/gm, "<h4>$1</h4>")
+    .replace(/^#{3} (.+)$/gm, "<h3>$1</h3>")
+    .replace(/^#{2} (.+)$/gm, "<h2>$1</h2>")
+    .replace(/^# (.+)$/gm, "<h1>$1</h1>")
+    // Горизонтальные линии
+    .replace(/^---$/gm, "<hr>")
+    // Жирный и курсив
+    .replace(/\*\*\*(.+?)\*\*\*/g, "<strong><em>$1</em></strong>")
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\*(.+?)\*/g, "<em>$1</em>")
+    // Инлайн-код
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    // Таблицы (простые)
+    .replace(/^\|(.+)\|$/gm, (row) => {
+      const cells = row.slice(1, -1).split("|").map(c => c.trim());
+      if (cells.every(c => /^[-:]+$/.test(c))) return ""; // разделитель
+      return "<tr>" + cells.map(c => `<td>${c}</td>`).join("") + "</tr>";
+    })
+    // Флажки TODO
+    .replace(/- \[ \] (.+)/g, "<li class='todo'>☐ $1</li>")
+    .replace(/- \[x\] (.+)/gi, "<li class='todo done'>☑ $1</li>")
+    // Списки (обычные)
+    .replace(/^- (.+)$/gm, "<li>$1</li>")
+    .replace(/^\d+\. (.+)$/gm, "<li>$1</li>")
+    // Параграфы (двойной перенос)
+    .replace(/\n\n+/g, "</p><p>")
+    // Обёртка таблиц в <table>
+    .replace(/(<tr>.*<\/tr>)/gs, "<table>$1</table>")
+    // Начало/конец
+    .replace(/^/, "<p>").replace(/$/, "</p>")
+    // Убрать пустые параграфы
+    .replace(/<p><\/p>/g, "")
+    .replace(/<p>(<h[1-4]>)/g, "$1")
+    .replace(/(<\/h[1-4]>)<\/p>/g, "$1")
+    .replace(/<p>(<hr>)<\/p>/g, "$1")
+    .replace(/<p>(<li)/g, "<ul><li")
+    .replace(/(<\/li>)<\/p>/g, "$1</ul>");
+}
+
+function ModuleReader({ course, module: mod, onBack }) {
+  const [content, setContent] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    setLoading(true);
+    fetch(`/api/courses?file=${encodeURIComponent(mod.filename)}&t=${Date.now()}`)
+      .then(r => r.ok ? r.json() : Promise.reject("not found"))
+      .then(data => { setContent(data.content); setLoading(false); })
+      .catch(() => { setError("Не удалось загрузить модуль"); setLoading(false); });
+  }, [mod.filename]);
+
+  return (
+    <div>
+      <div style={{ display: "flex", gap: 10, marginBottom: 20, flexWrap: "wrap", alignItems: "center" }}>
+        <button onClick={onBack} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 20, color: "#64748b", padding: 0 }}>←</button>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 18, fontWeight: 700, color: "#1e293b" }}>{mod.title}</div>
+          <div style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>
+            {course.title} · {mod.lessons} занятий · {mod.duration_min} мин
+          </div>
+        </div>
+        <button onClick={() => window.print()} style={{ background: "#f1f5f9", border: "1px solid #e2e8f0", borderRadius: 8, cursor: "pointer", fontSize: 12, padding: "6px 14px", color: "#475569" }}>
+          🖨 Распечатать
+        </button>
+      </div>
+
+      {loading && <div style={{ textAlign: "center", padding: 48, color: "#94a3b8" }}>⏳ Загрузка сценария...</div>}
+      {error && <div style={{ textAlign: "center", padding: 48, color: "#ef4444" }}>❌ {error}</div>}
+      {content && (
+        <div
+          style={{ fontSize: 14, lineHeight: 1.7, color: "#1e293b" }}
+          dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }}
+        />
+      )}
+    </div>
+  );
+}
+
+function CoursesTab() {
+  const { courses, loading, load } = useCourses();
+  const [selectedCourse, setSelectedCourse] = useState(null);
+  const [selectedModule, setSelectedModule] = useState(null);
+
+  useEffect(() => { load(); }, [load]);
+
+  // Просмотр сценария модуля
+  if (selectedCourse && selectedModule) {
+    return (
+      <ModuleReader
+        course={selectedCourse}
+        module={selectedModule}
+        onBack={() => setSelectedModule(null)}
+      />
+    );
+  }
+
+  // Просмотр модулей курса
+  if (selectedCourse) {
+    return (
+      <div>
+        <div style={{ display: "flex", gap: 10, marginBottom: 20, alignItems: "center" }}>
+          <button onClick={() => setSelectedCourse(null)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 20, color: "#64748b", padding: 0 }}>←</button>
+          <div>
+            <div style={{ fontSize: 20, fontWeight: 700, color: "#1e293b" }}>{selectedCourse.cover_emoji} {selectedCourse.title}</div>
+            <div style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>{selectedCourse.grades} · {selectedCourse.total_lessons} занятий · {selectedCourse.author}</div>
+          </div>
+        </div>
+
+        <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: 10, padding: "12px 16px", marginBottom: 20, fontSize: 13, color: "#1d4ed8" }}>
+          📖 {selectedCourse.description}
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {(selectedCourse.modules || []).map((mod, i) => (
+            <button key={mod.id} onClick={() => setSelectedModule(mod)}
+              style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 12, padding: "14px 16px", cursor: "pointer", textAlign: "left", fontFamily: "inherit", transition: "all 0.15s" }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = "#1e3a5f"; e.currentTarget.style.boxShadow = "0 4px 12px rgba(30,58,95,0.1)"; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.boxShadow = "none"; }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <div style={{ fontWeight: 600, fontSize: 14, color: "#1e293b", flex: 1 }}>
+                  <span style={{ color: "#94a3b8", fontWeight: 400, marginRight: 8 }}>{i + 1}.</span>
+                  {mod.title}
+                </div>
+                <span style={{ fontSize: 12, padding: "2px 8px", background: "#eff6ff", color: "#1d4ed8", borderRadius: 20, whiteSpace: "nowrap", marginLeft: 8 }}>
+                  {mod.lessons} занятий
+                </span>
+              </div>
+              {mod.description && (
+                <div style={{ fontSize: 12, color: "#64748b", marginTop: 6 }}>{mod.description}</div>
+              )}
+              {mod.prerequisite && (
+                <div style={{ fontSize: 11, color: "#f59e0b", marginTop: 6 }}>
+                  ⚠ Пресквизит: {(selectedCourse.modules || []).find(m => m.id === mod.prerequisite)?.title || mod.prerequisite}
+                </div>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Каталог курсов
+  if (loading) {
+    return <div style={{ textAlign: "center", padding: 56, color: "#94a3b8" }}>⏳ Загрузка каталога...</div>;
+  }
+
+  if (!courses || courses.length === 0) {
+    return (
+      <div style={{ textAlign: "center", padding: 56, color: "#94a3b8" }}>
+        <div style={{ fontSize: 40, marginBottom: 12 }}>📭</div>
+        <div style={{ fontWeight: 600, fontSize: 15 }}>Авторских курсов пока нет</div>
+        <div style={{ fontSize: 13, marginTop: 6 }}>Корифей работает над первым курсом — следите за обновлениями</div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 16 }}>
+      {courses.map(course => (
+        <button key={course.id} onClick={() => setSelectedCourse(course)}
+          style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 16, padding: "22px 20px", cursor: "pointer", textAlign: "left", fontFamily: "inherit", transition: "all 0.15s" }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = "#1e3a5f"; e.currentTarget.style.boxShadow = "0 6px 20px rgba(30,58,95,0.12)"; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.boxShadow = "none"; }}>
+          <div style={{ fontSize: 36, marginBottom: 12 }}>{course.cover_emoji}</div>
+          <div style={{ fontWeight: 700, fontSize: 16, color: "#1e293b", marginBottom: 4 }}>{course.title}</div>
+          <div style={{ fontSize: 12, color: "#64748b", marginBottom: 10 }}>{course.subtitle}</div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 12 }}>
+            <span style={{ fontSize: 11, padding: "2px 8px", background: "#f0fdf4", color: "#166534", borderRadius: 20 }}>{course.grades}</span>
+            <span style={{ fontSize: 11, padding: "2px 8px", background: "#eff6ff", color: "#1d4ed8", borderRadius: 20 }}>{course.total_modules} модулей</span>
+            <span style={{ fontSize: 11, padding: "2px 8px", background: "#fdf4ff", color: "#7e22ce", borderRadius: 20 }}>{course.total_lessons} занятий</span>
+          </div>
+          <div style={{ fontSize: 12, color: "#94a3b8" }}>✓ Прошёл модерацию Корифея</div>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────
+
 function LibraryView({ onClose, user }) {
   const { lessons: allLessons, libLoading, refresh } = useLessons();
   const isAdmin = user?.user_metadata?.role === "admin";
-  // Учитель видит только свои уроки; admin видит все
+  // showMine: true = только мои уроки (по умолчанию для авторизованных); false = все публичные
+  const [showMine, setShowMine] = useState(!!user && !isAdmin);
   const lessons = isAdmin
-    ? allLessons
-    : (allLessons || []).filter(l => !l.author_id || l.author_id === user?.id);
+    ? (allLessons || [])
+    : (user && showMine)
+      ? (allLessons || []).filter(l => l.author_id === user.id)
+      : (allLessons || []);
   const [search, setSearch] = useState("");
+  const [activeTab, setActiveTab] = useState(
+    new URLSearchParams(window.location.search).get("tab") === "courses" ? "courses" : "lessons"
+  );
   const [selectedSubject, setSelectedSubject] = useState(null); // null = subject grid
   const [openData, setOpenData] = useState(null);
   const [loadingLesson, setLoadingLesson] = useState(false);
@@ -2805,25 +3016,60 @@ function LibraryView({ onClose, user }) {
     <div style={{ background: "#f8fafc", borderRadius: 20, width: "100%", maxWidth: 720, minHeight: 300, padding: 28, boxShadow: "0 8px 40px rgba(0,0,0,0.2)" }}>
 
       {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+        <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: "#1e293b" }}>📚 Библиотека</h2>
+        <Btn variant="ghost" onClick={onClose}>✕ Закрыть</Btn>
+      </div>
+
+      {/* Таб-переключатель Уроки / Курсы */}
+      <div style={{ display: "flex", background: "#f1f5f9", borderRadius: 10, padding: 3, marginBottom: 20, gap: 2 }}>
+        {[["lessons", "📄 Уроки"], ["courses", "🧩 Курсы"]].map(([id, label]) => (
+          <button key={id} onClick={() => { setActiveTab(id); setSelectedSubject(null); }}
+            style={{ flex: 1, padding: "8px 16px", borderRadius: 8, border: "none", cursor: "pointer", fontSize: 13, fontWeight: activeTab === id ? 700 : 400,
+              background: activeTab === id ? "#1e3a5f" : "transparent", color: activeTab === id ? "#fff" : "#64748b", transition: "all 0.15s", fontFamily: "inherit" }}>
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {/* Курсы — отдельный таб */}
+      {activeTab === "courses" && <CoursesTab />}
+
+      {/* Уроки — основной контент ниже */}
+      {activeTab === "lessons" && <>
+
+      {/* Sub-header для уроков */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
         <div>
           {selectedSubject
             ? <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <button onClick={() => setSelectedSubject(null)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 20, color: "#64748b", padding: 0 }}>←</button>
                 <div>
-                  <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: "#1e293b" }}>{subjectEmoji(selectedSubject)} {selectedSubject}</h2>
+                  <div style={{ fontWeight: 700, fontSize: 16, color: "#1e293b" }}>{subjectEmoji(selectedSubject)} {selectedSubject}</div>
                   <div style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>{subjectLessons.length} урок{subjectLessons.length === 1 ? "" : subjectLessons.length < 5 ? "а" : "ов"}</div>
                 </div>
               </div>
-            : <div>
-                <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: "#1e293b" }}>📚 Библиотека уроков</h2>
-                <div style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>
-                  {libLoading ? "Загрузка..." : `${totalLessons} урок${totalLessons === 1 ? "" : totalLessons < 5 ? "а" : "ов"} · ${conductedCount} проведено`}
-                </div>
+            : <div style={{ fontSize: 12, color: "#64748b" }}>
+                {libLoading ? "Загрузка..." : `${totalLessons} урок${totalLessons === 1 ? "" : totalLessons < 5 ? "а" : "ов"} · ${conductedCount} проведено`}
               </div>
           }
         </div>
-        <div style={{ display: "flex", gap: 8 }}>
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          {/* Переключатель «Мои / Все» — только для авторизованных учителей */}
+          {user && !isAdmin && (
+            <div style={{ display: "flex", background: "#f1f5f9", borderRadius: 8, padding: 2 }}>
+              <button onClick={() => { setShowMine(true); setSelectedSubject(null); }}
+                style={{ padding: "5px 12px", borderRadius: 6, border: "none", cursor: "pointer", fontSize: 12, fontWeight: showMine ? 600 : 400,
+                  background: showMine ? "#1e3a5f" : "transparent", color: showMine ? "#fff" : "#64748b", transition: "all 0.15s" }}>
+                Мои
+              </button>
+              <button onClick={() => { setShowMine(false); setSelectedSubject(null); }}
+                style={{ padding: "5px 12px", borderRadius: 6, border: "none", cursor: "pointer", fontSize: 12, fontWeight: !showMine ? 600 : 400,
+                  background: !showMine ? "#1e3a5f" : "transparent", color: !showMine ? "#fff" : "#64748b", transition: "all 0.15s" }}>
+                Все
+              </button>
+            </div>
+          )}
           <Btn variant="secondary" onClick={refresh} style={{ fontSize: 12 }}>↻</Btn>
           <Btn variant="ghost" onClick={onClose}>✕ Закрыть</Btn>
         </div>
@@ -2859,9 +3105,17 @@ function LibraryView({ onClose, user }) {
               {subjectList.length === 0 ? (
                 <div style={{ textAlign: "center", padding: 56, color: "#94a3b8" }}>
                   <div style={{ fontSize: 40, marginBottom: 12 }}>📭</div>
-                  <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 6 }}>Библиотека пустая</div>
-                  <div style={{ fontSize: 13 }}>Сгенерируйте урок и нажмите «💾 Сохранить»</div>
-                  <div style={{ fontSize: 12, marginTop: 8, color: "#cbd5e1" }}>Уроки появятся после деплоя Netlify (~2-3 мин)</div>
+                  {user && showMine ? (
+                    <>
+                      <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 6 }}>У вас пока нет сохранённых уроков</div>
+                      <div style={{ fontSize: 13 }}>Сгенерируйте урок и нажмите «💾 Сохранить»</div>
+                    </>
+                  ) : (
+                    <>
+                      <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 6 }}>Библиотека пустая</div>
+                      <div style={{ fontSize: 13 }}>Уроки появятся после первого сохранения через конструктор</div>
+                    </>
+                  )}
                 </div>
               ) : (
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 12 }}>
@@ -2914,6 +3168,10 @@ function LibraryView({ onClose, user }) {
       <div style={{ marginTop: 20, padding: "10px 14px", background: "#fff", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 12, color: "#94a3b8" }}>
         💡 Уроки сохраняются в GitHub и появляются здесь после деплоя Netlify (~2-3 мин)
       </div>
+
+      {/* Конец таба уроков */}
+      </>}
+
     </div>
     </div>
   );
@@ -2927,7 +3185,10 @@ export default function App({ user }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
-  const [libraryOpen, setLibraryOpen] = useState(false);
+  // Открывать библиотеку сразу, если URL = /library
+  const [libraryOpen, setLibraryOpen] = useState(
+    window.location.pathname === "/library"
+  );
   const [saveStatus, setSaveStatus] = useState(null); // null | "saving" | "saved" | "error"
   const [saveError, setSaveError] = useState(null);
   const [reflOpen, setReflOpen] = useState(false);
