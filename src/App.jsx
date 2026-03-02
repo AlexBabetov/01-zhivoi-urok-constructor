@@ -734,6 +734,13 @@ const MOOD_OPTS = [
   { v: "active", emoji: "😊", label: "Активная" },
   { v: "fire",   emoji: "🔥", label: "Высокий драйв" },
 ];
+const WELLBEING_OPTS = [
+  { v: "tired",   emoji: "😴", label: "Устали" },
+  { v: "ok",      emoji: "🙂", label: "Норм" },
+  { v: "good",    emoji: "😊", label: "Хорошо" },
+  { v: "excited", emoji: "🤩", label: "На подъёме" },
+  { v: "mixed",   emoji: "🤔", label: "По-разному" },
+];
 const CAPTURE_OPTS = [
   { v: "1", label: "Захват 1" },
   { v: "2", label: "Захват 2" },
@@ -741,27 +748,79 @@ const CAPTURE_OPTS = [
   { v: "0", label: "Не использовал" },
 ];
 
-function ReflectionModal({ state, onClose, onSaved }) {
+// Сохраняет рефлексию в Supabase (если пользователь авторизован)
+async function saveReflectionToSupabase(supabaseClient, user, reflId, subject, grade, topic, data) {
+  if (!supabaseClient || !user) return;
+  try {
+    const row = {
+      id: reflId,
+      user_id: user.id,
+      subject,
+      grade: Number(grade),
+      topic,
+      rating: data.rating || null,
+      timing: data.timing || null,
+      mood: data.mood || null,
+      wellbeing: data.wellbeing || null,
+      capture_used: data.capture || null,
+      notes: data.notes || null,
+      saved_at: data.saved_at || new Date().toISOString(),
+    };
+    const { error } = await supabaseClient.from("reflections").upsert(row, { onConflict: "id" });
+    if (error) console.warn("[reflection] Supabase upsert:", error.message);
+  } catch (e) {
+    console.warn("[reflection] Supabase error:", e.message);
+  }
+}
+
+// ReflectionModal: user — опционально (Supabase запись только если залогинен)
+function ReflectionModal({ state, user, onClose, onSaved }) {
   const existing = getReflection(state.subject, state.grade, state.topic);
-  const [rating,  setRating]  = useState(existing?.rating  || 0);
-  const [timing,  setTiming]  = useState(existing?.timing  || "");
-  const [mood,    setMood]    = useState(existing?.mood    || "");
-  const [capture, setCapture] = useState(existing?.capture || "");
-  const [notes,   setNotes]   = useState(existing?.notes   || "");
-  const [saved,   setSaved]   = useState(!!existing);
+  const [rating,    setRating]    = useState(existing?.rating    || 0);
+  const [timing,    setTiming]    = useState(existing?.timing    || "");
+  const [mood,      setMood]      = useState(existing?.mood      || "");
+  const [wellbeing, setWellbeing] = useState(existing?.wellbeing || "");
+  const [capture,   setCapture]   = useState(existing?.capture   || "");
+  const [notes,     setNotes]     = useState(existing?.notes     || "");
+  const [saving,    setSaving]    = useState(false);
+  const [saved,     setSaved]     = useState(!!existing);
 
-  const canSave = rating > 0 && timing && mood;
+  const canSave = rating > 0 && timing && mood && wellbeing;
 
-  const handleSave = () => {
-    saveReflection(state.subject, state.grade, state.topic, { rating, timing, mood, capture, notes });
+  const handleSave = async () => {
+    setSaving(true);
+    const data = { rating, timing, mood, wellbeing, capture, notes };
+    const reflId = saveReflection(state.subject, state.grade, state.topic, data);
+    // Двойное сохранение: Supabase, если залогинен (ошибки игнорируются — localStorage всегда работает)
+    if (user) {
+      await saveReflectionToSupabase(supabase, user, reflId, state.subject, state.grade, state.topic, {
+        ...data, saved_at: new Date().toISOString(),
+      });
+    }
+    setSaving(false);
     setSaved(true);
     onSaved && onSaved();
-    setTimeout(onClose, 1200);
+    setTimeout(onClose, 1400);
   };
+
+  const EmojiBtn = ({ opts, value, onChange }) => (
+    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+      {opts.map(o => (
+        <button key={o.v} onClick={() => onChange(o.v)}
+          style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
+            padding: "10px 14px", borderRadius: 10, cursor: "pointer", fontFamily: "inherit",
+            border: value === o.v ? "2px solid #1e3a5f" : "1px solid #e2e8f0",
+            background: value === o.v ? "#eff6ff" : "#f8fafc", minWidth: 68 }}>
+          <span style={{ fontSize: 22 }}>{o.emoji}</span>
+          <span style={{ fontSize: 11, color: "#475569" }}>{o.label}</span>
+        </button>
+      ))}
+    </div>
+  );
 
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }}>
-      <div style={{ background: "#fff", borderRadius: 20, padding: 28, maxWidth: 480, width: "100%", boxShadow: "0 8px 40px rgba(0,0,0,0.18)", maxHeight: "90vh", overflowY: "auto" }}>
+      <div style={{ background: "#fff", borderRadius: 20, padding: 28, maxWidth: 500, width: "100%", boxShadow: "0 8px 40px rgba(0,0,0,0.18)", maxHeight: "90vh", overflowY: "auto" }}>
 
         {/* Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
@@ -770,6 +829,7 @@ function ReflectionModal({ state, onClose, onSaved }) {
             <div style={{ fontSize: 12, color: "#64748b", marginTop: 3 }}>
               {state.subject} · {state.grade} кл. · {state.topic}
             </div>
+            {user && <div style={{ fontSize: 11, color: "#16a34a", marginTop: 2 }}>☁️ Сохраняется в облако</div>}
           </div>
           <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 20, color: "#94a3b8", padding: 0 }}>✕</button>
         </div>
@@ -780,20 +840,34 @@ function ReflectionModal({ state, onClose, onSaved }) {
           </div>
         ) : (
           <>
-            {/* Rating */}
+            {/* Прогресс-индикатор обязательных полей */}
+            <div style={{ display: "flex", gap: 6, marginBottom: 20 }}>
+              {[["⭐", rating > 0], ["⏱", !!timing], ["🏫", !!mood], ["👦", !!wellbeing]].map(([icon, done], i) => (
+                <div key={i} style={{ flex: 1, height: 4, borderRadius: 4,
+                  background: done ? "#1e3a5f" : "#e2e8f0", transition: "background 0.2s",
+                  position: "relative" }}>
+                  <span style={{ position: "absolute", top: 8, left: "50%", transform: "translateX(-50%)", fontSize: 12, opacity: done ? 1 : 0.4 }}>{icon}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{ fontSize: 11, color: "#94a3b8", marginBottom: 20, marginTop: -8 }}>
+              Заполни все 4 поля, чтобы сохранить
+            </div>
+
+            {/* Оценка урока */}
             <div style={{ marginBottom: 20 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 8 }}>Общая оценка урока</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 8 }}>⭐ Общая оценка урока</div>
               <div style={{ display: "flex", gap: 8 }}>
                 {[1,2,3,4,5].map(n => (
                   <button key={n} onClick={() => setRating(n)}
-                    style={{ fontSize: 26, background: "none", border: "none", cursor: "pointer", opacity: n <= rating ? 1 : 0.3, transition: "opacity 0.15s" }}>⭐</button>
+                    style={{ fontSize: 28, background: "none", border: "none", cursor: "pointer", opacity: n <= rating ? 1 : 0.25, transition: "opacity 0.15s", padding: 0 }}>⭐</button>
                 ))}
               </div>
             </div>
 
-            {/* Timing */}
+            {/* Тайминг */}
             <div style={{ marginBottom: 20 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 8 }}>Тайминг</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 8 }}>⏱ Тайминг</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 {TIMING_OPTS.map(o => (
                   <label key={o.v} style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", padding: "8px 12px", borderRadius: 8,
@@ -805,29 +879,27 @@ function ReflectionModal({ state, onClose, onSaved }) {
               </div>
             </div>
 
-            {/* Mood */}
+            {/* Атмосфера класса */}
             <div style={{ marginBottom: 20 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 8 }}>Атмосфера класса</div>
-              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                {MOOD_OPTS.map(o => (
-                  <button key={o.v} onClick={() => setMood(o.v)}
-                    style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, padding: "10px 16px", borderRadius: 10, cursor: "pointer",
-                      border: mood === o.v ? "2px solid #1e3a5f" : "1px solid #e2e8f0",
-                      background: mood === o.v ? "#eff6ff" : "#f8fafc", minWidth: 72 }}>
-                    <span style={{ fontSize: 24 }}>{o.emoji}</span>
-                    <span style={{ fontSize: 11, color: "#475569" }}>{o.label}</span>
-                  </button>
-                ))}
-              </div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 8 }}>🏫 Атмосфера класса</div>
+              <EmojiBtn opts={MOOD_OPTS} value={mood} onChange={setMood} />
             </div>
 
-            {/* Capture */}
+            {/* Самочувствие учеников — новое поле */}
             <div style={{ marginBottom: 20 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 8 }}>Какой захват использовал?</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 8 }}>👦 Самочувствие учеников</div>
+              <EmojiBtn opts={WELLBEING_OPTS} value={wellbeing} onChange={setWellbeing} />
+            </div>
+
+            {/* Какой захват использовал */}
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 8 }}>
+                🎯 Какой захват использовал? <span style={{ fontWeight: 400, color: "#94a3b8" }}>(необязательно)</span>
+              </div>
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                 {CAPTURE_OPTS.map(o => (
-                  <button key={o.v} onClick={() => setCapture(o.v)}
-                    style={{ padding: "7px 14px", borderRadius: 8, cursor: "pointer", fontSize: 13,
+                  <button key={o.v} onClick={() => setCapture(capture === o.v ? "" : o.v)}
+                    style={{ padding: "7px 14px", borderRadius: 8, cursor: "pointer", fontSize: 13, fontFamily: "inherit",
                       border: capture === o.v ? "2px solid #7c3aed" : "1px solid #e2e8f0",
                       background: capture === o.v ? "#f5f3ff" : "#f8fafc",
                       color: capture === o.v ? "#6d28d9" : "#475569" }}>
@@ -837,9 +909,11 @@ function ReflectionModal({ state, onClose, onSaved }) {
               </div>
             </div>
 
-            {/* Notes */}
+            {/* Что изменить */}
             <div style={{ marginBottom: 24 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 8 }}>Что изменить в следующий раз? <span style={{ fontWeight: 400, color: "#94a3b8" }}>(необязательно)</span></div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 8 }}>
+                💡 Что изменить в следующий раз? <span style={{ fontWeight: 400, color: "#94a3b8" }}>(необязательно)</span>
+              </div>
               <textarea value={notes} onChange={e => setNotes(e.target.value)}
                 placeholder="Например: дать больше времени на игру, усилить хоровое закрепление..."
                 rows={3} style={{ width: "100%", padding: "10px 12px", borderRadius: 8, border: "1px solid #d1d5db", fontSize: 14, fontFamily: "inherit", boxSizing: "border-box", resize: "vertical" }} />
@@ -848,9 +922,9 @@ function ReflectionModal({ state, onClose, onSaved }) {
             {/* Actions */}
             <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
               <Btn variant="secondary" onClick={onClose}>Отмена</Btn>
-              <Btn onClick={handleSave} disabled={!canSave}
+              <Btn onClick={handleSave} disabled={!canSave || saving}
                 style={!canSave ? { opacity: 0.5 } : {}}>
-                💾 Сохранить рефлексию
+                {saving ? "⏳ Сохраняю..." : "💾 Сохранить рефлексию"}
               </Btn>
             </div>
           </>
@@ -2677,7 +2751,7 @@ function LessonCard({ entry, onOpen }) {
 }
 
 // ── Lesson detail view (shared between library modes) ──
-function LessonDetailView({ openData, onBack, onClose }) {
+function LessonDetailView({ openData, onBack, onClose, user }) {
   const st = openData.meta || {};
   const isPrimary = st.grade && st.grade <= 4;
   const isMiddle = st.grade && st.grade >= 5 && st.grade <= 9;
@@ -2704,6 +2778,7 @@ function LessonDetailView({ openData, onBack, onClose }) {
             {currentRefl.rating && <span style={{ padding: "2px 10px", background: "#fef3c7", borderRadius: 12, color: "#92400e" }}>{STAR_LABEL[currentRefl.rating]}</span>}
             {currentRefl.timing && <span style={{ padding: "2px 10px", background: "#eff6ff", borderRadius: 12, color: "#1d4ed8" }}>{TIMING_SHORT[currentRefl.timing]}</span>}
             {currentRefl.mood && <span style={{ padding: "2px 10px", background: "#f0fdf4", borderRadius: 12, color: "#166534" }}>{MOOD_EMOJI[currentRefl.mood]} {MOOD_OPTS.find(o => o.v === currentRefl.mood)?.label}</span>}
+            {currentRefl.wellbeing && <span style={{ padding: "2px 10px", background: "#fff7ed", borderRadius: 12, color: "#c2410c" }}>👦 {WELLBEING_OPTS.find(o => o.v === currentRefl.wellbeing)?.emoji} {WELLBEING_OPTS.find(o => o.v === currentRefl.wellbeing)?.label}</span>}
             {currentRefl.capture && currentRefl.capture !== "0" && <span style={{ padding: "2px 10px", background: "#f5f3ff", borderRadius: 12, color: "#6d28d9" }}>Захват {currentRefl.capture}</span>}
           </div>
           {currentRefl.notes && <div style={{ marginTop: 8, color: "#64748b", fontStyle: "italic" }}>💬 {currentRefl.notes}</div>}
@@ -2712,7 +2787,7 @@ function LessonDetailView({ openData, onBack, onClose }) {
       {isPrimary ? <PrimaryResult data={openData.lesson} state={st} />
         : isMiddle ? <MiddleResult data={openData.lesson} state={st} />
         : <StandardResult data={openData.lesson} state={st} />}
-      {libReflOpen && <ReflectionModal state={st} onClose={() => setLibReflOpen(false)} onSaved={() => setLibReflDone(true)} />}
+      {libReflOpen && <ReflectionModal state={st} user={user} onClose={() => setLibReflOpen(false)} onSaved={() => setLibReflDone(true)} />}
     </div>
   );
 }
@@ -2960,7 +3035,7 @@ function LibraryView({ onClose, user }) {
     return (
       <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 900, display: "flex", alignItems: "flex-start", justifyContent: "center", overflowY: "auto", padding: "24px 16px" }}>
         <div style={{ background: "#f8fafc", borderRadius: 20, width: "100%", maxWidth: 720, padding: 28, boxShadow: "0 8px 40px rgba(0,0,0,0.2)" }}>
-          <LessonDetailView openData={openData} onBack={() => setOpenData(null)} onClose={onClose} />
+          <LessonDetailView openData={openData} onBack={() => setOpenData(null)} onClose={onClose} user={user} />
         </div>
       </div>
     );
@@ -3386,7 +3461,7 @@ export default function App({ user }) {
           </div>
         </div>
       </div>
-      {reflOpen && <ReflectionModal state={state} onClose={() => setReflOpen(false)} onSaved={() => setReflDone(true)} />}
+      {reflOpen && <ReflectionModal state={state} user={user} onClose={() => setReflOpen(false)} onSaved={() => setReflDone(true)} />}
       {libraryOpen && <LibraryView onClose={() => setLibraryOpen(false)} user={user} />}
       {adminOpen && <AdminView user={user} onClose={() => setAdminOpen(false)} />}
       {showMindMap && <MindMapModal state={state} onClose={() => setShowMindMap(false)} cachedText={mindMapCache} onCached={setMindMapCache} />}
