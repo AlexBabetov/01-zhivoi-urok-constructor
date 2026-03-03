@@ -523,20 +523,26 @@ async function generateMindMap(st, token) {
 }
 
 // ========== MIND MAP MODAL ==========
-function MindMapModal({ state, onClose }) {
-  const [loading, setLoading] = useState(true);
-  const [text, setText] = useState("");
+function MindMapModal({ state, onClose, cachedText, onCached }) {
+  // BUG-02: start with cached result if available — no API call needed
+  const [loading, setLoading] = useState(!cachedText);
+  const [text, setText] = useState(cachedText || "");
   const [error, setError] = useState(null);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
+    if (cachedText) return; // already have it — skip API call
     let cancelled = false;
     const run = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         const token = session?.access_token || null;
         const result = await generateMindMap(state, token);
-        if (!cancelled) { setText(result); setLoading(false); }
+        if (!cancelled) {
+          setText(result);
+          setLoading(false);
+          if (onCached) onCached(result); // store in parent so re-open is instant
+        }
       } catch (e) {
         if (!cancelled) { setError(e.message); setLoading(false); }
       }
@@ -632,22 +638,31 @@ function StudentNotesSection({ data }) {
 // ========== UI COMPONENTS ==========
 const STEPS_BASIC = ["Параметры", "Модель", "Генерация", "Результат"];
 
-function StepIndicator({ current, steps }) {
+function StepIndicator({ current, steps, onGoTo }) {
   return (
     <div style={{ display: "flex", gap: 0, marginBottom: 32, position: "relative" }}>
-      {steps.map((s, i) => (
-        <div key={s} style={{ flex: 1, textAlign: "center", position: "relative" }}>
-          <div style={{
-            width: 36, height: 36, borderRadius: "50%", margin: "0 auto 6px",
-            background: i <= current ? "#1e3a5f" : "#e2e8f0",
-            color: i <= current ? "#fff" : "#94a3b8",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 14, fontWeight: 700, transition: "all 0.3s",
-            boxShadow: i === current ? "0 0 0 4px rgba(30,58,95,0.2)" : "none"
-          }}>{i + 1}</div>
-          <div style={{ fontSize: 11, color: i <= current ? "#1e3a5f" : "#94a3b8", fontWeight: i === current ? 700 : 400 }}>{s}</div>
-        </div>
-      ))}
+      {steps.map((s, i) => {
+        // UX-02: completed steps (i < current) are clickable
+        const isCompleted = i < current;
+        const isActive = i === current;
+        const clickable = isCompleted && !!onGoTo;
+        return (
+          <div key={s}
+            onClick={clickable ? () => onGoTo(i) : undefined}
+            style={{ flex: 1, textAlign: "center", position: "relative", cursor: clickable ? "pointer" : "default" }}>
+            <div style={{
+              width: 36, height: 36, borderRadius: "50%", margin: "0 auto 6px",
+              background: i <= current ? "#1e3a5f" : "#e2e8f0",
+              color: i <= current ? "#fff" : "#94a3b8",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 14, fontWeight: 700, transition: "all 0.3s",
+              boxShadow: isActive ? "0 0 0 4px rgba(30,58,95,0.2)" : "none",
+              outline: clickable ? "2px solid transparent" : "none",
+            }}>{i + 1}</div>
+            <div style={{ fontSize: 11, color: i <= current ? "#1e3a5f" : "#94a3b8", fontWeight: isActive ? 700 : 400, textDecoration: clickable ? "underline dotted" : "none" }}>{s}</div>
+          </div>
+        );
+      })}
       <div style={{ position: "absolute", top: 18, left: "8%", right: "8%", height: 2, background: "#e2e8f0", zIndex: -1 }} />
       <div style={{ position: "absolute", top: 18, left: "8%", height: 2, background: "#1e3a5f", zIndex: -1, width: `${(current / (steps.length - 1)) * 84}%`, transition: "width 0.4s" }} />
     </div>
@@ -719,6 +734,13 @@ const MOOD_OPTS = [
   { v: "active", emoji: "😊", label: "Активная" },
   { v: "fire",   emoji: "🔥", label: "Высокий драйв" },
 ];
+const WELLBEING_OPTS = [
+  { v: "tired",   emoji: "😴", label: "Устали" },
+  { v: "ok",      emoji: "🙂", label: "Норм" },
+  { v: "good",    emoji: "😊", label: "Хорошо" },
+  { v: "excited", emoji: "🤩", label: "На подъёме" },
+  { v: "mixed",   emoji: "🤔", label: "По-разному" },
+];
 const CAPTURE_OPTS = [
   { v: "1", label: "Захват 1" },
   { v: "2", label: "Захват 2" },
@@ -726,27 +748,79 @@ const CAPTURE_OPTS = [
   { v: "0", label: "Не использовал" },
 ];
 
-function ReflectionModal({ state, onClose, onSaved }) {
+// Сохраняет рефлексию в Supabase (если пользователь авторизован)
+async function saveReflectionToSupabase(supabaseClient, user, reflId, subject, grade, topic, data) {
+  if (!supabaseClient || !user) return;
+  try {
+    const row = {
+      id: reflId,
+      user_id: user.id,
+      subject,
+      grade: Number(grade),
+      topic,
+      rating: data.rating || null,
+      timing: data.timing || null,
+      mood: data.mood || null,
+      wellbeing: data.wellbeing || null,
+      capture_used: data.capture || null,
+      notes: data.notes || null,
+      saved_at: data.saved_at || new Date().toISOString(),
+    };
+    const { error } = await supabaseClient.from("reflections").upsert(row, { onConflict: "id" });
+    if (error) console.warn("[reflection] Supabase upsert:", error.message);
+  } catch (e) {
+    console.warn("[reflection] Supabase error:", e.message);
+  }
+}
+
+// ReflectionModal: user — опционально (Supabase запись только если залогинен)
+function ReflectionModal({ state, user, onClose, onSaved }) {
   const existing = getReflection(state.subject, state.grade, state.topic);
-  const [rating,  setRating]  = useState(existing?.rating  || 0);
-  const [timing,  setTiming]  = useState(existing?.timing  || "");
-  const [mood,    setMood]    = useState(existing?.mood    || "");
-  const [capture, setCapture] = useState(existing?.capture || "");
-  const [notes,   setNotes]   = useState(existing?.notes   || "");
-  const [saved,   setSaved]   = useState(!!existing);
+  const [rating,    setRating]    = useState(existing?.rating    || 0);
+  const [timing,    setTiming]    = useState(existing?.timing    || "");
+  const [mood,      setMood]      = useState(existing?.mood      || "");
+  const [wellbeing, setWellbeing] = useState(existing?.wellbeing || "");
+  const [capture,   setCapture]   = useState(existing?.capture   || "");
+  const [notes,     setNotes]     = useState(existing?.notes     || "");
+  const [saving,    setSaving]    = useState(false);
+  const [saved,     setSaved]     = useState(!!existing);
 
-  const canSave = rating > 0 && timing && mood;
+  const canSave = rating > 0 && timing && mood && wellbeing;
 
-  const handleSave = () => {
-    saveReflection(state.subject, state.grade, state.topic, { rating, timing, mood, capture, notes });
+  const handleSave = async () => {
+    setSaving(true);
+    const data = { rating, timing, mood, wellbeing, capture, notes };
+    const reflId = saveReflection(state.subject, state.grade, state.topic, data);
+    // Двойное сохранение: Supabase, если залогинен (ошибки игнорируются — localStorage всегда работает)
+    if (user) {
+      await saveReflectionToSupabase(supabase, user, reflId, state.subject, state.grade, state.topic, {
+        ...data, saved_at: new Date().toISOString(),
+      });
+    }
+    setSaving(false);
     setSaved(true);
     onSaved && onSaved();
-    setTimeout(onClose, 1200);
+    setTimeout(onClose, 1400);
   };
+
+  const EmojiBtn = ({ opts, value, onChange }) => (
+    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+      {opts.map(o => (
+        <button key={o.v} onClick={() => onChange(o.v)}
+          style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
+            padding: "10px 14px", borderRadius: 10, cursor: "pointer", fontFamily: "inherit",
+            border: value === o.v ? "2px solid #1e3a5f" : "1px solid #e2e8f0",
+            background: value === o.v ? "#eff6ff" : "#f8fafc", minWidth: 68 }}>
+          <span style={{ fontSize: 22 }}>{o.emoji}</span>
+          <span style={{ fontSize: 11, color: "#475569" }}>{o.label}</span>
+        </button>
+      ))}
+    </div>
+  );
 
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }}>
-      <div style={{ background: "#fff", borderRadius: 20, padding: 28, maxWidth: 480, width: "100%", boxShadow: "0 8px 40px rgba(0,0,0,0.18)", maxHeight: "90vh", overflowY: "auto" }}>
+      <div style={{ background: "#fff", borderRadius: 20, padding: 28, maxWidth: 500, width: "100%", boxShadow: "0 8px 40px rgba(0,0,0,0.18)", maxHeight: "90vh", overflowY: "auto" }}>
 
         {/* Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
@@ -755,6 +829,7 @@ function ReflectionModal({ state, onClose, onSaved }) {
             <div style={{ fontSize: 12, color: "#64748b", marginTop: 3 }}>
               {state.subject} · {state.grade} кл. · {state.topic}
             </div>
+            {user && <div style={{ fontSize: 11, color: "#16a34a", marginTop: 2 }}>☁️ Сохраняется в облако</div>}
           </div>
           <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 20, color: "#94a3b8", padding: 0 }}>✕</button>
         </div>
@@ -765,20 +840,34 @@ function ReflectionModal({ state, onClose, onSaved }) {
           </div>
         ) : (
           <>
-            {/* Rating */}
+            {/* Прогресс-индикатор обязательных полей */}
+            <div style={{ display: "flex", gap: 6, marginBottom: 20 }}>
+              {[["⭐", rating > 0], ["⏱", !!timing], ["🏫", !!mood], ["👦", !!wellbeing]].map(([icon, done], i) => (
+                <div key={i} style={{ flex: 1, height: 4, borderRadius: 4,
+                  background: done ? "#1e3a5f" : "#e2e8f0", transition: "background 0.2s",
+                  position: "relative" }}>
+                  <span style={{ position: "absolute", top: 8, left: "50%", transform: "translateX(-50%)", fontSize: 12, opacity: done ? 1 : 0.4 }}>{icon}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{ fontSize: 11, color: "#94a3b8", marginBottom: 20, marginTop: -8 }}>
+              Заполни все 4 поля, чтобы сохранить
+            </div>
+
+            {/* Оценка урока */}
             <div style={{ marginBottom: 20 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 8 }}>Общая оценка урока</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 8 }}>⭐ Общая оценка урока</div>
               <div style={{ display: "flex", gap: 8 }}>
                 {[1,2,3,4,5].map(n => (
                   <button key={n} onClick={() => setRating(n)}
-                    style={{ fontSize: 26, background: "none", border: "none", cursor: "pointer", opacity: n <= rating ? 1 : 0.3, transition: "opacity 0.15s" }}>⭐</button>
+                    style={{ fontSize: 28, background: "none", border: "none", cursor: "pointer", opacity: n <= rating ? 1 : 0.25, transition: "opacity 0.15s", padding: 0 }}>⭐</button>
                 ))}
               </div>
             </div>
 
-            {/* Timing */}
+            {/* Тайминг */}
             <div style={{ marginBottom: 20 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 8 }}>Тайминг</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 8 }}>⏱ Тайминг</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 {TIMING_OPTS.map(o => (
                   <label key={o.v} style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", padding: "8px 12px", borderRadius: 8,
@@ -790,29 +879,27 @@ function ReflectionModal({ state, onClose, onSaved }) {
               </div>
             </div>
 
-            {/* Mood */}
+            {/* Атмосфера класса */}
             <div style={{ marginBottom: 20 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 8 }}>Атмосфера класса</div>
-              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                {MOOD_OPTS.map(o => (
-                  <button key={o.v} onClick={() => setMood(o.v)}
-                    style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, padding: "10px 16px", borderRadius: 10, cursor: "pointer",
-                      border: mood === o.v ? "2px solid #1e3a5f" : "1px solid #e2e8f0",
-                      background: mood === o.v ? "#eff6ff" : "#f8fafc", minWidth: 72 }}>
-                    <span style={{ fontSize: 24 }}>{o.emoji}</span>
-                    <span style={{ fontSize: 11, color: "#475569" }}>{o.label}</span>
-                  </button>
-                ))}
-              </div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 8 }}>🏫 Атмосфера класса</div>
+              <EmojiBtn opts={MOOD_OPTS} value={mood} onChange={setMood} />
             </div>
 
-            {/* Capture */}
+            {/* Самочувствие учеников — новое поле */}
             <div style={{ marginBottom: 20 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 8 }}>Какой захват использовал?</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 8 }}>👦 Самочувствие учеников</div>
+              <EmojiBtn opts={WELLBEING_OPTS} value={wellbeing} onChange={setWellbeing} />
+            </div>
+
+            {/* Какой захват использовал */}
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 8 }}>
+                🎯 Какой захват использовал? <span style={{ fontWeight: 400, color: "#94a3b8" }}>(необязательно)</span>
+              </div>
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                 {CAPTURE_OPTS.map(o => (
-                  <button key={o.v} onClick={() => setCapture(o.v)}
-                    style={{ padding: "7px 14px", borderRadius: 8, cursor: "pointer", fontSize: 13,
+                  <button key={o.v} onClick={() => setCapture(capture === o.v ? "" : o.v)}
+                    style={{ padding: "7px 14px", borderRadius: 8, cursor: "pointer", fontSize: 13, fontFamily: "inherit",
                       border: capture === o.v ? "2px solid #7c3aed" : "1px solid #e2e8f0",
                       background: capture === o.v ? "#f5f3ff" : "#f8fafc",
                       color: capture === o.v ? "#6d28d9" : "#475569" }}>
@@ -822,9 +909,11 @@ function ReflectionModal({ state, onClose, onSaved }) {
               </div>
             </div>
 
-            {/* Notes */}
+            {/* Что изменить */}
             <div style={{ marginBottom: 24 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 8 }}>Что изменить в следующий раз? <span style={{ fontWeight: 400, color: "#94a3b8" }}>(необязательно)</span></div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 8 }}>
+                💡 Что изменить в следующий раз? <span style={{ fontWeight: 400, color: "#94a3b8" }}>(необязательно)</span>
+              </div>
               <textarea value={notes} onChange={e => setNotes(e.target.value)}
                 placeholder="Например: дать больше времени на игру, усилить хоровое закрепление..."
                 rows={3} style={{ width: "100%", padding: "10px 12px", borderRadius: 8, border: "1px solid #d1d5db", fontSize: 14, fontFamily: "inherit", boxSizing: "border-box", resize: "vertical" }} />
@@ -833,9 +922,9 @@ function ReflectionModal({ state, onClose, onSaved }) {
             {/* Actions */}
             <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
               <Btn variant="secondary" onClick={onClose}>Отмена</Btn>
-              <Btn onClick={handleSave} disabled={!canSave}
+              <Btn onClick={handleSave} disabled={!canSave || saving}
                 style={!canSave ? { opacity: 0.5 } : {}}>
-                💾 Сохранить рефлексию
+                {saving ? "⏳ Сохраняю..." : "💾 Сохранить рефлексию"}
               </Btn>
             </div>
           </>
@@ -846,10 +935,11 @@ function ReflectionModal({ state, onClose, onSaved }) {
 }
 
 // ========== CURRICULUM SELECTOR ==========
-function CurriculumSelector({ curriculum, grade, onSelect }) {
+function CurriculumSelector({ curriculum, grade, onSelect, selectedLesson, selectedSection }) {
   // All hooks must be declared at the top level (React rules of hooks)
-  const [selectedId, setSelectedId] = useState("");
-  const [selSectionKey, setSelSectionKey] = useState("");
+  // BUG-01 fix: initialize from props so selection survives back-navigation
+  const [selectedId, setSelectedId] = useState(selectedLesson || "");
+  const [selSectionKey, setSelSectionKey] = useState(selectedSection || "");
 
   if (!curriculum) return null;
 
@@ -976,18 +1066,26 @@ function Step1({ state, setState }) {
     }
     const hasCurriculumLessons = !!(curriculum.lessons && curriculum.lessons.length);
     if (!hasCurriculumLessons) {
-      const ctx = buildSectionsContext(curriculum, state.grade);
+      // BUG-01 fix: restore focused section context on back-navigation.
+      // If state.curriculumSection is set (user already picked a section before going to Step 2),
+      // rebuild the focused sectionsCtx so it isn't lost on remount.
+      let focusSection = null;
+      if (state.curriculumSection) {
+        const gradeSections = (curriculum.sections || []).filter(s => s.grade === state.grade);
+        focusSection = gradeSections.find(s => (s.id || s.title) === state.curriculumSection) || null;
+      }
+      const ctx = buildSectionsContext(curriculum, state.grade, focusSection);
       setState(s => ({ ...s, sectionsCtx: ctx }));
     } else {
       // У этого JSON есть поурочное планирование — sectionsCtx не нужен
       setState(s => (s.sectionsCtx ? { ...s, sectionsCtx: null } : s));
     }
-  }, [curriculum, state.grade, setState]);
+  }, [curriculum, state.grade, state.curriculumSection, setState]);
 
   const handleCurriculumSelect = useCallback((item) => {
     if (!item) {
       // Сброс — восстанавливаем полный sectionsCtx если есть sections
-      setState(s => ({ ...s, curriculumLesson: null, curriculumCtx: null }));
+      setState(s => ({ ...s, curriculumLesson: null, curriculumCtx: null, curriculumSection: null }));
       if (curriculum && !(curriculum.lessons && curriculum.lessons.length)) {
         const ctx = buildSectionsContext(curriculum, state.grade);
         setState(s => ({ ...s, sectionsCtx: ctx }));
@@ -995,7 +1093,9 @@ function Step1({ state, setState }) {
     } else if (item.sectionMode) {
       // Выбран раздел из ФРП — обновляем sectionsCtx с фокусом на разделе
       const ctx = buildSectionsContext(curriculum, state.grade, item.section);
-      setState(s => ({ ...s, sectionsCtx: ctx, curriculumLesson: null, curriculumCtx: null }));
+      // BUG-01 fix: persist section key so CurriculumSelector can restore it on back-navigation
+      const sectionKey = item.section?.id || item.section?.title || "";
+      setState(s => ({ ...s, sectionsCtx: ctx, curriculumLesson: null, curriculumCtx: null, curriculumSection: sectionKey }));
     } else {
       // Выбран конкретный урок из поурочного планирования
       const ctx = buildCurriculumContext(curriculum, item.id);
@@ -1048,6 +1148,8 @@ function Step1({ state, setState }) {
           curriculum={curriculum}
           grade={state.grade}
           onSelect={handleCurriculumSelect}
+          selectedLesson={state.curriculumLesson || ""}
+          selectedSection={state.curriculumSection || ""}
         />
       )}
       {hasCurriculum && !curriculum && (
@@ -1128,13 +1230,18 @@ function Step2({ state, setState }) {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
         {sorted.map(m => {
           const w = m.w[cluster] || 0;
+          // UX-01: removed opacity:0.4 for zero-weight models — all models are selectable
           return (
-            <Card key={m.id} active={state.model === m.id} onClick={() => setState(s => ({ ...s, model: m.id }))} style={{ opacity: w === 0 ? 0.4 : 1 }}>
+            <Card key={m.id} active={state.model === m.id} onClick={() => setState(s => ({ ...s, model: m.id }))}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
                 <span style={{ fontSize: 17 }}>{m.emoji} <strong>{m.name}</strong></span>
-                <span style={{ fontSize: 12, padding: "2px 8px", borderRadius: 20,
-                  background: w >= 20 ? "#dcfce7" : w > 0 ? "#fef3c7" : "#fee2e2",
-                  color: w >= 20 ? "#166534" : w > 0 ? "#92400e" : "#991b1b" }}>{w}%</span>
+                {w === 0 ? (
+                  <span style={{ fontSize: 11, padding: "2px 8px", borderRadius: 20, background: "#f1f5f9", color: "#94a3b8" }}>Редко</span>
+                ) : (
+                  <span style={{ fontSize: 12, padding: "2px 8px", borderRadius: 20,
+                    background: w >= 20 ? "#dcfce7" : "#fef3c7",
+                    color: w >= 20 ? "#166534" : "#92400e" }}>{w}%</span>
+                )}
               </div>
               <div style={{ fontSize: 12, color: "#64748b" }}>{m.desc}</div>
               <div style={{ fontSize: 11, color: "#94a3b8", marginTop: 4 }}>Режим: {m.mode}</div>
@@ -1152,6 +1259,15 @@ function Step3({ state, onGenerate, onMindMap, loading, error }) {
   const cluster = gc(state.subject);
   const clInfo = CLUSTERS[cluster];
   const isPrimary = state.grade <= 4;
+
+  // BUG-05: elapsed timer — shows seconds so user knows generation is alive
+  const [elapsed, setElapsed] = useState(0);
+  useEffect(() => {
+    if (!loading) { setElapsed(0); return; }
+    setElapsed(0);
+    const id = setInterval(() => setElapsed(s => s + 1), 1000);
+    return () => clearInterval(id);
+  }, [loading]);
 
   return (
     <div style={{ textAlign: "center" }}>
@@ -1173,8 +1289,16 @@ function Step3({ state, onGenerate, onMindMap, loading, error }) {
         <div style={{ padding: 40 }}>
           <div style={{ fontSize: 48, marginBottom: 16, animation: "pulse 1.5s infinite" }}>✨</div>
           <div style={{ fontSize: 16, fontWeight: 600, color: "#1e3a5f", marginBottom: 8 }}>AI генерирует сценарий...</div>
-          <div style={{ fontSize: 13, color: "#64748b" }}>
+          <div style={{ fontSize: 13, color: "#64748b", marginBottom: 16 }}>
             {isPrimary ? "Создаём 3 варианта захвата, игру-передвижение, ошибки Кори и хоровое закрепление" : "Создаём захват, таймлайн и задачи трёх уровней"}
+          </div>
+          {/* BUG-05: progress indicator — elapsed timer + status hint */}
+          <div style={{ fontSize: 13, color: "#94a3b8", marginBottom: 12 }}>
+            {elapsed < 5 ? "Запускаем..." : elapsed < 20 ? "Обычно 15–25 с, уже идёт..." : elapsed < 45 ? "Почти готово..." : "Ждём ответа от AI..."}
+            {" "}⏱ {elapsed}с
+          </div>
+          <div style={{ height: 4, borderRadius: 2, background: "#e2e8f0", overflow: "hidden", maxWidth: 240, margin: "0 auto" }}>
+            <div style={{ height: "100%", borderRadius: 2, background: "#1e3a5f", transition: "width 1s linear", width: `${Math.min(elapsed * 3, 95)}%` }} />
           </div>
           <style>{`@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }`}</style>
         </div>
@@ -2627,7 +2751,7 @@ function LessonCard({ entry, onOpen }) {
 }
 
 // ── Lesson detail view (shared between library modes) ──
-function LessonDetailView({ openData, onBack, onClose }) {
+function LessonDetailView({ openData, onBack, onClose, user }) {
   const st = openData.meta || {};
   const isPrimary = st.grade && st.grade <= 4;
   const isMiddle = st.grade && st.grade >= 5 && st.grade <= 9;
@@ -2654,6 +2778,7 @@ function LessonDetailView({ openData, onBack, onClose }) {
             {currentRefl.rating && <span style={{ padding: "2px 10px", background: "#fef3c7", borderRadius: 12, color: "#92400e" }}>{STAR_LABEL[currentRefl.rating]}</span>}
             {currentRefl.timing && <span style={{ padding: "2px 10px", background: "#eff6ff", borderRadius: 12, color: "#1d4ed8" }}>{TIMING_SHORT[currentRefl.timing]}</span>}
             {currentRefl.mood && <span style={{ padding: "2px 10px", background: "#f0fdf4", borderRadius: 12, color: "#166534" }}>{MOOD_EMOJI[currentRefl.mood]} {MOOD_OPTS.find(o => o.v === currentRefl.mood)?.label}</span>}
+            {currentRefl.wellbeing && <span style={{ padding: "2px 10px", background: "#fff7ed", borderRadius: 12, color: "#c2410c" }}>👦 {WELLBEING_OPTS.find(o => o.v === currentRefl.wellbeing)?.emoji} {WELLBEING_OPTS.find(o => o.v === currentRefl.wellbeing)?.label}</span>}
             {currentRefl.capture && currentRefl.capture !== "0" && <span style={{ padding: "2px 10px", background: "#f5f3ff", borderRadius: 12, color: "#6d28d9" }}>Захват {currentRefl.capture}</span>}
           </div>
           {currentRefl.notes && <div style={{ marginTop: 8, color: "#64748b", fontStyle: "italic" }}>💬 {currentRefl.notes}</div>}
@@ -2662,19 +2787,230 @@ function LessonDetailView({ openData, onBack, onClose }) {
       {isPrimary ? <PrimaryResult data={openData.lesson} state={st} />
         : isMiddle ? <MiddleResult data={openData.lesson} state={st} />
         : <StandardResult data={openData.lesson} state={st} />}
-      {libReflOpen && <ReflectionModal state={st} onClose={() => setLibReflOpen(false)} onSaved={() => setLibReflDone(true)} />}
+      {libReflOpen && <ReflectionModal state={st} user={user} onClose={() => setLibReflOpen(false)} onSaved={() => setLibReflDone(true)} />}
     </div>
   );
 }
 
+// ─────────────────────────────────────────────────────────
+// АВТОРСКИЕ КУРСЫ — компоненты
+// ─────────────────────────────────────────────────────────
+
+function useCourses() {
+  const [courses, setCourses] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const load = useCallback(() => {
+    setLoading(true);
+    fetch(`/courses/index.json?t=${Date.now()}`)
+      .then(r => r.ok ? r.json() : [])
+      .then(data => { setCourses(Array.isArray(data) ? data : []); setLoading(false); })
+      .catch(() => { setCourses([]); setLoading(false); });
+  }, []);
+  return { courses, loading, load };
+}
+
+// Простой Markdown → HTML рендерер (без зависимостей)
+function renderMarkdown(md) {
+  if (!md) return "";
+  return md
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    // Заголовки
+    .replace(/^#{4} (.+)$/gm, "<h4>$1</h4>")
+    .replace(/^#{3} (.+)$/gm, "<h3>$1</h3>")
+    .replace(/^#{2} (.+)$/gm, "<h2>$1</h2>")
+    .replace(/^# (.+)$/gm, "<h1>$1</h1>")
+    // Горизонтальные линии
+    .replace(/^---$/gm, "<hr>")
+    // Жирный и курсив
+    .replace(/\*\*\*(.+?)\*\*\*/g, "<strong><em>$1</em></strong>")
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\*(.+?)\*/g, "<em>$1</em>")
+    // Инлайн-код
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    // Таблицы (простые)
+    .replace(/^\|(.+)\|$/gm, (row) => {
+      const cells = row.slice(1, -1).split("|").map(c => c.trim());
+      if (cells.every(c => /^[-:]+$/.test(c))) return ""; // разделитель
+      return "<tr>" + cells.map(c => `<td>${c}</td>`).join("") + "</tr>";
+    })
+    // Флажки TODO
+    .replace(/- \[ \] (.+)/g, "<li class='todo'>☐ $1</li>")
+    .replace(/- \[x\] (.+)/gi, "<li class='todo done'>☑ $1</li>")
+    // Списки (обычные)
+    .replace(/^- (.+)$/gm, "<li>$1</li>")
+    .replace(/^\d+\. (.+)$/gm, "<li>$1</li>")
+    // Параграфы (двойной перенос)
+    .replace(/\n\n+/g, "</p><p>")
+    // Обёртка таблиц в <table>
+    .replace(/(<tr>.*<\/tr>)/gs, "<table>$1</table>")
+    // Начало/конец
+    .replace(/^/, "<p>").replace(/$/, "</p>")
+    // Убрать пустые параграфы
+    .replace(/<p><\/p>/g, "")
+    .replace(/<p>(<h[1-4]>)/g, "$1")
+    .replace(/(<\/h[1-4]>)<\/p>/g, "$1")
+    .replace(/<p>(<hr>)<\/p>/g, "$1")
+    .replace(/<p>(<li)/g, "<ul><li")
+    .replace(/(<\/li>)<\/p>/g, "$1</ul>");
+}
+
+function ModuleReader({ course, module: mod, onBack }) {
+  const [content, setContent] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    setLoading(true);
+    fetch(`/courses/${mod.filename}?t=${Date.now()}`)
+      .then(r => r.ok ? r.text() : Promise.reject("not found"))
+      .then(content => { setContent(content); setLoading(false); })
+      .catch(() => { setError("Не удалось загрузить модуль"); setLoading(false); });
+  }, [mod.filename]);
+
+  return (
+    <div>
+      <div style={{ display: "flex", gap: 10, marginBottom: 20, flexWrap: "wrap", alignItems: "center" }}>
+        <button onClick={onBack} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 20, color: "#64748b", padding: 0 }}>←</button>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 18, fontWeight: 700, color: "#1e293b" }}>{mod.title}</div>
+          <div style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>
+            {course.title} · {mod.lessons} занятий · {mod.duration_min} мин
+          </div>
+        </div>
+        <button onClick={() => window.print()} style={{ background: "#f1f5f9", border: "1px solid #e2e8f0", borderRadius: 8, cursor: "pointer", fontSize: 12, padding: "6px 14px", color: "#475569" }}>
+          🖨 Распечатать
+        </button>
+      </div>
+
+      {loading && <div style={{ textAlign: "center", padding: 48, color: "#94a3b8" }}>⏳ Загрузка сценария...</div>}
+      {error && <div style={{ textAlign: "center", padding: 48, color: "#ef4444" }}>❌ {error}</div>}
+      {content && (
+        <div
+          style={{ fontSize: 14, lineHeight: 1.7, color: "#1e293b" }}
+          dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }}
+        />
+      )}
+    </div>
+  );
+}
+
+function CoursesTab() {
+  const { courses, loading, load } = useCourses();
+  const [selectedCourse, setSelectedCourse] = useState(null);
+  const [selectedModule, setSelectedModule] = useState(null);
+
+  useEffect(() => { load(); }, [load]);
+
+  // Просмотр сценария модуля
+  if (selectedCourse && selectedModule) {
+    return (
+      <ModuleReader
+        course={selectedCourse}
+        module={selectedModule}
+        onBack={() => setSelectedModule(null)}
+      />
+    );
+  }
+
+  // Просмотр модулей курса
+  if (selectedCourse) {
+    return (
+      <div>
+        <div style={{ display: "flex", gap: 10, marginBottom: 20, alignItems: "center" }}>
+          <button onClick={() => setSelectedCourse(null)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 20, color: "#64748b", padding: 0 }}>←</button>
+          <div>
+            <div style={{ fontSize: 20, fontWeight: 700, color: "#1e293b" }}>{selectedCourse.cover_emoji} {selectedCourse.title}</div>
+            <div style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>{selectedCourse.grades} · {selectedCourse.total_lessons} занятий · {selectedCourse.author}</div>
+          </div>
+        </div>
+
+        <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: 10, padding: "12px 16px", marginBottom: 20, fontSize: 13, color: "#1d4ed8" }}>
+          📖 {selectedCourse.description}
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {(selectedCourse.modules || []).map((mod, i) => (
+            <button key={mod.id} onClick={() => setSelectedModule(mod)}
+              style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 12, padding: "14px 16px", cursor: "pointer", textAlign: "left", fontFamily: "inherit", transition: "all 0.15s" }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = "#1e3a5f"; e.currentTarget.style.boxShadow = "0 4px 12px rgba(30,58,95,0.1)"; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.boxShadow = "none"; }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <div style={{ fontWeight: 600, fontSize: 14, color: "#1e293b", flex: 1 }}>
+                  <span style={{ color: "#94a3b8", fontWeight: 400, marginRight: 8 }}>{i + 1}.</span>
+                  {mod.title}
+                </div>
+                <span style={{ fontSize: 12, padding: "2px 8px", background: "#eff6ff", color: "#1d4ed8", borderRadius: 20, whiteSpace: "nowrap", marginLeft: 8 }}>
+                  {mod.lessons} занятий
+                </span>
+              </div>
+              {mod.description && (
+                <div style={{ fontSize: 12, color: "#64748b", marginTop: 6 }}>{mod.description}</div>
+              )}
+              {mod.prerequisite && (
+                <div style={{ fontSize: 11, color: "#f59e0b", marginTop: 6 }}>
+                  ⚠ Пресквизит: {(selectedCourse.modules || []).find(m => m.id === mod.prerequisite)?.title || mod.prerequisite}
+                </div>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Каталог курсов
+  if (loading) {
+    return <div style={{ textAlign: "center", padding: 56, color: "#94a3b8" }}>⏳ Загрузка каталога...</div>;
+  }
+
+  if (!courses || courses.length === 0) {
+    return (
+      <div style={{ textAlign: "center", padding: 56, color: "#94a3b8" }}>
+        <div style={{ fontSize: 40, marginBottom: 12 }}>📭</div>
+        <div style={{ fontWeight: 600, fontSize: 15 }}>Авторских курсов пока нет</div>
+        <div style={{ fontSize: 13, marginTop: 6 }}>Корифей работает над первым курсом — следите за обновлениями</div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 16 }}>
+      {courses.map(course => (
+        <button key={course.id} onClick={() => setSelectedCourse(course)}
+          style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 16, padding: "22px 20px", cursor: "pointer", textAlign: "left", fontFamily: "inherit", transition: "all 0.15s" }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = "#1e3a5f"; e.currentTarget.style.boxShadow = "0 6px 20px rgba(30,58,95,0.12)"; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.boxShadow = "none"; }}>
+          <div style={{ fontSize: 36, marginBottom: 12 }}>{course.cover_emoji}</div>
+          <div style={{ fontWeight: 700, fontSize: 16, color: "#1e293b", marginBottom: 4 }}>{course.title}</div>
+          <div style={{ fontSize: 12, color: "#64748b", marginBottom: 10 }}>{course.subtitle}</div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 12 }}>
+            <span style={{ fontSize: 11, padding: "2px 8px", background: "#f0fdf4", color: "#166534", borderRadius: 20 }}>{course.grades}</span>
+            <span style={{ fontSize: 11, padding: "2px 8px", background: "#eff6ff", color: "#1d4ed8", borderRadius: 20 }}>{course.total_modules} модулей</span>
+            <span style={{ fontSize: 11, padding: "2px 8px", background: "#fdf4ff", color: "#7e22ce", borderRadius: 20 }}>{course.total_lessons} занятий</span>
+          </div>
+          <div style={{ fontSize: 12, color: "#94a3b8" }}>✓ Прошёл модерацию Корифея</div>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────
+
 function LibraryView({ onClose, user }) {
   const { lessons: allLessons, libLoading, refresh } = useLessons();
   const isAdmin = user?.user_metadata?.role === "admin";
-  // Учитель видит только свои уроки; admin видит все
+  // showMine: true = только мои уроки (по умолчанию для авторизованных); false = все публичные
+  const [showMine, setShowMine] = useState(!!user && !isAdmin);
   const lessons = isAdmin
-    ? allLessons
-    : (allLessons || []).filter(l => !l.author_id || l.author_id === user?.id);
+    ? (allLessons || [])
+    : (user && showMine)
+      ? (allLessons || []).filter(l => l.author_id === user.id)
+      : (allLessons || []);
   const [search, setSearch] = useState("");
+  const [activeTab, setActiveTab] = useState(
+    new URLSearchParams(window.location.search).get("tab") === "courses" ? "courses" : "lessons"
+  );
   const [selectedSubject, setSelectedSubject] = useState(null); // null = subject grid
   const [openData, setOpenData] = useState(null);
   const [loadingLesson, setLoadingLesson] = useState(false);
@@ -2699,7 +3035,7 @@ function LibraryView({ onClose, user }) {
     return (
       <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 900, display: "flex", alignItems: "flex-start", justifyContent: "center", overflowY: "auto", padding: "24px 16px" }}>
         <div style={{ background: "#f8fafc", borderRadius: 20, width: "100%", maxWidth: 720, padding: 28, boxShadow: "0 8px 40px rgba(0,0,0,0.2)" }}>
-          <LessonDetailView openData={openData} onBack={() => setOpenData(null)} onClose={onClose} />
+          <LessonDetailView openData={openData} onBack={() => setOpenData(null)} onClose={onClose} user={user} />
         </div>
       </div>
     );
@@ -2755,25 +3091,60 @@ function LibraryView({ onClose, user }) {
     <div style={{ background: "#f8fafc", borderRadius: 20, width: "100%", maxWidth: 720, minHeight: 300, padding: 28, boxShadow: "0 8px 40px rgba(0,0,0,0.2)" }}>
 
       {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+        <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: "#1e293b" }}>📚 Библиотека</h2>
+        <Btn variant="ghost" onClick={onClose}>✕ Закрыть</Btn>
+      </div>
+
+      {/* Таб-переключатель Уроки / Курсы */}
+      <div style={{ display: "flex", background: "#f1f5f9", borderRadius: 10, padding: 3, marginBottom: 20, gap: 2 }}>
+        {[["lessons", "📄 Уроки"], ["courses", "🧩 Курсы"]].map(([id, label]) => (
+          <button key={id} onClick={() => { setActiveTab(id); setSelectedSubject(null); }}
+            style={{ flex: 1, padding: "8px 16px", borderRadius: 8, border: "none", cursor: "pointer", fontSize: 13, fontWeight: activeTab === id ? 700 : 400,
+              background: activeTab === id ? "#1e3a5f" : "transparent", color: activeTab === id ? "#fff" : "#64748b", transition: "all 0.15s", fontFamily: "inherit" }}>
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {/* Курсы — отдельный таб */}
+      {activeTab === "courses" && <CoursesTab />}
+
+      {/* Уроки — основной контент ниже */}
+      {activeTab === "lessons" && <>
+
+      {/* Sub-header для уроков */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
         <div>
           {selectedSubject
             ? <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <button onClick={() => setSelectedSubject(null)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 20, color: "#64748b", padding: 0 }}>←</button>
                 <div>
-                  <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: "#1e293b" }}>{subjectEmoji(selectedSubject)} {selectedSubject}</h2>
+                  <div style={{ fontWeight: 700, fontSize: 16, color: "#1e293b" }}>{subjectEmoji(selectedSubject)} {selectedSubject}</div>
                   <div style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>{subjectLessons.length} урок{subjectLessons.length === 1 ? "" : subjectLessons.length < 5 ? "а" : "ов"}</div>
                 </div>
               </div>
-            : <div>
-                <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: "#1e293b" }}>📚 Библиотека уроков</h2>
-                <div style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>
-                  {libLoading ? "Загрузка..." : `${totalLessons} урок${totalLessons === 1 ? "" : totalLessons < 5 ? "а" : "ов"} · ${conductedCount} проведено`}
-                </div>
+            : <div style={{ fontSize: 12, color: "#64748b" }}>
+                {libLoading ? "Загрузка..." : `${totalLessons} урок${totalLessons === 1 ? "" : totalLessons < 5 ? "а" : "ов"} · ${conductedCount} проведено`}
               </div>
           }
         </div>
-        <div style={{ display: "flex", gap: 8 }}>
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          {/* Переключатель «Мои / Все» — только для авторизованных учителей */}
+          {user && !isAdmin && (
+            <div style={{ display: "flex", background: "#f1f5f9", borderRadius: 8, padding: 2 }}>
+              <button onClick={() => { setShowMine(true); setSelectedSubject(null); }}
+                style={{ padding: "5px 12px", borderRadius: 6, border: "none", cursor: "pointer", fontSize: 12, fontWeight: showMine ? 600 : 400,
+                  background: showMine ? "#1e3a5f" : "transparent", color: showMine ? "#fff" : "#64748b", transition: "all 0.15s" }}>
+                Мои
+              </button>
+              <button onClick={() => { setShowMine(false); setSelectedSubject(null); }}
+                style={{ padding: "5px 12px", borderRadius: 6, border: "none", cursor: "pointer", fontSize: 12, fontWeight: !showMine ? 600 : 400,
+                  background: !showMine ? "#1e3a5f" : "transparent", color: !showMine ? "#fff" : "#64748b", transition: "all 0.15s" }}>
+                Все
+              </button>
+            </div>
+          )}
           <Btn variant="secondary" onClick={refresh} style={{ fontSize: 12 }}>↻</Btn>
           <Btn variant="ghost" onClick={onClose}>✕ Закрыть</Btn>
         </div>
@@ -2809,9 +3180,17 @@ function LibraryView({ onClose, user }) {
               {subjectList.length === 0 ? (
                 <div style={{ textAlign: "center", padding: 56, color: "#94a3b8" }}>
                   <div style={{ fontSize: 40, marginBottom: 12 }}>📭</div>
-                  <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 6 }}>Библиотека пустая</div>
-                  <div style={{ fontSize: 13 }}>Сгенерируйте урок и нажмите «💾 Сохранить»</div>
-                  <div style={{ fontSize: 12, marginTop: 8, color: "#cbd5e1" }}>Уроки появятся после деплоя Netlify (~2-3 мин)</div>
+                  {user && showMine ? (
+                    <>
+                      <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 6 }}>У вас пока нет сохранённых уроков</div>
+                      <div style={{ fontSize: 13 }}>Сгенерируйте урок и нажмите «💾 Сохранить»</div>
+                    </>
+                  ) : (
+                    <>
+                      <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 6 }}>Библиотека пустая</div>
+                      <div style={{ fontSize: 13 }}>Уроки появятся после первого сохранения через конструктор</div>
+                    </>
+                  )}
                 </div>
               ) : (
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 12 }}>
@@ -2864,8 +3243,179 @@ function LibraryView({ onClose, user }) {
       <div style={{ marginTop: 20, padding: "10px 14px", background: "#fff", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 12, color: "#94a3b8" }}>
         💡 Уроки сохраняются в GitHub и появляются здесь после деплоя Netlify (~2-3 мин)
       </div>
+
+      {/* Конец таба уроков */}
+      </>}
+
     </div>
     </div>
+  );
+}
+
+// ─── Profile Drawer ────────────────────────────────────────────────────────────
+function ProfileDrawer({ user, onClose }) {
+  const meta = user?.user_metadata || {};
+  const [editing, setEditing] = useState(false);
+  const [form, setForm] = useState({ name: meta.name || "", school: meta.school || "", city: meta.city || "" });
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [reflStats, setReflStats] = useState(null);
+
+  // Статистика уроков из localStorage
+  const lessons = React.useMemo(() => {
+    try { return JSON.parse(localStorage.getItem("zh360_lessons") || "[]"); } catch { return []; }
+  }, []);
+  const myLessons = lessons.filter(l => l.author_id === user?.id);
+
+  // Статистика рефлексий из Supabase
+  React.useEffect(() => {
+    if (!user) return;
+    supabase.from("reflections")
+      .select("id, rating, saved_at")
+      .eq("user_id", user.id)
+      .then(({ data }) => {
+        if (!data) return;
+        const avg = data.length
+          ? (data.reduce((s, r) => s + (r.rating || 0), 0) / data.length).toFixed(1)
+          : null;
+        setReflStats({ count: data.length, avgRating: avg });
+      });
+  }, [user]);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await supabase.auth.updateUser({ data: { name: form.name, school: form.school, city: form.city } });
+      setSaved(true);
+      setEditing(false);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (e) {
+      console.warn("Profile save error:", e);
+    }
+    setSaving(false);
+  };
+
+  const providerLabel = { google: "Google", email: "Email" }[meta.provider] || "Email";
+  const providerColor = { google: "#4285F4", email: "#64748b" }[meta.provider] || "#64748b";
+
+  return (
+    <>
+      {/* Overlay */}
+      <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 4000 }} />
+      {/* Drawer */}
+      <div style={{
+        position: "fixed", top: 0, right: 0, bottom: 0, width: 360,
+        background: "#fff", zIndex: 4001, boxShadow: "-4px 0 24px rgba(0,0,0,0.15)",
+        display: "flex", flexDirection: "column", fontFamily: "'Segoe UI', system-ui, sans-serif",
+        overflowY: "auto",
+      }}>
+        {/* Header */}
+        <div style={{ background: "#1e3a5f", padding: "24px 20px 20px", color: "#fff" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
+            <div style={{ fontSize: 13, opacity: 0.7 }}>Профиль учителя</div>
+            <button onClick={onClose} style={{ background: "none", border: "none", color: "#fff", cursor: "pointer", fontSize: 18, opacity: 0.7, padding: 0 }}>✕</button>
+          </div>
+          {/* Avatar + Name */}
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            {meta.avatar_url ? (
+              <img src={meta.avatar_url} alt="" width={52} height={52}
+                style={{ borderRadius: "50%", border: "2px solid rgba(255,255,255,0.3)", objectFit: "cover" }} />
+            ) : (
+              <div style={{ width: 52, height: 52, borderRadius: "50%", background: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>
+                👤
+              </div>
+            )}
+            <div>
+              <div style={{ fontWeight: 700, fontSize: 16 }}>{meta.name || user?.email?.split("@")[0] || "Учитель"}</div>
+              <div style={{ fontSize: 12, opacity: 0.75, marginTop: 2 }}>{user?.email || "—"}</div>
+              <div style={{ marginTop: 6, display: "inline-block", background: providerColor, borderRadius: 4, padding: "2px 8px", fontSize: 11, fontWeight: 600 }}>
+                {providerLabel}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style={{ padding: "20px", flex: 1 }}>
+          {/* Stats */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 24 }}>
+            <div style={{ background: "#f8fafc", borderRadius: 12, padding: "14px 16px", textAlign: "center" }}>
+              <div style={{ fontSize: 26, fontWeight: 800, color: "#1e3a5f" }}>{myLessons.length}</div>
+              <div style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>уроков создано</div>
+            </div>
+            <div style={{ background: "#f8fafc", borderRadius: 12, padding: "14px 16px", textAlign: "center" }}>
+              <div style={{ fontSize: 26, fontWeight: 800, color: "#1e3a5f" }}>
+                {reflStats === null ? "…" : reflStats.count}
+              </div>
+              <div style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>
+                рефлексий{reflStats?.avgRating ? ` · ★ ${reflStats.avgRating}` : ""}
+              </div>
+            </div>
+          </div>
+
+          {/* Info / Edit */}
+          {saved && (
+            <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 8, padding: "8px 12px", fontSize: 13, color: "#16a34a", marginBottom: 14 }}>
+              ✅ Профиль обновлён
+            </div>
+          )}
+
+          {editing ? (
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#1e3a5f", marginBottom: 14 }}>Редактировать профиль</div>
+              {[
+                { key: "name", label: "Имя и фамилия", placeholder: "Иванова Мария Петровна" },
+                { key: "school", label: "Школа", placeholder: 'Гимназия №210 "Корифей"' },
+                { key: "city", label: "Город", placeholder: "Екатеринбург" },
+              ].map(({ key, label, placeholder }) => (
+                <div key={key} style={{ marginBottom: 12 }}>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#374151", marginBottom: 4 }}>{label}</label>
+                  <input
+                    value={form[key]}
+                    onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
+                    placeholder={placeholder}
+                    style={{ width: "100%", padding: "9px 12px", borderRadius: 8, border: "1.5px solid #e2e8f0", fontSize: 13, outline: "none", boxSizing: "border-box" }}
+                  />
+                </div>
+              ))}
+              <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
+                <button onClick={() => setEditing(false)} style={{ flex: 1, padding: "9px", border: "1px solid #e2e8f0", borderRadius: 8, background: "none", cursor: "pointer", fontSize: 13, color: "#64748b" }}>
+                  Отмена
+                </button>
+                <button onClick={handleSave} disabled={saving} style={{ flex: 2, padding: "9px", border: "none", borderRadius: 8, background: "#1e3a5f", color: "#fff", fontSize: 13, fontWeight: 700, cursor: saving ? "not-allowed" : "pointer" }}>
+                  {saving ? "Сохраняем…" : "Сохранить"}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div>
+              {[
+                { label: "Школа", value: meta.school },
+                { label: "Город", value: meta.city },
+                { label: "Роль", value: meta.role === "admin" ? "Администратор" : "Учитель" },
+              ].map(({ label, value }) => (
+                <div key={label} style={{ marginBottom: 12, paddingBottom: 12, borderBottom: "1px solid #f1f5f9" }}>
+                  <div style={{ fontSize: 11, color: "#94a3b8", marginBottom: 2 }}>{label}</div>
+                  <div style={{ fontSize: 14, color: value ? "#1e293b" : "#cbd5e1" }}>{value || "—"}</div>
+                </div>
+              ))}
+              <button onClick={() => setEditing(true)} style={{ width: "100%", padding: "10px", border: "1.5px solid #e2e8f0", borderRadius: 10, background: "none", cursor: "pointer", fontSize: 13, fontWeight: 600, color: "#1e3a5f", marginTop: 4 }}>
+                ✏️ Редактировать
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Footer — Sign out */}
+        <div style={{ padding: "16px 20px", borderTop: "1px solid #f1f5f9" }}>
+          <button
+            onClick={() => supabase.auth.signOut()}
+            style={{ width: "100%", padding: "11px", border: "1px solid #fecaca", borderRadius: 10, background: "#fff", color: "#dc2626", fontSize: 13, fontWeight: 600, cursor: "pointer" }}
+          >
+            Выйти из аккаунта
+          </button>
+        </div>
+      </div>
+    </>
   );
 }
 
@@ -2877,13 +3427,19 @@ export default function App({ user }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
-  const [libraryOpen, setLibraryOpen] = useState(false);
+  // Открывать библиотеку сразу, если URL = /library
+  const [libraryOpen, setLibraryOpen] = useState(
+    window.location.pathname === "/library"
+  );
   const [saveStatus, setSaveStatus] = useState(null); // null | "saving" | "saved" | "error"
   const [saveError, setSaveError] = useState(null);
   const [reflOpen, setReflOpen] = useState(false);
   const [reflDone, setReflDone] = useState(false);
   const [adminOpen, setAdminOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const [showMindMap, setShowMindMap] = useState(false);
+  // BUG-02: cache mind map text so re-opening the modal skips the API call
+  const [mindMapCache, setMindMapCache] = useState(null);
 
   // Check if reflection already exists when result is shown
   useEffect(() => {
@@ -2970,12 +3526,21 @@ export default function App({ user }) {
   }, [result, state, saveStatus]);
 
   const reset = () => {
+    // UX-03: preserve grade/subject/duration/format so the next lesson starts pre-filled
+    const keepParams = {
+      grade: state.grade,
+      subject: state.subject,
+      duration: state.duration || 45,
+      format: state.format || "offline",
+    };
     setStep(0);
-    setState({ duration: 45, format: "offline" });
+    setState(keepParams);
     setResult(null);
     setError(null);
     setSaveStatus(null);
     setSaveError(null);
+    setReflDone(false);
+    setMindMapCache(null);
   };
 
   return (
@@ -3000,20 +3565,34 @@ export default function App({ user }) {
             </Btn>
           )}
           {user && (
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginLeft: 4, borderLeft: "1px solid rgba(255,255,255,0.15)", paddingLeft: 12 }}>
-              <span style={{ fontSize: 11, opacity: 0.7, maxWidth: 140, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                👤 {user.email}
+            <button
+              onClick={() => setProfileOpen(true)}
+              title="Профиль"
+              style={{
+                display: "flex", alignItems: "center", gap: 8,
+                marginLeft: 4, paddingLeft: 12,
+                borderLeft: "1px solid rgba(255,255,255,0.15)",
+                background: "none", border: "none", cursor: "pointer", color: "#fff",
+              }}
+            >
+              {user.user_metadata?.avatar_url ? (
+                <img src={user.user_metadata.avatar_url} alt="" width={28} height={28}
+                  style={{ borderRadius: "50%", objectFit: "cover", border: "1.5px solid rgba(255,255,255,0.4)" }} />
+              ) : (
+                <div style={{ width: 28, height: 28, borderRadius: "50%", background: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>
+                  👤
+                </div>
+              )}
+              <span style={{ fontSize: 11, opacity: 0.8, maxWidth: 100, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {user.user_metadata?.name || user.email?.split("@")[0] || "Профиль"}
               </span>
-              <Btn variant="ghost" onClick={() => supabase.auth.signOut()} style={{ color: "#fff", borderColor: "rgba(255,255,255,0.2)", fontSize: 11, padding: "6px 12px" }}>
-                Выйти
-              </Btn>
-            </div>
+            </button>
           )}
         </div>
       </div>
 
       <div style={{ maxWidth: 720, margin: "0 auto", padding: "24px 16px" }}>
-        <StepIndicator current={step} steps={steps} />
+        <StepIndicator current={step} steps={steps} onGoTo={(i) => { if (i < step) setStep(i); }} />
         <div style={{ background: "#fff", borderRadius: 16, padding: 28, boxShadow: "0 1px 3px rgba(0,0,0,0.06)", border: "1px solid #e2e8f0", marginBottom: 24 }}>
           {step === 0 && <Step1 state={state} setState={setState} />}
           {step === 1 && <Step2 state={state} setState={setState} />}
@@ -3033,7 +3612,7 @@ export default function App({ user }) {
               <Btn onClick={() => setStep(s => s + 1)} disabled={!canNext}>Далее →</Btn>
             ) : step === 3 ? (
               <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-                <Btn variant="secondary" onClick={() => { setResult(null); setStep(2); }}>🔄 Перегенерировать</Btn>
+                <Btn variant="secondary" onClick={() => { setResult(null); setReflDone(false); setMindMapCache(null); setStep(2); }}>🔄 Перегенерировать</Btn>
                 <Btn
                   variant="secondary"
                   onClick={handleSave}
@@ -3042,23 +3621,33 @@ export default function App({ user }) {
                 >
                   {saveStatus === "saving" ? "⏳ Сохраняю…" : saveStatus === "saved" ? "✅ Сохранено" : saveStatus === "error" ? "❌ Ошибка" : "💾 Сохранить урок"}
                 </Btn>
-                <Btn
-                  variant={reflDone ? "ghost" : "accent"}
-                  onClick={() => setReflOpen(true)}
-                  style={reflDone ? { borderColor: "#16a34a", color: "#16a34a" } : {}}
-                >
-                  {reflDone ? "✅ Рефлексия заполнена" : "📋 Провёл урок"}
-                </Btn>
+                {/* UX-04: guest mode — prompt to log in instead of opening reflection */}
+                {user ? (
+                  <Btn
+                    variant={reflDone ? "ghost" : "accent"}
+                    onClick={() => setReflOpen(true)}
+                    style={reflDone ? { borderColor: "#16a34a", color: "#16a34a" } : {}}
+                  >
+                    {reflDone ? "✅ Рефлексия заполнена" : "📋 Провёл урок"}
+                  </Btn>
+                ) : (
+                  <Btn variant="ghost" onClick={() => window.location.href = "/"}
+                    style={{ borderColor: "#94a3b8", color: "#64748b", fontSize: 13 }}
+                    title="Войдите, чтобы сохранять рефлексию">
+                    🔒 Войдите, чтобы отметить урок
+                  </Btn>
+                )}
                 <Btn onClick={reset}>🎯 Новый урок</Btn>
               </div>
             ) : null}
           </div>
         </div>
       </div>
-      {reflOpen && <ReflectionModal state={state} onClose={() => setReflOpen(false)} onSaved={() => setReflDone(true)} />}
+      {reflOpen && <ReflectionModal state={state} user={user} onClose={() => setReflOpen(false)} onSaved={() => setReflDone(true)} />}
       {libraryOpen && <LibraryView onClose={() => setLibraryOpen(false)} user={user} />}
       {adminOpen && <AdminView user={user} onClose={() => setAdminOpen(false)} />}
-      {showMindMap && <MindMapModal state={state} onClose={() => setShowMindMap(false)} />}
+      {profileOpen && <ProfileDrawer user={user} onClose={() => setProfileOpen(false)} />}
+      {showMindMap && <MindMapModal state={state} onClose={() => setShowMindMap(false)} cachedText={mindMapCache} onCached={setMindMapCache} />}
     </div>
   );
 }

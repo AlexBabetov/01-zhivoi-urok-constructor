@@ -101,13 +101,20 @@ exports.handler = async (event) => {
     .slice(0, 40);
 
   const lessonNum = meta.lesson_num || 0;
-  const filename = `${lessonNum}_${topicSlug}.json`;
+  const modelSlug = (meta.model || "")
+    .toLowerCase()
+    .replace(/ё/g, "е")
+    .replace(/\s+/g, "-")
+    .replace(/[^a-zа-я0-9-]/g, "")
+    .slice(0, 12);
+  // BUG-04 fix: include model slug so same-topic lessons with different models don't overwrite each other
+  const filename = `${lessonNum}_${topicSlug}_${modelSlug}.json`;
   // CRA: public/ → build/ on deploy, must write to public/lessons/ for static serving
   const filePath = `public/lessons/${subjectSlug}/${meta.grade}/${filename}`;
   const indexPath = `public/lessons/index.json`;
   const savedAt = new Date().toISOString();
-  // ID включает topicSlug чтобы избежать коллизий при одинаковом lesson_num для разных тем
-  const id = `${subjectSlug}-${meta.grade}-${lessonNum}-${topicSlug.slice(0, 20)}`;
+  // ID включает model чтобы два урока с одной темой не затирали друг друга
+  const id = `${subjectSlug}-${meta.grade}-${lessonNum}-${topicSlug.slice(0, 20)}-${modelSlug}`;
 
   // ── GitHub API helpers ────────────────────────────────
   const ghHeaders = {

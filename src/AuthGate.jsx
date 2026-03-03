@@ -40,6 +40,15 @@ const LABEL = {
   marginBottom: 6,
 };
 
+// ─── Helper ──────────────────────────────────────────────────────────────────
+const TRUSTED_DOMAINS = ["koriphey.ru", "koriphey.online"];
+
+function getStatusForEmail(email) {
+  const domain = email?.split("@")[1]?.toLowerCase() || "";
+  return TRUSTED_DOMAINS.includes(domain) ? "approved" : "pending";
+}
+
+// ─── Shared components ────────────────────────────────────────────────────────
 function Field({ label, type = "text", value, onChange, placeholder, required }) {
   return (
     <div style={{ marginBottom: 14 }}>
@@ -113,6 +122,9 @@ function SubmitBtn({ loading, children }) {
   );
 }
 
+// OAuth через Google — временно отключён (Sprint 4)
+// function OAuthButtons(...) { ... }
+
 // ─── Login Form ─────────────────────────────────────────────────────────────────
 function LoginForm({ onSwitchToRegister }) {
   const [email, setEmail] = useState("");
@@ -132,11 +144,8 @@ function LoginForm({ onSwitchToRegister }) {
       setLoading(false);
       return;
     }
-    // Check status after login
     const status = data.user?.user_metadata?.status;
-    if (status === "pending") {
-      // Will be handled by AuthGate
-    } else if (status === "rejected") {
+    if (status === "rejected") {
       await supabase.auth.signOut();
       setError("Ваша заявка на регистрацию была отклонена. Обратитесь к администратору.");
     }
@@ -197,13 +206,10 @@ function RegisterForm({ onSwitchToLogin }) {
 
     setLoading(true);
 
-    // Корифейские домены получают доступ сразу без подтверждения
-    const TRUSTED_DOMAINS = ["koriphey.ru", "koriphey.online"];
     const emailDomain = form.email.split("@")[1]?.toLowerCase() || "";
     const isTrusted = TRUSTED_DOMAINS.includes(emailDomain);
     const initialStatus = isTrusted ? "approved" : "pending";
 
-    // 1. Регистрация в Supabase
     const { data, error: signUpError } = await supabase.auth.signUp({
       email: form.email,
       password: form.password,
@@ -214,6 +220,7 @@ function RegisterForm({ onSwitchToLogin }) {
           name: form.name,
           school: form.school,
           city: form.city,
+          provider: "email",
         },
       },
     });
@@ -228,10 +235,7 @@ function RegisterForm({ onSwitchToLogin }) {
     }
 
     if (!isTrusted) {
-      // 2а. Сторонний домен — выходим (ждут подтверждения)
       await supabase.auth.signOut();
-
-      // 3. Уведомляем администратора
       try {
         await fetch("/.netlify/functions/notify-admin", {
           method: "POST",
@@ -243,18 +247,14 @@ function RegisterForm({ onSwitchToLogin }) {
             city: form.city,
           }),
         });
-      } catch (_) {
-        // не критично — заявка уже сохранена в Supabase
-      }
+      } catch (_) { /* не критично */ }
     }
-    // 2б. Корифейский домен — остаётся в системе, сразу попадёт в приложение
 
     setSuccess(isTrusted ? "trusted" : "pending");
     setLoading(false);
   };
 
   if (success === "trusted") {
-    // Корифейский домен — сразу перенаправляем, страница перегрузится через AuthGate
     return (
       <div style={BG}>
         <div style={{ ...CARD, textAlign: "center" }}>
@@ -311,7 +311,7 @@ function RegisterForm({ onSwitchToLogin }) {
     <div style={BG}>
       <div style={{ ...CARD, maxWidth: 460 }}>
         <Logo />
-        <div style={{ fontSize: 16, fontWeight: 700, color: "#1e3a5f", marginBottom: 20, textAlign: "center" }}>
+        <div style={{ fontSize: 15, fontWeight: 700, color: "#1e3a5f", marginBottom: 16, textAlign: "center" }}>
           Заявка на регистрацию
         </div>
         <form onSubmit={handleRegister}>
@@ -358,16 +358,19 @@ function PendingScreen({ user }) {
           Заявка на рассмотрении
         </div>
         <p style={{ fontSize: 14, color: "#475569", lineHeight: 1.6, marginBottom: 8 }}>
-          Ваша заявка ещё не рассмотрена администратором.
-        </p>
-        <p style={{ fontSize: 13, color: "#94a3b8", marginBottom: 28 }}>
-          Вы получите письмо на <b>{user?.email}</b>, когда заявка будет одобрена.
-        </p>
+            Ваша заявка ещё не рассмотрена администратором.
+          </p>
+        {user?.email && (
+          <p style={{ fontSize: 13, color: "#94a3b8", marginBottom: 28 }}>
+            Вы получите письмо на <b>{user.email}</b>, когда заявка будет одобрена.
+          </p>
+        )}
         <button
           onClick={() => supabase.auth.signOut()}
           style={{
             background: "none", border: "1px solid #cbd5e1", borderRadius: 8,
             padding: "9px 20px", fontSize: 13, color: "#64748b", cursor: "pointer",
+            marginTop: 8,
           }}
         >
           Выйти
@@ -404,7 +407,111 @@ function RejectedScreen({ user }) {
   );
 }
 
-// ─── Auth Gate ─────────────────────────────────────────────────────────────────
+// ─── Onboarding Modal ─────────────────────────────────────────────────────────
+const ONBOARDING_SLIDES = [
+  {
+    emoji: "⚡",
+    title: "Урок за 30 секунд",
+    text: "Введи предмет, класс и тему — и получи готовый сценарий по методологии «Живой урок 360». Со структурой, захватами, заданиями и Кори.",
+    hint: "Шаг 1 → 2 → 3 → Готово",
+  },
+  {
+    emoji: "📚",
+    title: "Библиотека уроков",
+    text: "Сохраняй уроки в библиотеку — они останутся навсегда. Открывай в любой момент прямо на уроке с телефона или планшета.",
+    hint: "Кнопка «Сохранить урок» после генерации",
+  },
+  {
+    emoji: "🌱",
+    title: "Расти после каждого урока",
+    text: "После урока заполни 2-минутную рефлексию: как прошёл тайминг, какой была энергия класса. Данные копятся — ты видишь свой рост.",
+    hint: "Кнопка «Рефлексия» в карточке урока",
+  },
+];
+
+function OnboardingModal({ onDone }) {
+  const [slide, setSlide] = useState(0);
+  const current = ONBOARDING_SLIDES[slide];
+  const isLast = slide === ONBOARDING_SLIDES.length - 1;
+
+  const handleDone = async () => {
+    try {
+      await supabase.auth.updateUser({ data: { onboarding_done: true } });
+    } catch (_) { /* не критично */ }
+    onDone();
+  };
+
+  return (
+    <div style={{
+      position: "fixed", inset: 0,
+      background: "rgba(0,0,0,0.65)",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      zIndex: 3000, padding: 20,
+      fontFamily: "'Segoe UI', system-ui, sans-serif",
+    }}>
+      <div style={{
+        background: "#fff", borderRadius: 20,
+        padding: "40px 36px", width: "100%", maxWidth: 400,
+        boxShadow: "0 20px 60px rgba(0,0,0,0.35)",
+        textAlign: "center",
+      }}>
+        {/* Progress dots */}
+        <div style={{ display: "flex", justifyContent: "center", gap: 6, marginBottom: 28 }}>
+          {ONBOARDING_SLIDES.map((_, i) => (
+            <div key={i} style={{
+              width: i === slide ? 20 : 8, height: 8,
+              borderRadius: 4,
+              background: i === slide ? "#1e3a5f" : "#e2e8f0",
+              transition: "all 0.3s",
+            }} />
+          ))}
+        </div>
+
+        <div style={{ fontSize: 52, marginBottom: 16 }}>{current.emoji}</div>
+        <div style={{ fontSize: 20, fontWeight: 800, color: "#1e3a5f", marginBottom: 12 }}>
+          {current.title}
+        </div>
+        <p style={{ fontSize: 14, color: "#475569", lineHeight: 1.7, marginBottom: 12 }}>
+          {current.text}
+        </p>
+        <div style={{
+          display: "inline-block",
+          background: "#f1f5f9", borderRadius: 8,
+          padding: "6px 12px", fontSize: 12, color: "#64748b",
+          marginBottom: 28,
+        }}>
+          {current.hint}
+        </div>
+
+        <div style={{ display: "flex", gap: 10 }}>
+          <button
+            onClick={handleDone}
+            style={{
+              flex: 1, padding: "10px",
+              background: "none", border: "1px solid #e2e8f0",
+              borderRadius: 10, fontSize: 13, color: "#94a3b8",
+              cursor: "pointer",
+            }}
+          >
+            Пропустить
+          </button>
+          <button
+            onClick={isLast ? handleDone : () => setSlide(s => s + 1)}
+            style={{
+              flex: 2, padding: "10px",
+              background: "#1e3a5f", border: "none",
+              borderRadius: 10, fontSize: 14, fontWeight: 700,
+              color: "#fff", cursor: "pointer",
+            }}
+          >
+            {isLast ? "Создать первый урок →" : "Далее →"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Guest Banner ──────────────────────────────────────────────────────────────
 function GuestBanner({ onLogin }) {
   return (
@@ -480,19 +587,58 @@ function LoginModal({ onClose }) {
 
 // ─── Auth Gate ─────────────────────────────────────────────────────────────────
 // AUTH_REQUIRED=false: приложение доступно без входа (тестовый режим).
-// Авторизованные пользователи получают дополнительные функции (сохранение уроков).
 const AUTH_REQUIRED = false;
 
 export default function AuthGate({ children }) {
   const [session, setSession] = useState(undefined); // undefined = loading
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === "SIGNED_IN" && session) {
+        const meta = session.user?.user_metadata || {};
+
+        // Первый вход через OAuth (нет role — новый пользователь)
+        if (!meta.role) {
+          const email = session.user.email;
+          const status = email ? getStatusForEmail(email) : "pending";
+          const provider = session.user.app_metadata?.provider || "email";
+          const name = meta.full_name
+            || `${meta.given_name || ""} ${meta.family_name || ""}`.trim()
+            || meta.name
+            || "";
+
+          try {
+            await supabase.auth.updateUser({
+              data: {
+                role: "teacher",
+                status,
+                name,
+                avatar_url: meta.picture || meta.avatar_url || null,
+                provider,
+              },
+            });
+            // После updateUser сработает ещё один SIGNED_IN — он подхватит обновлённые данные
+            return;
+          } catch (e) {
+            console.warn("[AuthGate] Failed to set initial metadata:", e.message);
+          }
+        }
+
+        // Показать онбординг при первом одобренном входе
+        const isApproved = meta.role === "admin" || meta.status === "approved";
+        const onboardingDone = meta.onboarding_done;
+        const hasLessons = Boolean(localStorage.getItem("zh360_lessons"));
+        if (isApproved && !onboardingDone && !hasLessons) {
+          setShowOnboarding(true);
+        }
+      }
+
       setSession(session);
     });
 
@@ -522,7 +668,6 @@ export default function AuthGate({ children }) {
         </div>
       );
     }
-    // Тестовый режим: пропускаем без авторизации
     return (
       <>
         <div style={{ paddingBottom: 80 }}>
@@ -539,13 +684,25 @@ export default function AuthGate({ children }) {
   const status = meta.status;
   const role = meta.role;
 
-  // Admin always has access (no status check)
-  if (role === "admin") return children(session.user);
+  // Admin always has access
+  if (role === "admin") {
+    return (
+      <>
+        {showOnboarding && <OnboardingModal onDone={() => setShowOnboarding(false)} />}
+        {children(session.user)}
+      </>
+    );
+  }
 
   // Teacher: check status
   if (status === "pending") return <PendingScreen user={session.user} />;
   if (status === "rejected") return <RejectedScreen user={session.user} />;
 
-  // approved (or legacy users without status)
-  return children(session.user);
+  // approved (or legacy without status)
+  return (
+    <>
+      {showOnboarding && <OnboardingModal onDone={() => setShowOnboarding(false)} />}
+      {children(session.user)}
+    </>
+  );
 }
