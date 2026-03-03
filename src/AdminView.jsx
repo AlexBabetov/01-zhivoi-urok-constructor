@@ -99,11 +99,13 @@ function UsersTab({ currentUser }) {
                   {u.name}
                 </div>
               )}
-              {/* Email показываем только суперадмину */}
-              {isSuperadmin && u.email && (
+              {u.email && (
                 <div style={{ fontSize: 12, color: "#64748b" }}>📧 {u.email}</div>
               )}
-              {!isSuperadmin && (
+              {u.city && (
+                <div style={{ fontSize: 12, color: "#64748b" }}>📍 {u.city}</div>
+              )}
+              {!u.email && !u.city && (
                 <div style={{ fontSize: 12, color: "#94a3b8", fontFamily: "monospace" }}>
                   {u.id ? u.id.slice(0, 12) + "…" : "—"}
                 </div>
