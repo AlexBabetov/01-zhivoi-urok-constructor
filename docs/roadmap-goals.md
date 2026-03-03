@@ -76,15 +76,14 @@ depends_on: —
 - Whitelist моделей в Edge Function: единственная разрешённая `claude-haiku-4-5-20251001`
 
 **Задачи:**
-- [ ] Добавить JWT-проверку в `save-lesson.js` (минимум: валидный токен + статус `approved`)
-- [ ] Добавить JWT-проверку в `netlify/edge-functions/generate-lesson.js` (сейчас — публичный прокси)
-- [ ] Добавить whitelist моделей в Edge Function (`claude-haiku-4-5-20251001` — единственная разрешённая)
-- [ ] Добавить ceiling `max_tokens` на стороне сервера Edge Function (не выше 8000, без override клиентом)
-- [ ] Исправить default model в Edge Function: `claude-3-5-haiku-20241022` → `claude-haiku-4-5-20251001`
-- [ ] Добавить rate limiting (10 запросов/час/пользователь — начальный порог)
-- [ ] Перенести логирование `generated` в Edge Function; задокументировать `netlify/functions/generate-lesson.js` как non-production
-- [ ] Добавить переменную `SUPABASE_URL` в Netlify env vars (серверная, без `REACT_APP_` префикса — нужна для `save-lesson.js`)
-- [ ] Рассмотреть отвязку `public/lessons/` от auto-deploy trigger (перенос в Supabase Storage или S3)
+- [x] Добавить JWT-проверку в `save-lesson.js` (2026-02-27)
+- [x] Добавить JWT-проверку в `api/generate-lesson.js` — мягкая: гости допускаются, невалидный токен → 401 (2026-03-03)
+- [x] Добавить whitelist моделей в Edge Function (2026-02-27)
+- [x] Добавить ceiling `max_tokens` на стороне сервера (10000, без override клиентом) (2026-02-27)
+- [x] Исправить default model → `claude-haiku-4-5-20251001` (2026-02-27)
+- [x] Перенести логирование `generated` в `api/generate-lesson.js` (best-effort для авторизованных) (2026-03-03)
+- [ ] Добавить rate limiting (10 запросов/час/пользователь — следующий шаг)
+- [ ] Рассмотреть отвязку `public/lessons/` от auto-deploy trigger (Supabase Storage или S3)
 
 ---
 

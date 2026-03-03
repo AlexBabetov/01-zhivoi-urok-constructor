@@ -122,64 +122,8 @@ function SubmitBtn({ loading, children }) {
   );
 }
 
-function Divider({ label }) {
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 10, margin: "16px 0" }}>
-      <div style={{ flex: 1, height: 1, background: "#e2e8f0" }} />
-      <span style={{ fontSize: 12, color: "#94a3b8", fontWeight: 500 }}>{label}</span>
-      <div style={{ flex: 1, height: 1, background: "#e2e8f0" }} />
-    </div>
-  );
-}
-
-// ─── OAuth Buttons ─────────────────────────────────────────────────────────────
-function OAuthButtons({ loading, setLoading, setError }) {
-  async function handleOAuth(provider) {
-    setLoading(true);
-    setError(null);
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: window.location.origin,
-      },
-    });
-    if (error) {
-      setError("Ошибка входа через Google: " + error.message);
-      setLoading(false);
-    }
-    // При успехе — редирект, setLoading не нужен
-  }
-
-  const baseBtn = {
-    width: "100%",
-    padding: "11px 14px",
-    borderRadius: 10,
-    fontSize: 14,
-    fontWeight: 600,
-    cursor: loading ? "not-allowed" : "pointer",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 10,
-    border: "none",
-    transition: "opacity 0.15s",
-    opacity: loading ? 0.6 : 1,
-  };
-
-  return (
-    <div style={{ marginBottom: 4 }}>
-      <button
-        type="button"
-        disabled={loading}
-        onClick={() => handleOAuth("google")}
-        style={{ ...baseBtn, background: "#fff", border: "1.5px solid #e2e8f0", color: "#374151" }}
-      >
-        <img src="/google-icon.svg" width={18} height={18} alt="" />
-        Войти через Google
-      </button>
-    </div>
-  );
-}
+// OAuth через Google — временно отключён (Sprint 4)
+// function OAuthButtons(...) { ... }
 
 // ─── Login Form ─────────────────────────────────────────────────────────────────
 function LoginForm({ onSwitchToRegister }) {
@@ -212,8 +156,6 @@ function LoginForm({ onSwitchToRegister }) {
     <div style={BG}>
       <div style={CARD}>
         <Logo />
-        <OAuthButtons loading={loading} setLoading={setLoading} setError={setError} />
-        <Divider label="или войти по email" />
         <form onSubmit={handleLogin}>
           <Field label="Email" type="email" value={email} onChange={setEmail}
             placeholder="teacher@school.ru" required />
@@ -369,8 +311,6 @@ function RegisterForm({ onSwitchToLogin }) {
     <div style={BG}>
       <div style={{ ...CARD, maxWidth: 460 }}>
         <Logo />
-        <OAuthButtons loading={loading} setLoading={setLoading} setError={setError} />
-        <Divider label="или зарегистрироваться по email" />
         <div style={{ fontSize: 15, fontWeight: 700, color: "#1e3a5f", marginBottom: 16, textAlign: "center" }}>
           Заявка на регистрацию
         </div>
