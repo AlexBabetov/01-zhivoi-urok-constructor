@@ -1,6 +1,172 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { supabase } from "./supabase";
 
+// ── Users Tab (Управление пользователями) ─────────────────────
+const ROLE_LABELS = { teacher: "Учитель", admin: "Администратор", superadmin: "Суперадмин" };
+const ROLE_COLORS = { teacher: "#64748b", admin: "#1e3a5f", superadmin: "#7c3aed" };
+
+function UsersTab({ currentUser }) {
+  const [users, setUsers]         = useState([]);
+  const [loading, setLoading]     = useState(true);
+  const [error, setError]         = useState(null);
+  const [changing, setChanging]   = useState(null); // userId меняющийся прямо сейчас
+  const [search, setSearch]       = useState("");
+
+  const load = useCallback(async () => {
+    setLoading(true); setError(null);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      const res = await fetch("/api/get-analytics?days=365", {
+        headers: { "Authorization": `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error(`Ошибка: ${res.status}`);
+      const data = await res.json();
+      setUsers(data.users || []);
+    } catch (e) { setError(e.message); }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  const setRole = async (user, newRole) => {
+    setChanging(user.id);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      const res = await fetch("/api/set-role", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+        body: JSON.stringify({ userId: user.id, role: newRole }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || `Ошибка ${res.status}`);
+      // Обновляем локально
+      setUsers(prev => prev.map(u => u.id === user.id ? { ...u, role: newRole } : u));
+    } catch (e) { alert("Ошибка: " + e.message); }
+    setChanging(null);
+  };
+
+  const filtered = users.filter(u =>
+    !search ||
+    (u.email || "").toLowerCase().includes(search.toLowerCase()) ||
+    (u.name  || "").toLowerCase().includes(search.toLowerCase())
+  );
+
+  if (loading) return (
+    <div style={{ textAlign: "center", padding: "40px 0", color: "#64748b", fontSize: 14 }}>
+      ⏳ Загружаем пользователей...
+    </div>
+  );
+  if (error) return (
+    <div style={{ background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 10, padding: "12px 16px", fontSize: 13, color: "#dc2626" }}>
+      ⚠️ {error}
+      <button onClick={load} style={{ marginLeft: 12, background: "none", border: "none", cursor: "pointer", color: "#1e3a5f", fontWeight: 600 }}>Повторить</button>
+    </div>
+  );
+
+  const isSuperadmin = currentUser?.user_metadata?.role === "superadmin";
+
+  return (
+    <div>
+      {/* Поиск */}
+      <input
+        placeholder="🔍 Поиск по имени или email..."
+        value={search}
+        onChange={e => setSearch(e.target.value)}
+        style={{
+          width: "100%", padding: "9px 12px", fontSize: 13,
+          border: "1.5px solid #e2e8f0", borderRadius: 10,
+          marginBottom: 14, boxSizing: "border-box", outline: "none",
+          fontFamily: "inherit",
+        }}
+      />
+
+      {/* Список пользователей */}
+      {filtered.map(u => {
+        const isSelf = u.id === currentUser?.id;
+        const isChanging = changing === u.id;
+        const currentRole = u.role || "teacher";
+        return (
+          <div key={u.id} style={{
+            border: "1.5px solid #e2e8f0", borderRadius: 12, padding: "12px 16px",
+            marginBottom: 8, background: "#f8fafc",
+            display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
+          }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              {u.name && (
+                <div style={{ fontSize: 14, fontWeight: 700, color: "#1e293b", marginBottom: 2 }}>
+                  {u.name}
+                </div>
+              )}
+              {/* Email показываем только суперадмину */}
+              {isSuperadmin && u.email && (
+                <div style={{ fontSize: 12, color: "#64748b" }}>📧 {u.email}</div>
+              )}
+              {!isSuperadmin && (
+                <div style={{ fontSize: 12, color: "#94a3b8", fontFamily: "monospace" }}>
+                  {u.id ? u.id.slice(0, 12) + "…" : "—"}
+                </div>
+              )}
+            </div>
+
+            {/* Текущая роль */}
+            <div style={{
+              fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 20,
+              background: (ROLE_COLORS[currentRole] || "#64748b") + "18",
+              color: ROLE_COLORS[currentRole] || "#64748b",
+              whiteSpace: "nowrap",
+            }}>
+              {ROLE_LABELS[currentRole] || currentRole}
+            </div>
+
+            {/* Кнопки смены роли */}
+            {!isSelf && (
+              <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+                {currentRole !== "teacher" && (
+                  <button
+                    onClick={() => setRole(u, "teacher")}
+                    disabled={isChanging}
+                    style={{
+                      fontSize: 12, padding: "5px 12px", borderRadius: 8, cursor: "pointer",
+                      border: "1.5px solid #e2e8f0", background: "#fff", color: "#64748b",
+                      fontWeight: 600, opacity: isChanging ? 0.5 : 1,
+                    }}
+                  >
+                    {isChanging ? "…" : "→ Учитель"}
+                  </button>
+                )}
+                {currentRole !== "admin" && (
+                  <button
+                    onClick={() => setRole(u, "admin")}
+                    disabled={isChanging}
+                    style={{
+                      fontSize: 12, padding: "5px 12px", borderRadius: 8, cursor: "pointer",
+                      border: "1.5px solid #1e3a5f", background: "#1e3a5f", color: "#fff",
+                      fontWeight: 600, opacity: isChanging ? 0.5 : 1,
+                    }}
+                  >
+                    {isChanging ? "…" : "→ Админ"}
+                  </button>
+                )}
+              </div>
+            )}
+            {isSelf && (
+              <div style={{ fontSize: 11, color: "#94a3b8", fontStyle: "italic" }}>это вы</div>
+            )}
+          </div>
+        );
+      })}
+
+      {filtered.length === 0 && (
+        <div style={{ textAlign: "center", padding: "30px 0", color: "#94a3b8", fontSize: 13 }}>
+          Пользователи не найдены
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Dashboard Tab (Дашборд завуча — рефлексии) ────────────────
 const MOOD_LABELS  = { low: "😔 Низкий", work: "😐 Рабочий", active: "😊 Активный", fire: "🔥 Огонь" };
 const MOOD_COLORS  = { low: "#dc2626", work: "#d97706", active: "#16a34a", fire: "#7c3aed" };
@@ -569,6 +735,9 @@ export default function AdminView({ onClose, user }) {
             <button style={tabStyle(tab === "dashboard")} onClick={() => setTab("dashboard")}>
               🏫 Дашборд
             </button>
+            <button style={tabStyle(tab === "users")} onClick={() => setTab("users")}>
+              👤 Роли
+            </button>
           </div>
         </div>
 
@@ -577,6 +746,7 @@ export default function AdminView({ onClose, user }) {
           {tab === "requests"  && <PendingUsersTab />}
           {tab === "analytics" && <AnalyticsTab />}
           {tab === "dashboard" && <DashboardTab />}
+          {tab === "users"     && <UsersTab currentUser={user} />}
         </div>
       </div>
     </div>
