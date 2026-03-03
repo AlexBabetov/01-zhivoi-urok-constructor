@@ -93,3 +93,44 @@ tags:
 - [x] id:20260226-093005 | docs | Ребилд модели AI-управления по стандарту 00-koriphey-knowledge-base: созданы CLAUDE.md (точка входа для Claude Code/Cowork), docs/project-rules.md (правила проекта, 100% приоритет), docs/current-state.md (оперативный срез), .env.example (канонический список переменных), docs/team/ (карточки babetov_aa.md, kaluzhskaya_mv.md). Добавлен frontmatter во все docs/*.md без него. docs/refs/roadmap-2026.docx → archive-roadmap-2026.docx (данные уже в roadmap-goals.md). | babetov_aa@koriphey.ru | DONE
 - [x] id:20260226-093658 | audit | Полный аудит кода проекта (сессия 2): прочитаны App.jsx, netlify/functions/*, netlify/edge-functions/generate-lesson.js, netlify.toml, public/curriculum/ (33 файла). Новые находки: (1) edge-functions/generate-lesson.js — публичный прокси без JWT [CRITICAL], (2) Edge принимает model+max_tokens без валидации [CRITICAL], (3) Edge default model claude-3-5-haiku-20241022 устарел [BUG], (4) save-lesson.js читает SUPABASE_URL — расхождение с env vars [BUG], (5) 6 предметов в UI без curriculum: Английский, Немецкий, Французский, МХК, Биология 10-11, Информатика 10-11. Обновлены: project-rules.md, current-state.md, roadmap-goals.md (G-001 +4 задачи, G-009 +2 задачи), AGENTS.md (порядок чтения, структура docs/, секция известных проблем), .env.example (+SUPABASE_URL). | babetov_aa@koriphey.ru | DONE
 - [x] id:20260226-094007 | docs | Финализация документации сессии 2: закрыты выполненные задачи G-009 в roadmap-goals.md (.env.example обновлён, ссылка на archive-roadmap-2026.docx исправлена). Все изменения из системных уведомлений линтера приняты. | babetov_aa@koriphey.ru | DONE
+
+---
+
+## v3 — Миграция на Vercel, Admin-панель, Дашборд завуча, Rate limiting (3 марта 2026)
+
+Полная миграция с Netlify на Vercel. Все security-блокеры G-001 закрыты.
+Реализован дашборд завуча с управлением ролями. Назначены три администратора.
+
+### 2026-03-03 — Миграция с Netlify на Vercel
+
+- [x] id:20260303-100000 | setup | Проект перенесён с Netlify на Vercel: создана папка api/ с Vercel Edge Functions. Netlify-специфичный код (netlify/functions/, netlify.toml) оставлен как архив. Autodeploy: main → prod, dev → preview | babetov_aa@koriphey.ru | DONE
+- [x] id:20260303-100100 | setup | Все env vars перенесены в Vercel: ANTHROPIC_API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, REACT_APP_SUPABASE_URL, REACT_APP_SUPABASE_ANON_KEY, GITHUB_REPO, GITHUB_TOKEN, RESEND_API_KEY | babetov_aa@koriphey.ru | DONE
+- [x] id:20260303-100200 | fix | Исправлены Redirect URLs в Supabase Auth: добавлены prod и dev Vercel-адреса | babetov_aa@koriphey.ru | DONE
+- [x] id:20260303-100300 | fix | Библиотека курсов: исправлен фетч /courses/index.json — вкладка «Курсы» заработала | babetov_aa@koriphey.ru | DONE
+- [x] id:20260303-100400 | fix | Таймер генерации: метка «Claude» переименована в «AI» | babetov_aa@koriphey.ru | DONE
+
+### 2026-03-03 — Закрытие G-001: security-блокеры
+
+- [x] id:20260303-110000 | security | api/generate-lesson.js: JWT-верификация (мягкая — гости допускаются, невалидный токен → 401). Авторизованные запросы логируются в lesson_events | babetov_aa@koriphey.ru | DONE
+- [x] id:20260303-110100 | security | api/generate-lesson.js: whitelist моделей ALLOWED_MODELS, потолок max_tokens=10000, default model → claude-haiku-4-5-20251001 | babetov_aa@koriphey.ru | DONE
+- [x] id:20260303-110200 | security | api/generate-lesson.js: логирование события generated перенесено в Vercel Edge Function (best-effort для авторизованных и гостей по IP) | babetov_aa@koriphey.ru | DONE
+- [x] id:20260303-110300 | security | api/generate-lesson.js: rate limiting — учитель 5/день, admin 10/день, гость 2/день по IP. При превышении → 429 с человеческим сообщением на русском | babetov_aa@koriphey.ru | DONE
+- [x] id:20260303-110400 | fix | App.jsx: ошибки API теперь парсят JSON-поле error — учитель видит русский текст вместо технического JSON при ошибках сервера | babetov_aa@koriphey.ru | DONE
+
+### 2026-03-03 — Admin-панель и дашборд завуча
+
+- [x] id:20260303-120000 | docs | Создан docs/specs/spec-dashboard-zavuch.md — полный PRD: проблема, user stories, must have/should have, API spec, SQL, критерии приёмки, метрики, оценка ~7ч | babetov_aa@koriphey.ru | DONE
+- [x] id:20260303-120100 | setup | Создан supabase/migrations/20260304_create_lesson_events.sql — идемпотентная миграция, добавлены индексы по event_type и subject (таблица уже существовала) | babetov_aa@koriphey.ru | DONE
+- [x] id:20260303-120200 | feature | Создан api/get-analytics.js: GET /api/get-analytics?days=N, только admin/superadmin. Список всех пользователей через Supabase Admin API, агрегат lesson_events за период, email виден только суперадмину | babetov_aa@koriphey.ru | DONE
+- [x] id:20260303-120300 | feature | Создан api/dashboard.js: GET /api/dashboard?days=N, только admin/superadmin. Параллельный запрос reflections_by_teacher + reflections_by_subject + recent reflections | babetov_aa@koriphey.ru | DONE
+- [x] id:20260303-120400 | feature | Создан api/set-role.js: POST {userId, role}, только admin/superadmin. Защита от смены собственной роли. superadmin может назначать superadmin, admin — только teacher/admin | babetov_aa@koriphey.ru | DONE
+- [x] id:20260303-120500 | fix | Создан api/list-pending-users.js: GET, фильтр status=pending через Supabase Admin API. Исправляет 404 в вкладке «Заявки» | babetov_aa@koriphey.ru | DONE
+- [x] id:20260303-120600 | fix | Создан api/update-user-status.js: POST {userId, status, userEmail, userName}. Merge user_metadata (не перезаписывает role). Email-уведомление через Resend | babetov_aa@koriphey.ru | DONE
+- [x] id:20260303-120700 | feature | AdminView.jsx: вкладка «🏫 Дашборд» (DashboardTab) — summary cards, таблица по предметам с красной подсветкой avg_rating<3, таблица по учителям, переключатель 7/30/90 дней | babetov_aa@koriphey.ru | DONE
+- [x] id:20260303-120800 | feature | AdminView.jsx: вкладка «👤 Роли» (UsersTab) — поиск по имени/email, бейджи ролей с цветами, кнопки «→ Учитель» / «→ Админ», оптимистичное обновление, email и город видны всем admin | babetov_aa@koriphey.ru | DONE
+- [x] id:20260303-120900 | fix | App.jsx: кнопка admin переименована «👥 Заявки» → «🛡️ Панель» для ясности | babetov_aa@koriphey.ru | DONE
+
+### 2026-03-03 — Пользователи и мерж
+
+- [x] id:20260303-130000 | chore | Назначены роли admin: kamenskih_ig@koriphey.ru и babetov_aa@koriphey.ru через SQL, antropova_ts@koriphey.ru через UI-панель «👤 Роли» (первое использование панели в продакшне) | babetov_aa@koriphey.ru | DONE
+- [x] id:20260303-130100 | chore | dev → main: смерж после стабилизации security и admin-панели | babetov_aa@koriphey.ru | DONE
