@@ -2819,86 +2819,117 @@ function useCourses() {
   return { courses, loading, load };
 }
 
-// Простой Markdown → HTML рендерер (без зависимостей)
+// Markdown → HTML рендерер с улучшенными стилями для модулей
 function renderMarkdown(md) {
   if (!md) return "";
   return md
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-    // Заголовки
-    .replace(/^#{4} (.+)$/gm, "<h4>$1</h4>")
-    .replace(/^#{3} (.+)$/gm, "<h3>$1</h3>")
-    .replace(/^#{2} (.+)$/gm, "<h2>$1</h2>")
-    .replace(/^# (.+)$/gm, "<h1>$1</h1>")
-    // Горизонтальные линии
-    .replace(/^---$/gm, "<hr>")
-    // Жирный и курсив
+    .replace(/^#{4} (.+)$/gm, "<h4 class='md-h4'>$1</h4>")
+    .replace(/^#{3} (.+)$/gm, "<h3 class='md-h3'>$1</h3>")
+    .replace(/^#{2} (.+)$/gm, "<h2 class='md-h2'>$1</h2>")
+    .replace(/^# (.+)$/gm, "<h1 class='md-h1'>$1</h1>")
+    .replace(/^---$/gm, "<hr class='md-hr'>")
     .replace(/\*\*\*(.+?)\*\*\*/g, "<strong><em>$1</em></strong>")
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
     .replace(/\*(.+?)\*/g, "<em>$1</em>")
-    // Инлайн-код
-    .replace(/`([^`]+)`/g, "<code>$1</code>")
-    // Таблицы (простые)
+    .replace(/`([^`]+)`/g, "<code class='md-code'>$1</code>")
     .replace(/^\|(.+)\|$/gm, (row) => {
       const cells = row.slice(1, -1).split("|").map(c => c.trim());
-      if (cells.every(c => /^[-:]+$/.test(c))) return ""; // разделитель
-      return "<tr>" + cells.map(c => `<td>${c}</td>`).join("") + "</tr>";
+      if (cells.every(c => /^[-:]+$/.test(c))) return "";
+      return "<tr class='md-tr'>" + cells.map(c => `<td class='md-td'>${c}</td>`).join("") + "</tr>";
     })
-    // Флажки TODO
-    .replace(/- \[ \] (.+)/g, "<li class='todo'>☐ $1</li>")
-    .replace(/- \[x\] (.+)/gi, "<li class='todo done'>☑ $1</li>")
-    // Списки (обычные)
-    .replace(/^- (.+)$/gm, "<li>$1</li>")
-    .replace(/^\d+\. (.+)$/gm, "<li>$1</li>")
-    // Параграфы (двойной перенос)
-    .replace(/\n\n+/g, "</p><p>")
-    // Обёртка таблиц в <table>
-    .replace(/(<tr>.*<\/tr>)/gs, "<table>$1</table>")
-    // Начало/конец
-    .replace(/^/, "<p>").replace(/$/, "</p>")
-    // Убрать пустые параграфы
-    .replace(/<p><\/p>/g, "")
-    .replace(/<p>(<h[1-4]>)/g, "$1")
+    .replace(/- \[ \] (.+)/g, "<li class='md-todo'>☐ $1</li>")
+    .replace(/- \[x\] (.+)/gi, "<li class='md-todo md-done'>☑ $1</li>")
+    .replace(/^- (.+)$/gm, "<li class='md-li'>$1</li>")
+    .replace(/^\d+\. (.+)$/gm, "<li class='md-li md-oli'>$1</li>")
+    .replace(/\n\n+/g, "</p><p class='md-p'>")
+    .replace(/(<tr class='md-tr'>[\s\S]*?<\/tr>)/g, (m) => "<table class='md-table'>" + m + "</table>")
+    .replace(/^/, "<p class='md-p'>").replace(/$/, "</p>")
+    .replace(/<p[^>]*><\/p>/g, "")
+    .replace(/<p[^>]*>(<h[1-4])/g, "$1")
     .replace(/(<\/h[1-4]>)<\/p>/g, "$1")
-    .replace(/<p>(<hr>)<\/p>/g, "$1")
-    .replace(/<p>(<li)/g, "<ul><li")
+    .replace(/<p[^>]*>(<hr)/g, "$1")
+    .replace(/<p[^>]*>(<li)/g, "<ul class='md-ul'><li")
     .replace(/(<\/li>)<\/p>/g, "$1</ul>");
 }
+
+const MODULE_READER_STYLES = `
+  .md-h1 { font-size: 20px; font-weight: 800; color: #1e293b; margin: 28px 0 14px; padding-bottom: 8px; border-bottom: 2px solid #e2e8f0; }
+  .md-h2 { font-size: 16px; font-weight: 700; color: #1e293b; margin: 22px 0 10px; padding: 8px 14px 8px 16px; background: #f1f5f9; border-left: 4px solid #1e3a5f; border-radius: 0 8px 8px 0; }
+  .md-h3 { font-size: 14px; font-weight: 700; color: #334155; margin: 18px 0 8px; padding: 6px 12px 6px 14px; background: #f8fafc; border-left: 3px solid #94a3b8; border-radius: 0 6px 6px 0; }
+  .md-h4 { font-size: 12px; font-weight: 700; color: #64748b; margin: 14px 0 6px; text-transform: uppercase; letter-spacing: 0.07em; }
+  .md-hr { border: none; border-top: 2px dashed #e2e8f0; margin: 20px 0; }
+  .md-p { margin: 6px 0; font-size: 14px; line-height: 1.75; color: #374151; }
+  .md-ul { padding-left: 22px; margin: 6px 0 10px; }
+  .md-li { margin: 4px 0; font-size: 14px; line-height: 1.65; color: #374151; }
+  .md-code { background: #f1f5f9; color: #0f172a; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-family: 'Courier New', monospace; border: 1px solid #e2e8f0; }
+  .md-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13px; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 6px rgba(0,0,0,0.08); }
+  .md-tr:nth-child(odd) { background: #f8fafc; }
+  .md-tr:nth-child(even) { background: #ffffff; }
+  .md-tr:first-child { background: #1e3a5f; }
+  .md-tr:first-child .md-td { color: #ffffff; font-weight: 700; border-color: rgba(255,255,255,0.15); font-size: 12px; }
+  .md-td { padding: 9px 13px; border: 1px solid #e2e8f0; vertical-align: top; line-height: 1.5; }
+  .md-todo { list-style: none; padding: 5px 10px; border-radius: 6px; margin: 3px 0; background: #f8fafc; font-size: 13px; border: 1px solid #f1f5f9; }
+  .md-done { background: #f0fdf4; color: #166534; border-color: #bbf7d0; }
+`;
 
 function ModuleReader({ course, module: mod, onBack }) {
   const [content, setContent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const accentColor = course.accent_color || "#1e3a5f";
+  const accentBg = course.accent_bg || "#eff6ff";
 
   useEffect(() => {
     setLoading(true);
     fetch(`/courses/${mod.filename}?t=${Date.now()}`)
       .then(r => r.ok ? r.text() : Promise.reject("not found"))
-      .then(content => { setContent(content); setLoading(false); })
+      .then(text => { setContent(text); setLoading(false); })
       .catch(() => { setError("Не удалось загрузить модуль"); setLoading(false); });
   }, [mod.filename]);
 
   return (
     <div>
-      <div style={{ display: "flex", gap: 10, marginBottom: 20, flexWrap: "wrap", alignItems: "center" }}>
-        <button onClick={onBack} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 20, color: "#64748b", padding: 0 }}>←</button>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 18, fontWeight: 700, color: "#1e293b" }}>{mod.title}</div>
-          <div style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>
-            {course.title} · {mod.lessons} занятий · {mod.duration_min} мин
+      {/* Шапка */}
+      <div style={{ display: "flex", gap: 10, marginBottom: 16, flexWrap: "wrap", alignItems: "center" }}>
+        <button onClick={onBack} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 20, color: "#64748b", padding: 0, lineHeight: 1 }}>←</button>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+            {mod.emoji && <span style={{ fontSize: 18 }}>{mod.emoji}</span>}
+            <span style={{ fontSize: 16, fontWeight: 700, color: "#1e293b" }}>{mod.title}</span>
+          </div>
+          <div style={{ fontSize: 12, color: "#64748b", marginTop: 3 }}>
+            {course.cover_emoji} {course.title} · Пул {course.pool} · {course.grades} · {mod.lessons} занятий по {mod.duration_min} мин
           </div>
         </div>
-        <button onClick={() => window.print()} style={{ background: "#f1f5f9", border: "1px solid #e2e8f0", borderRadius: 8, cursor: "pointer", fontSize: 12, padding: "6px 14px", color: "#475569" }}>
+        <button onClick={() => window.print()} style={{ background: "#f1f5f9", border: "1px solid #e2e8f0", borderRadius: 8, cursor: "pointer", fontSize: 12, padding: "6px 14px", color: "#475569", whiteSpace: "nowrap" }}>
           🖨 Распечатать
         </button>
       </div>
 
+      {/* Инфобар: алгоритм + пресквизит */}
+      {(mod.key_algorithm || mod.prerequisite) && (
+        <div style={{ display: "flex", gap: 8, marginBottom: 18, flexWrap: "wrap" }}>
+          {mod.key_algorithm && (
+            <div style={{ background: accentBg, border: `1px solid ${accentColor}35`, borderRadius: 8, padding: "7px 13px", fontSize: 12, color: accentColor, fontWeight: 600 }}>
+              📌 «{mod.key_algorithm}»
+            </div>
+          )}
+          {mod.prerequisite && (
+            <div style={{ background: "#fffbeb", border: "1px solid #fde68a", borderRadius: 8, padding: "7px 13px", fontSize: 12, color: "#92400e" }}>
+              ⚠ После: {(course.modules || []).find(m => m.id === mod.prerequisite)?.title || mod.prerequisite}
+            </div>
+          )}
+        </div>
+      )}
+
       {loading && <div style={{ textAlign: "center", padding: 48, color: "#94a3b8" }}>⏳ Загрузка сценария...</div>}
       {error && <div style={{ textAlign: "center", padding: 48, color: "#ef4444" }}>❌ {error}</div>}
       {content && (
-        <div
-          style={{ fontSize: 14, lineHeight: 1.7, color: "#1e293b" }}
-          dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }}
-        />
+        <div>
+          <style>{MODULE_READER_STYLES}</style>
+          <div dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }} />
+        </div>
       )}
     </div>
   );
@@ -2911,7 +2942,7 @@ function CoursesTab() {
 
   useEffect(() => { load(); }, [load]);
 
-  // Просмотр сценария модуля
+  // ── Просмотр сценария модуля ──
   if (selectedCourse && selectedModule) {
     return (
       <ModuleReader
@@ -2922,53 +2953,96 @@ function CoursesTab() {
     );
   }
 
-  // Просмотр модулей курса
+  // ── Список модулей курса ──
   if (selectedCourse) {
+    const c = selectedCourse;
+    const ac = c.accent_color || "#1e3a5f";
+    const ab = c.accent_bg || "#eff6ff";
     return (
       <div>
-        <div style={{ display: "flex", gap: 10, marginBottom: 20, alignItems: "center" }}>
-          <button onClick={() => setSelectedCourse(null)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 20, color: "#64748b", padding: 0 }}>←</button>
-          <div>
-            <div style={{ fontSize: 20, fontWeight: 700, color: "#1e293b" }}>{selectedCourse.cover_emoji} {selectedCourse.title}</div>
-            <div style={{ fontSize: 12, color: "#64748b", marginTop: 2 }}>{selectedCourse.grades} · {selectedCourse.total_lessons} занятий · {selectedCourse.author}</div>
+        <button onClick={() => setSelectedCourse(null)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 13, color: "#64748b", padding: "0 0 16px 0", display: "flex", alignItems: "center", gap: 5 }}>
+          ← Все курсы
+        </button>
+
+        {/* Шапка курса с градиентом */}
+        <div style={{ borderRadius: 16, overflow: "hidden", marginBottom: 18, border: `1px solid ${ac}22`, boxShadow: "0 2px 14px rgba(0,0,0,0.07)" }}>
+          <div style={{ background: `linear-gradient(135deg, ${ac} 0%, ${ac}bb 100%)`, padding: "18px 22px" }}>
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 14 }}>
+              <span style={{ fontSize: 38 }}>{c.cover_emoji}</span>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 19, fontWeight: 800, color: "#fff", lineHeight: 1.25 }}>{c.title}</div>
+                <div style={{ fontSize: 13, color: "rgba(255,255,255,0.82)", marginTop: 3 }}>{c.subtitle}</div>
+              </div>
+              <div style={{ textAlign: "right", flexShrink: 0 }}>
+                <div style={{ background: "rgba(255,255,255,0.22)", borderRadius: 20, padding: "4px 12px", fontSize: 12, color: "#fff", fontWeight: 700, display: "inline-block" }}>Пул {c.pool}</div>
+                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.72)", marginTop: 5 }}>{c.grades} · {c.ages}</div>
+              </div>
+            </div>
+          </div>
+          <div style={{ background: ab, padding: "10px 22px", display: "flex", gap: 20, flexWrap: "wrap", borderTop: `1px solid ${ac}18` }}>
+            <span style={{ fontSize: 12, color: ac, fontWeight: 700 }}>📦 {c.total_modules} модулей</span>
+            <span style={{ fontSize: 12, color: ac, fontWeight: 700 }}>🕐 {c.total_lessons} занятий</span>
+            <span style={{ fontSize: 12, color: ac, fontWeight: 600, opacity: 0.8 }}>✍ {c.author}</span>
           </div>
         </div>
 
-        <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: 10, padding: "12px 16px", marginBottom: 20, fontSize: 13, color: "#1d4ed8" }}>
-          📖 {selectedCourse.description}
+        {/* Описание */}
+        <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: 10, padding: "11px 15px", marginBottom: 18, fontSize: 13, color: "#475569", lineHeight: 1.6 }}>
+          {c.description}
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          {(selectedCourse.modules || []).map((mod, i) => (
-            <button key={mod.id} onClick={() => setSelectedModule(mod)}
-              style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 12, padding: "14px 16px", cursor: "pointer", textAlign: "left", fontFamily: "inherit", transition: "all 0.15s" }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = "#1e3a5f"; e.currentTarget.style.boxShadow = "0 4px 12px rgba(30,58,95,0.1)"; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.boxShadow = "none"; }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                <div style={{ fontWeight: 600, fontSize: 14, color: "#1e293b", flex: 1 }}>
-                  <span style={{ color: "#94a3b8", fontWeight: 400, marginRight: 8 }}>{i + 1}.</span>
-                  {mod.title}
+        {/* Список модулей */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+          {(c.modules || []).map((mod, i) => {
+            const isLast = i === (c.modules.length - 1);
+            const prereqTitle = mod.prerequisite
+              ? (c.modules.find(m => m.id === mod.prerequisite)?.title || mod.prerequisite)
+              : null;
+            return (
+              <button key={mod.id} onClick={() => setSelectedModule(mod)}
+                style={{ background: "#fff", border: `1px solid ${isLast ? ac + "45" : "#e2e8f0"}`, borderRadius: 12, padding: "13px 15px", cursor: "pointer", textAlign: "left", fontFamily: "inherit", transition: "all 0.14s" }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = ac; e.currentTarget.style.boxShadow = `0 4px 16px ${ac}15`; e.currentTarget.style.transform = "translateY(-1px)"; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = isLast ? ac + "45" : "#e2e8f0"; e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.transform = "none"; }}>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: 11 }}>
+                  {/* Кружок с номером/эмодзи */}
+                  <div style={{ width: 30, height: 30, borderRadius: "50%", background: isLast ? ac : ab, border: `2px solid ${ac}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: mod.emoji ? 14 : 12, fontWeight: 700, color: isLast ? "#fff" : ac, marginTop: 1 }}>
+                    {mod.emoji || (i + 1)}
+                  </div>
+                  {/* Текст */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
+                      <div style={{ fontWeight: 700, fontSize: 14, color: "#1e293b", lineHeight: 1.3 }}>
+                        <span style={{ color: "#94a3b8", fontWeight: 400, fontSize: 11, marginRight: 4 }}>{i + 1}.</span>
+                        {mod.title}
+                        {isLast && <span style={{ marginLeft: 8, fontSize: 10, fontWeight: 700, background: ac, color: "#fff", padding: "2px 7px", borderRadius: 8, verticalAlign: "middle" }}>ФИНАЛ</span>}
+                      </div>
+                      <span style={{ fontSize: 11, padding: "3px 8px", background: ab, color: ac, borderRadius: 20, whiteSpace: "nowrap", flexShrink: 0, fontWeight: 600 }}>
+                        {mod.lessons} зан.
+                      </span>
+                    </div>
+                    {mod.description && (
+                      <div style={{ fontSize: 12, color: "#64748b", marginTop: 5, lineHeight: 1.5 }}>{mod.description}</div>
+                    )}
+                    <div style={{ display: "flex", gap: 6, marginTop: 7, flexWrap: "wrap" }}>
+                      {mod.key_algorithm && (
+                        <span style={{ fontSize: 11, color: "#6b7280", background: "#f3f4f6", padding: "2px 8px", borderRadius: 6 }}>📌 {mod.key_algorithm}</span>
+                      )}
+                      {prereqTitle && (
+                        <span style={{ fontSize: 11, color: "#b45309", background: "#fffbeb", padding: "2px 8px", borderRadius: 6 }}>⚠ после: {prereqTitle}</span>
+                      )}
+                    </div>
+                  </div>
+                  <div style={{ color: "#cbd5e1", fontSize: 14, flexShrink: 0, paddingTop: 7 }}>›</div>
                 </div>
-                <span style={{ fontSize: 12, padding: "2px 8px", background: "#eff6ff", color: "#1d4ed8", borderRadius: 20, whiteSpace: "nowrap", marginLeft: 8 }}>
-                  {mod.lessons} занятий
-                </span>
-              </div>
-              {mod.description && (
-                <div style={{ fontSize: 12, color: "#64748b", marginTop: 6 }}>{mod.description}</div>
-              )}
-              {mod.prerequisite && (
-                <div style={{ fontSize: 11, color: "#f59e0b", marginTop: 6 }}>
-                  ⚠ Пресквизит: {(selectedCourse.modules || []).find(m => m.id === mod.prerequisite)?.title || mod.prerequisite}
-                </div>
-              )}
-            </button>
-          ))}
+              </button>
+            );
+          })}
         </div>
       </div>
     );
   }
 
-  // Каталог курсов
+  // ── Каталог курсов ──
   if (loading) {
     return <div style={{ textAlign: "center", padding: 56, color: "#94a3b8" }}>⏳ Загрузка каталога...</div>;
   }
@@ -2983,23 +3057,69 @@ function CoursesTab() {
     );
   }
 
+  // Группируем курсы по названию (НШ и СШ одного курса — рядом)
+  const grouped = {};
+  courses.forEach(c => {
+    if (!grouped[c.title]) grouped[c.title] = [];
+    grouped[c.title].push(c);
+  });
+
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 16 }}>
-      {courses.map(course => (
-        <button key={course.id} onClick={() => setSelectedCourse(course)}
-          style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 16, padding: "22px 20px", cursor: "pointer", textAlign: "left", fontFamily: "inherit", transition: "all 0.15s" }}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = "#1e3a5f"; e.currentTarget.style.boxShadow = "0 6px 20px rgba(30,58,95,0.12)"; }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.boxShadow = "none"; }}>
-          <div style={{ fontSize: 36, marginBottom: 12 }}>{course.cover_emoji}</div>
-          <div style={{ fontWeight: 700, fontSize: 16, color: "#1e293b", marginBottom: 4 }}>{course.title}</div>
-          <div style={{ fontSize: 12, color: "#64748b", marginBottom: 10 }}>{course.subtitle}</div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 12 }}>
-            <span style={{ fontSize: 11, padding: "2px 8px", background: "#f0fdf4", color: "#166534", borderRadius: 20 }}>{course.grades}</span>
-            <span style={{ fontSize: 11, padding: "2px 8px", background: "#eff6ff", color: "#1d4ed8", borderRadius: 20 }}>{course.total_modules} модулей</span>
-            <span style={{ fontSize: 11, padding: "2px 8px", background: "#fdf4ff", color: "#7e22ce", borderRadius: 20 }}>{course.total_lessons} занятий</span>
+    <div>
+      {Object.entries(grouped).map(([subject, group]) => (
+        <div key={subject} style={{ marginBottom: 28 }}>
+          {/* Заголовок группы */}
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 13, paddingBottom: 10, borderBottom: "1px solid #f1f5f9" }}>
+            <span style={{ fontSize: 22 }}>{group[0].cover_emoji}</span>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 16, fontWeight: 800, color: "#1e293b" }}>{subject}</div>
+              <div style={{ fontSize: 12, color: "#64748b", marginTop: 1 }}>{group.map(c => `${c.grades} (Пул ${c.pool})`).join(" · ")}</div>
+            </div>
+            <div style={{ fontSize: 11, color: "#94a3b8" }}>{group.reduce((s, c) => s + c.total_modules, 0)} модулей всего</div>
           </div>
-          <div style={{ fontSize: 12, color: "#94a3b8" }}>✓ Прошёл модерацию Корифея</div>
-        </button>
+
+          {/* Карточки (по одной на каждый пул) */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(230px, 1fr))", gap: 12 }}>
+            {group.map(course => {
+              const ac = course.accent_color || "#1e3a5f";
+              const ab = course.accent_bg || "#eff6ff";
+              return (
+                <button key={course.id} onClick={() => setSelectedCourse(course)}
+                  style={{ background: "#fff", border: "1px solid #e8ecf0", borderRadius: 16, overflow: "hidden", cursor: "pointer", textAlign: "left", fontFamily: "inherit", transition: "all 0.16s", display: "flex", flexDirection: "column" }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = ac; e.currentTarget.style.boxShadow = `0 6px 26px ${ac}20`; e.currentTarget.style.transform = "translateY(-2px)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = "#e8ecf0"; e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.transform = "none"; }}>
+
+                  {/* Градиентная шапка */}
+                  <div style={{ background: `linear-gradient(135deg, ${ac} 0%, ${ac}aa 100%)`, padding: "15px 17px 13px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                      <span style={{ fontSize: 26 }}>{course.cover_emoji}</span>
+                      <span style={{ background: "rgba(255,255,255,0.24)", borderRadius: 12, padding: "3px 10px", fontSize: 11, color: "#fff", fontWeight: 700 }}>Пул {course.pool}</span>
+                    </div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginTop: 10, lineHeight: 1.35 }}>{course.subtitle}</div>
+                    <div style={{ fontSize: 11, color: "rgba(255,255,255,0.78)", marginTop: 3 }}>{course.grades} · {course.ages}</div>
+                  </div>
+
+                  {/* Тело */}
+                  <div style={{ padding: "12px 17px", flex: 1 }}>
+                    <div style={{ fontSize: 12, color: "#64748b", lineHeight: 1.55, marginBottom: 11 }}>
+                      {course.description.slice(0, 95)}{course.description.length > 95 ? "…" : ""}
+                    </div>
+                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                      <span style={{ fontSize: 11, padding: "3px 9px", background: ab, color: ac, borderRadius: 20, fontWeight: 600 }}>{course.total_modules} модулей</span>
+                      <span style={{ fontSize: 11, padding: "3px 9px", background: "#f1f5f9", color: "#475569", borderRadius: 20 }}>{course.total_lessons} занятий</span>
+                    </div>
+                  </div>
+
+                  {/* Футер */}
+                  <div style={{ padding: "8px 17px 10px", borderTop: "1px solid #f1f5f9", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontSize: 11, color: "#94a3b8" }}>✓ Корифей</span>
+                    <span style={{ fontSize: 12, color: ac, fontWeight: 700 }}>Открыть →</span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
       ))}
     </div>
   );
