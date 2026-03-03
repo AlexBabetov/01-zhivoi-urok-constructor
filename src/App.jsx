@@ -1294,7 +1294,7 @@ function Step3({ state, onGenerate, onMindMap, loading, error }) {
           </div>
           {/* BUG-05: progress indicator — elapsed timer + status hint */}
           <div style={{ fontSize: 13, color: "#94a3b8", marginBottom: 12 }}>
-            {elapsed < 5 ? "Запускаем..." : elapsed < 20 ? "Обычно 15–25 с, уже идёт..." : elapsed < 45 ? "Почти готово..." : "Ждём ответа от Claude..."}
+            {elapsed < 5 ? "Запускаем..." : elapsed < 20 ? "Обычно 15–25 с, уже идёт..." : elapsed < 45 ? "Почти готово..." : "Ждём ответа от AI..."}
             {" "}⏱ {elapsed}с
           </div>
           <div style={{ height: 4, borderRadius: 2, background: "#e2e8f0", overflow: "hidden", maxWidth: 240, margin: "0 auto" }}>
