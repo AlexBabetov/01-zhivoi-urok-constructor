@@ -3561,7 +3561,7 @@ export default function App({ user }) {
           )}
           {user?.user_metadata?.role === "admin" && (
             <Btn variant="ghost" onClick={() => setAdminOpen(true)} style={{ color: "#fff", borderColor: "rgba(255,255,255,0.2)", fontSize: 12 }}>
-              👥 Заявки
+              🛡️ Панель
             </Btn>
           )}
           {user && (
