@@ -2801,7 +2801,7 @@ function useCourses() {
   const [loading, setLoading] = useState(false);
   const load = useCallback(() => {
     setLoading(true);
-    fetch(`/api/courses?t=${Date.now()}`)
+    fetch(`/courses/index.json?t=${Date.now()}`)
       .then(r => r.ok ? r.json() : [])
       .then(data => { setCourses(Array.isArray(data) ? data : []); setLoading(false); })
       .catch(() => { setCourses([]); setLoading(false); });
@@ -2861,9 +2861,9 @@ function ModuleReader({ course, module: mod, onBack }) {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`/api/courses?file=${encodeURIComponent(mod.filename)}&t=${Date.now()}`)
-      .then(r => r.ok ? r.json() : Promise.reject("not found"))
-      .then(data => { setContent(data.content); setLoading(false); })
+    fetch(`/courses/${mod.filename}?t=${Date.now()}`)
+      .then(r => r.ok ? r.text() : Promise.reject("not found"))
+      .then(content => { setContent(content); setLoading(false); })
       .catch(() => { setError("Не удалось загрузить модуль"); setLoading(false); });
   }, [mod.filename]);
 
