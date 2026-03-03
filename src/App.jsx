@@ -359,7 +359,12 @@ async function generateLesson(st, token) {
   if (!response.ok) {
     let errText = "";
     try { errText = await response.text(); } catch(e) {}
-    throw new Error(`API вернул ошибку ${response.status}. ${errText.slice(0, 200)}`);
+    // Парсим JSON-ошибку для человеческого сообщения
+    try {
+      const errJson = JSON.parse(errText);
+      if (errJson.error) throw new Error(errJson.error);
+    } catch(e) { if (e.message !== errText) throw e; }
+    throw new Error(`Ошибка сервера (${response.status}). Попробуйте ещё раз.`);
   }
 
   // Читаем SSE-поток (streaming) — данные приходят по мере генерации
@@ -498,7 +503,12 @@ async function generateMindMap(st, token) {
   if (!response.ok) {
     let errText = "";
     try { errText = await response.text(); } catch(e) {}
-    throw new Error(`API вернул ошибку ${response.status}. ${errText.slice(0, 200)}`);
+    // Парсим JSON-ошибку для человеческого сообщения
+    try {
+      const errJson = JSON.parse(errText);
+      if (errJson.error) throw new Error(errJson.error);
+    } catch(e) { if (e.message !== errText) throw e; }
+    throw new Error(`Ошибка сервера (${response.status}). Попробуйте ещё раз.`);
   }
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
@@ -3561,7 +3571,7 @@ export default function App({ user }) {
           )}
           {user?.user_metadata?.role === "admin" && (
             <Btn variant="ghost" onClick={() => setAdminOpen(true)} style={{ color: "#fff", borderColor: "rgba(255,255,255,0.2)", fontSize: 12 }}>
-              👥 Заявки
+              🛡️ Панель
             </Btn>
           )}
           {user && (

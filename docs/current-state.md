@@ -1,7 +1,7 @@
 ---
 status: active
 created: 2026-02-26
-updated: 2026-02-26
+updated: 2026-03-03
 owner: babetov_aa@koriphey.ru
 tags: [state]
 ---
@@ -13,52 +13,67 @@ tags: [state]
 
 ---
 
-## 1. Статус на 2026-02-26 (сессия 2)
+## 1. Статус на 2026-03-03 (сессия 3)
 
-- **Фаза 1 завершена:** инфраструктура, аутентификация, аналитика, кастомный домен.
-- **Фаза 2 в работе:** закрытие security-блокеров (G-001), первый пилот (G-002).
-- Оценка по аудиту: **2/10** — не production-ready без закрытия блокеров.
-- Модель AI-управления введена полностью: CLAUDE.md, AGENTS.md, docs/ (project-rules, current-state, roadmap, devlog, team, .env.example).
+- **G-001 ЗАКРЫТ:** все security-блокеры устранены (JWT, whitelist, rate limiting, аналитика).
+- **Платформа:** мигрировали с Netlify на Vercel. Edge Functions в `api/`. Netlify-код архивирован.
+- **Admin-панель:** полностью рабочая — заявки, аналитика, дашборд завуча, управление ролями.
+- **Приоритет сейчас:** G-002 — первый реальный пилот с Калужской (уроки + рефлексия).
+- Дашборд завуча технически готов, но **данных нет** — рефлексий ещё не собрано.
 
 ## 2. Что сейчас в работе
 
-- G-001: security-блокеры (JWT в save-lesson + edge generate-lesson, whitelist моделей, rate limiting, аналитика).
+- **G-002:** Провести первый урок с kaluzhskaya_mv@koriphey.ru, собрать рефлексию вручную.
+- **G-002:** Форма рефлексии после урока (встроить в Шаг 4, данные → Supabase).
+- **G-003:** Промпт для средней школы 5–9 кл.
 
 ## 3. Ближайший следующий шаг
 
-1. JWT-верификация в `save-lesson.js` — CRITICAL (DDoS + порча репо).
-2. JWT-верификация в `netlify/edge-functions/generate-lesson.js` — CRITICAL (публичный прокси к Anthropic).
-3. Server-side whitelist моделей + `max_tokens` ceiling в Edge Function.
-4. Логирование `generated` перенести в Edge Function; dead code Regular Function → задокументировать как non-production.
-5. Добавить `SUPABASE_URL` в Netlify env vars (отдельно от `REACT_APP_SUPABASE_URL`).
+1. Провести первый урок с Калужской — дать данные в дашборд.
+2. Реализовать форму рефлексии (2-минутная, встроена в Шаг 4 конструктора).
+3. Зафиксировать ≥ 10 уроков в библиотеке (цель G-002).
 
 ## 4. Блокеры и риски
 
-- **CRITICAL:** `save-lesson.js` — нет JWT → любой POST пишет в GitHub + триггерит Netlify deploy.
-- **CRITICAL:** `edge-functions/generate-lesson.js` — публичный прокси к Anthropic API без аутентификации.
-- **CRITICAL:** Edge принимает `model` и `max_tokens` от клиента без валидации — можно подставить дорогую модель.
-- **HIGH:** Аналитика генераций мертва — `generated` пишется в мёртвый Regular Function, не в Edge.
-- **HIGH:** Нет rate limiting на `/api/generate-lesson`.
-- **BUG:** `save-lesson.js` читает `process.env.SUPABASE_URL`, но в Netlify переменная — `REACT_APP_SUPABASE_URL`. Логирование `saved` в Supabase не работает.
-- **BUG:** Edge default model `claude-3-5-haiku-20241022` устарел; клиент переопределяет правильно (`claude-haiku-4-5-20251001`), но прямые вызовы Edge используют устаревший.
-- **RISK:** `src/App.jsx` 2104 строки — высокая стоимость любых изменений UI.
+- **Нет данных рефлексий** — дашборд завуча пустой до первых проведённых уроков.
+- **RISK:** `src/App.jsx` ~3500+ строк — высокая стоимость любых изменений UI (G-005).
+- **MEDIUM:** Нет формы рефлексии после урока — учителя не могут оставить обратную связь.
 
 ## 5. Пользователи системы
 
 | Email | Роль | Статус |
 |-------|------|--------|
+| `alexey@babetov.kz` | admin (superadmin) | active |
 | `babetov_aa@koriphey.ru` | admin | active |
+| `kamenskih_ig@koriphey.ru` | admin | active |
+| `antropova_ts@koriphey.ru` | admin | active |
 | `kaluzhskaya_mv@koriphey.ru` | teacher | active |
 
 ## 6. Продакшн
 
 - URL: `https://urok360.koriphey.ru`
-- Ветка: `main` → Netlify autodeploy
-- Dev: `dev--constructor-zhivoi-urok.netlify.app` ← ветка `dev`
+- Хостинг: **Vercel** (мигрировали с Netlify 2026-03-03)
+- Ветка: `main` → Vercel prod autodeploy
+- Dev: `https://01-zhivoi-urok-constructor-git-dev-urok360-koriphey.vercel.app` ← ветка `dev`
+- Репозиторий: `https://github.com/AlexBabetov/01-zhivoi-urok-constructor`
 
-## 7. Что не трогать без явного запроса
+## 7. Архитектура API (актуальная)
 
-- `src/App.jsx` — только минимальные фиксы, не рефакторинг
-- `netlify/functions/generate-lesson.js` — мёртвый код, не трогать
+| Файл | Метод | Назначение | Авторизация |
+|------|-------|-----------|-------------|
+| `api/generate-lesson.js` | POST | Генерация урока (streaming SSE) | Мягкая: гости ок, невалидный токен → 401 |
+| `api/save-lesson.js` | POST | Сохранение урока в GitHub | JWT обязателен, status=approved |
+| `api/lessons.js` | GET | Список сохранённых уроков | JWT |
+| `api/courses.js` | GET | Список курсов | Публичный |
+| `api/get-analytics.js` | GET | Аналитика по пользователям | admin/superadmin |
+| `api/dashboard.js` | GET | Дашборд завуча | admin/superadmin |
+| `api/set-role.js` | POST | Смена роли пользователя | admin/superadmin |
+| `api/list-pending-users.js` | GET | Список заявок на регистрацию | admin/superadmin |
+| `api/update-user-status.js` | POST | Одобрение/отклонение заявки | admin/superadmin |
+
+## 8. Что не трогать без явного запроса
+
+- `src/App.jsx` — только минимальные фиксы, не рефакторинг (G-005 — отдельная задача)
+- `netlify/` — мёртвый код (архив Netlify), не трогать
 - `public/curriculum/*.json` — 33 файла учебных программ, не изменять
 - `docs/audit-reports/` — исторические отчёты, только добавление
