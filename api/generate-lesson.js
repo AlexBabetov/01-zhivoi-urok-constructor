@@ -15,6 +15,8 @@ export const config = { runtime: 'edge' };
 const ALLOWED_MODELS    = ["claude-haiku-4-5-20251001", "claude-3-5-haiku-20241022"];
 const DEFAULT_MODEL     = "claude-haiku-4-5-20251001";
 const MAX_TOKENS_CEILING = 10000;
+const DAILY_LIMIT_TEACHER = 5;  // максимум генераций в сутки для учителя
+const DAILY_LIMIT_ADMIN   = 10; // максимум генераций в сутки для администратора
 
 const cors = {
   "Access-Control-Allow-Origin":  "*",
@@ -62,6 +64,53 @@ export default async function handler(req) {
     return json({ error: "Недействительный токен авторизации" }, 401);
   }
 
+  // ── Rate limiting: дневной лимит генераций ────────────────────────────────────
+  // Авторизованные: учитель — 5/день, admin/superadmin — 10/день
+  // Гости (не авторизованы): 2 попытки — по IP (best-effort через заголовок)
+  if (user && supabaseUrl && serviceKey) {
+    const role  = user.user_metadata?.role || "teacher";
+    const limit = ["admin", "superadmin"].includes(role) ? DAILY_LIMIT_ADMIN : DAILY_LIMIT_TEACHER;
+    const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const countRes = await fetch(
+      `${supabaseUrl}/rest/v1/lesson_events?select=id&user_id=eq.${user.id}&event_type=eq.generated&created_at=gte.${since}`,
+      { headers: { "apikey": serviceKey, "Authorization": `Bearer ${serviceKey}` } }
+    );
+    if (countRes.ok) {
+      const rows = await countRes.json();
+      if (Array.isArray(rows) && rows.length >= limit) {
+        return json({
+          error: `Дневной лимит исчерпан: не более ${limit} уроков в день. Попробуйте завтра.`,
+          limit,
+          used: rows.length,
+        }, 429);
+      }
+    }
+  } else if (!user) {
+    // Гость — ограничение по IP, best-effort
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
+            || req.headers.get("x-real-ip")
+            || "unknown";
+    const GUEST_LIMIT = 2;
+    if (supabaseUrl && serviceKey && ip !== "unknown") {
+      const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+      const countRes = await fetch(
+        `${supabaseUrl}/rest/v1/lesson_events?select=id&user_email=eq.guest:${ip}&event_type=eq.generated&created_at=gte.${since}`,
+        { headers: { "apikey": serviceKey, "Authorization": `Bearer ${serviceKey}` } }
+      );
+      if (countRes.ok) {
+        const rows = await countRes.json();
+        if (Array.isArray(rows) && rows.length >= GUEST_LIMIT) {
+          return json({
+            error: `Вы использовали бесплатный лимит (${GUEST_LIMIT} урока). Зарегистрируйтесь, чтобы создавать уроки без ограничений.`,
+            limit: GUEST_LIMIT,
+            used: rows.length,
+            suggest_register: true,
+          }, 429);
+        }
+      }
+    }
+  }
+
   let body;
   try { body = await req.json(); }
   catch { return json({ error: "Неверный JSON" }, 400); }
@@ -91,12 +140,14 @@ export default async function handler(req) {
     return json({ error: err.error?.message || `Claude API ${upstream.status}` }, upstream.status);
   }
 
-  // ── Логирование события generated (best-effort, только авторизованные) ──────
-  if (user && supabaseUrl && serviceKey) {
-    // Парсим метаданные из тела для логирования (не блокируем стриминг)
-    const subject = body.subject || null;
-    const grade   = body.grade   || null;
-    const topic   = body.topic   || null;
+  // ── Логирование события generated (best-effort) ───────────────────────────
+  if (supabaseUrl && serviceKey) {
+    const subject   = body.subject || null;
+    const grade     = body.grade   || null;
+    const topic     = body.topic   || null;
+    const guestIp   = !user
+      ? (req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || req.headers.get("x-real-ip") || null)
+      : null;
 
     fetch(`${supabaseUrl}/rest/v1/lesson_events`, {
       method: "POST",
@@ -107,8 +158,8 @@ export default async function handler(req) {
         "Prefer":        "return=minimal",
       },
       body: JSON.stringify({
-        user_id:      user.id,
-        user_email:   user.email,
+        user_id:      user?.id    || null,
+        user_email:   user?.email || (guestIp ? `guest:${guestIp}` : null),
         event_type:   "generated",
         subject,
         grade,
